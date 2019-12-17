@@ -19,9 +19,9 @@ import (
 // Overridden via Makefile for release builds
 var version string = "dev build"
 
-const myAppURL string = "https://github.com/atc0005/send2teams"
-
+// Primarily used with branding
 const myAppName string = "send2teams"
+const myAppURL string = "https://github.com/atc0005/send2teams"
 
 // All webhook URLs begin with this URL pattern. We check provided URLs against
 // this pattern.
@@ -147,17 +147,12 @@ func main() {
 	flag.StringVar(&webhook.Team, "team", "", "The name of the Team containing our target channel")
 	flag.StringVar(&webhook.Channel, "channel", "", "The target channel where we will send a message")
 	flag.StringVar(&webhook.WebhookURL, "url", "", "The Webhook URL provided by a preconfigured Connector")
-	flag.StringVar(&message.ThemeColor, "color", "", "The hex color code used to set the desired trim color on submitted messages")
+	flag.StringVar(&message.ThemeColor, "color", defaultMessageThemeColor, "The hex color code used to set the desired trim color on submitted messages")
 	flag.StringVar(&message.MessageTitle, "title", "", "The title for the message to submit")
 	flag.StringVar(&message.MessageText, "message", "", "The (optionally) Markdown-formatted message to submit")
 
 	// parse flag definitions from the argument list
 	flag.Parse()
-
-	// If the theme color option wasn't provided, set it to a default value.
-	if message.ThemeColor == "" {
-		message.ThemeColor = defaultMessageThemeColor
-	}
 
 	// Validate provided info before going any further
 	if err := validateMessage(message); err != nil {
