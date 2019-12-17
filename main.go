@@ -27,6 +27,7 @@ const myAppURL string = "https://github.com/atc0005/send2teams"
 // this pattern.
 const webhookURLPrefix = "https://outlook.office.com/webhook/"
 
+// Used if the user doesn't provide a value via commandline
 const defaultMessageThemeColor = "#832561"
 
 // Included at the bottom of each Teams message
