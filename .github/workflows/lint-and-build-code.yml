@@ -1,0 +1,80 @@
+#!/bin/bash
+
+# Copyright 2019 Adam Chalkley
+#
+# https://github.com/atc0005/send2teams
+#
+# Licensed under the MIT License. See LICENSE file in the project root for
+# full license information.
+
+name: Validate Codebase
+
+# Run builds for Pull Requests (new, updated)
+# `synchronized` seems to equate to pushing new commits to a linked branch
+# (whether force-pushed or not)
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  lint_and_build_code:
+    name: Lint and Build codebase
+    runs-on: ${{ matrix.os }}
+    # Default: 360 minutes
+    timeout-minutes: 10
+    strategy:
+      matrix:
+        # Supported versions of Go
+        go-version: [1.12.x, 1.13.x]
+
+        # Supported LTS and latest version of Ubuntu Linux
+        #os: [ubuntu-16.04, ubuntu-18.04, ubuntu-latest]
+
+        # This should be good enough until we learn otherwise
+        os: [ubuntu-latest]
+
+    steps:
+      - name: Set up Go
+        # https://github.com/actions/setup-go
+        uses: actions/setup-go@v1
+        with:
+          go-version: ${{ matrix.go-version }}
+        id: go
+
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v1
+
+      - name: Get dependencies
+        run: |
+          go get -v -t -d ./...
+
+      # Force tests to run early as it isn't worth doing much else if the
+      # tests fail to run properly.
+      - name: Run all tests
+        run: go test -v ./...
+
+      - name: Install Go linting tools
+        run: |
+          # add executables installed with go get to PATH
+          # TODO: this will hopefully be fixed by
+          # https://github.com/actions/setup-go/issues/14
+          export PATH=${PATH}:$(go env GOPATH)/bin
+          make lintinstall
+
+      - name: Install Ubuntu packages
+        if: contains(matrix.os, 'ubuntu')
+        run: sudo apt update && sudo apt install -y --no-install-recommends make gcc
+
+      - name: Run Go linting tools using project Makefile
+        run: |
+          # add executables installed with go get to PATH
+          # TODO: this will hopefully be fixed by
+          # https://github.com/actions/setup-go/issues/14
+          export PATH=${PATH}:$(go env GOPATH)/bin
+          make linting
+
+      - name: Build with default options
+        run: go build -v .
+
+      - name: Build using project Makefile
+        run: make all
