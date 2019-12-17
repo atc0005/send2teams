@@ -81,7 +81,7 @@ func validateWebhook(webhook TeamsChannel) error {
 	if !strings.HasPrefix(webhook.WebhookURL, webhookURLPrefix) {
 		webhookURLPrefixLength := len(webhookURLPrefix)
 		actualWebhookURLPrefix := webhook.WebhookURL[0:(webhookURLPrefixLength - 1)]
-		return fmt.Errorf("webhook URL missing expected prefix! Got: %q, Expected: %q",
+		return fmt.Errorf("webhook URL missing expected prefix; got: %q, Expected: %q",
 			actualWebhookURLPrefix, webhook.WebhookURL)
 	}
 
@@ -99,7 +99,7 @@ func validateMessage(message TeamsMessage) error {
 
 		expectedLength := len(defaultMessageThemeColor)
 		actualLength := len(message.ThemeColor)
-		return fmt.Errorf("Provided message theme color too short. Got message %q of length %d, expected length of %d",
+		return fmt.Errorf("provided message theme color too short; got message %q of length %d, expected length of %d",
 			message.ThemeColor, actualLength, expectedLength)
 	}
 
@@ -169,7 +169,7 @@ func main() {
 			webhook.Channel, webhook.Team, message, err)
 	}
 
-	fmt.Printf("Message successfully sent to %q channel in the %q team:\n%+v\n",
+	log.Printf("Message successfully sent to %q channel in the %q team:\n%+v\n",
 		webhook.Channel, webhook.Team, message)
 
 }
