@@ -103,15 +103,15 @@ Requests for other configuration sources will be considered.
 
 Aside from the built-in `-h`, short flag names are currently not supported.
 
-| Flag        | Required | Default      | Repeat | Possible                                 | Description                                                                  |
-| ----------- | -------- | ------------ | ------ | ---------------------------------------- | ---------------------------------------------------------------------------- |
-| `h`, `help` | No       | N/A          | No     | N/A                                      | Display Help; show available flags.                                          |
-| `channel`   | Yes      | N/A          | No     | *valid Microsoft Teams channel name*     | The target channel where we will send a message.                             |
-| `color`     | No       | `#832561`    | No     | *valid hex color code*                   | The hex color code used to set the desired trim color on submitted messages. |
-| `message`   | Yes      | *empty list* | No     | *valid message string*                   | The (optionally) Markdown-formatted message to submit.                       |
-| `team`      | Yes      | N/A          | No     | *valid Microsoft Teams team name*        | The name of the Team containing our target channel.                          |
-| `title`     | Yes      | N/A          | No     | *valid title string*                     | The title for the message to submit.                                         |
-| `url`       | Yes      | N/A          | No     | *valid Microsoft Office 365 Webhook URL* | The Webhook URL provided by a pre-configured Connector.                      |
+| Flag        | Required | Default        | Repeat | Possible                                 | Description                                                                  |
+| ----------- | -------- | -------------- | ------ | ---------------------------------------- | ---------------------------------------------------------------------------- |
+| `h`, `help` | No       | N/A            | No     | N/A                                      | Display Help; show available flags.                                          |
+| `channel`   | Yes      | *empty string* | No     | *valid Microsoft Teams channel name*     | The target channel where we will send a message.                             |
+| `color`     | No       | `#832561`      | No     | *valid hex color code*                   | The hex color code used to set the desired trim color on submitted messages. |
+| `message`   | Yes      | *empty string* | No     | *valid message string*                   | The (optionally) Markdown-formatted message to submit.                       |
+| `team`      | Yes      | *empty string* | No     | *valid Microsoft Teams team name*        | The name of the Team containing our target channel.                          |
+| `title`     | Yes      | *empty string* | No     | *valid title string*                     | The title for the message to submit.                                         |
+| `url`       | Yes      | *empty string* | No     | *valid Microsoft Office 365 Webhook URL* | The Webhook URL provided by a pre-configured Connector.                      |
 
 ## Examples
 
