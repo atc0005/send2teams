@@ -8,6 +8,7 @@
 # Ignore generated binaries
 send2teams.exe
 send2teams
+send2teams-*
 
 # Ignore Visual Studio Code workspace-level settings
 .vscode/settings.json

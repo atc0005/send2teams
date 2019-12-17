@@ -16,6 +16,9 @@ import (
 	goteamsnotify "gopkg.in/dasrick/go-teams-notify.v1"
 )
 
+// Overridden via Makefile for release builds
+var version string = "dev"
+
 // All webhook URLs begin with this URL pattern. We check provided URLs against
 // this pattern.
 const webhookURLPrefix = "https://outlook.office.com/webhook/"
