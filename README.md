@@ -1,5 +1,12 @@
 # send2teams
 
+Small CLI tool used to submit messages to Microsoft Teams.
+
+[![Latest Release](https://img.shields.io/github/release/atc0005/send2teams.svg?style=flat-square)](https://github.com/atc0005/send2teams/releases/latest)
+[![GoDoc](https://godoc.org/github.com/atc0005/send2teams?status.svg)](https://godoc.org/github.com/atc0005/send2teams)
+![Validate Codebase](https://github.com/atc0005/send2teams/workflows/Validate%20Codebase/badge.svg)
+![Validate Docs](https://github.com/atc0005/send2teams/workflows/Validate%20Docs/badge.svg)
+
 - [send2teams](#send2teams)
   - [Project home](#project-home)
   - [Overview](#overview)
