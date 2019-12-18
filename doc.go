@@ -10,8 +10,8 @@ inclusion into the project.
 
 PURPOSE
 
-send2teams is intended for use by Nagios, scripts or other scripted actions
-that may need to submit pass/fail results to a MS Teams channel.
+send2teams is intended for use by Nagios, scripts or other actions that may
+need to submit pass/fail results to a MS Teams channel.
 
 FEATURES
 
