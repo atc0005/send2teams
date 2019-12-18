@@ -123,13 +123,13 @@ scripts or any other tool that calls out to others in order to perform its
 tasks.
 
 ```ShellSession
-./send2teams.exe -channel "Testing" -message "Testing from cmdline!" -title "Another test" -color "#832561" -url "https://outlook.office.com/webhook/www@xxx/IncomingWebhook/yyy/zzz"
+./send2teams.exe -channel "Testing" -message "Testing from command-line!" -title "Another test" -color "#832561" -url "https://outlook.office.com/webhook/www@xxx/IncomingWebhook/yyy/zzz"
 ```
 
 Accidentally typing the wrong flag results in a message like this one:
 
 ```
-flag provided but not defined: -fakeflag
+flag provided but not defined: -fake-flag
 ```
 
 ## License
