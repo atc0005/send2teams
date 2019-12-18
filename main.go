@@ -10,7 +10,9 @@ package main
 import (
 	"flag"
 	"fmt"
+	"io/ioutil"
 	"log"
+	"os"
 	"strings"
 
 	goteamsnotify "gopkg.in/dasrick/go-teams-notify.v1"
@@ -140,11 +142,32 @@ func sendMessage(webhookURL string, teamsMessage goteamsnotify.MessageCard) erro
 	return mstClient.Send(webhookURL, teamsMessage)
 }
 
+func (tc TeamsChannel) String() string {
+	return fmt.Sprintf("Team=%q, Channel=%q, WebhookURL=%q",
+		tc.Team,
+		tc.Channel,
+		tc.WebhookURL,
+	)
+}
+
+func (tm TeamsMessage) String() string {
+	return fmt.Sprintf("ThemeColor=%q, MessageTitle=%q, MessageText=%q",
+		tm.ThemeColor,
+		tm.MessageTitle,
+		tm.MessageText,
+	)
+}
+
 func main() {
 
 	webhook := TeamsChannel{}
 	message := TeamsMessage{}
 
+	var verboseOutput bool
+	var silentOutput bool
+
+	flag.BoolVar(&verboseOutput, "verbose", false, "Whether detailed output should be shown after message submission success or failure")
+	flag.BoolVar(&silentOutput, "silent", false, "Whether ANY output should be shown after message submission success or failure")
 	flag.StringVar(&webhook.Team, "team", "", "The name of the Team containing our target channel")
 	flag.StringVar(&webhook.Channel, "channel", "", "The target channel where we will send a message")
 	flag.StringVar(&webhook.WebhookURL, "url", "", "The Webhook URL provided by a preconfigured Connector")
@@ -158,11 +181,16 @@ func main() {
 	// Validate provided info before going any further
 	if err := validateMessage(message); err != nil {
 		log.Fatal(err)
-
 	}
 
 	if err := validateWebhook(webhook); err != nil {
 		log.Fatal(err)
+	}
+
+	// TODO: Move elsewhere?
+	if silentOutput && verboseOutput {
+		fmt.Println("Unsupported: You cannot have both silent and verbose output.")
+		os.Exit(1)
 	}
 
 	// setup message card
@@ -171,12 +199,44 @@ func main() {
 	msgCard.Text = message.MessageText + messageTrailer
 	msgCard.ThemeColor = message.ThemeColor
 
+	// FIXME: Work around goteamsnotify package using `log.Println(err)`
+	// by directing all statements other than ours to /dev/null
+	log.SetOutput(ioutil.Discard)
+
 	if err := sendMessage(webhook.WebhookURL, msgCard); err != nil {
-		log.Fatalf("Failed to submit message to %q channel in the %q team!\nMessage: %+v\nError: %v",
-			webhook.Channel, webhook.Team, message, err)
+
+		// Display error output if silence is not requested
+		if !silentOutput {
+			fmt.Printf("\n\nERROR: Failed to submit message to %q channel in the %q team!\n\n",
+				webhook.Channel, webhook.Team)
+
+			if verboseOutput {
+				fmt.Printf("[Message]: %+v\n[Webhook]: %+v\n[Error]: %v", message, webhook, err)
+			}
+
+		}
+
+		// Regardless of silent flag, explicitly note unsuccessful results
+		os.Exit(1)
 	}
 
-	log.Printf("Message successfully sent to %q channel in the %q team:\n%+v\n",
-		webhook.Channel, webhook.Team, message)
+	// FIXME: Remove this workaround once the goteamsnotify package is
+	// updated or I learn of a better/proper way to handle this
+	//
+	// By this point any errors emitted by the goteamsnotify package
+	// should have already been emitted and then immediately redirected to
+	// dev/null, so go ahead and restore logging output
+	log.SetOutput(os.Stdout)
+
+	if !silentOutput {
+
+		// Emit basic success message
+		log.Println("Message successfully sent!")
+
+		if verboseOutput {
+			log.Printf("Webhook: %s\n", webhook)
+			log.Printf("Message: %s\n", message)
+		}
+	}
 
 }
