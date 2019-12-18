@@ -30,8 +30,8 @@ inclusion into the project.
 ## Overview
 
 Small CLI tool used to submit messages to Microsoft Teams. `send2teams` is
-intended for use by Nagios, scripts or other scripted actions that may need to
-submit pass/fail results to a MS Teams channel.
+intended for use by Nagios, scripts or other actions that may need to submit
+pass/fail results to a MS Teams channel.
 
 Many thanks to the developer/contributors of the `dasrick/go-teams-notify`
 package for making this tool possible.
