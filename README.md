@@ -101,8 +101,6 @@ Tested using:
 Currently `send2teams` only supports command-line configuration flags.
 Requests for other configuration sources will be considered.
 
-Aside from the built-in `-h`, short flag names are currently not supported.
-
 | Flag        | Required | Default   | Possible                                 | Description                                                                  |
 | ----------- | -------- | --------- | ---------------------------------------- | ---------------------------------------------------------------------------- |
 | `h`, `help` | No       | N/A       | N/A                                      | Display Help; show available flags.                                          |
