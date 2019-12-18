@@ -90,7 +90,7 @@ Tested using:
       - `make windows`
    - for Linux
      - `make linux`
-1. Copy the applicable binary to whatever systems needs to run it
+1. Copy the applicable binary to whatever systems that need to run it
    1. Linux: `/tmp/send2teams/send2teams`
    1. Windows: `/tmp/send2teams/send2teams.exe`
 
