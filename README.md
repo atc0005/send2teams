@@ -126,7 +126,7 @@ tasks.
 
 Accidentally typing the wrong flag results in a message like this one:
 
-```
+```ShellSession
 flag provided but not defined: -fake-flag
 ```
 
@@ -164,10 +164,9 @@ SOFTWARE.
 - <https://github.com/dasrick/go-teams-notify/>
   - the package/library this app depends on
 
-- <https://docs.microsoft.com/en-us/outlook/actionable-messages/message-card-reference>
+- <https://sankalpit.com/how-to-get-channel-webhook-url/>
+
 - <https://docs.microsoft.com/en-us/outlook/actionable-messages/message-card-reference>
 - <https://docs.microsoft.com/en-us/microsoftteams/platform/concepts/outgoingwebhook>
 - <https://docs.microsoft.com/en-us/outlook/actionable-messages/send-via-connectors>
 - <https://messagecardplayground.azurewebsites.net/>
-
-- <https://sankalpit.com/how-to-get-channel-webhook-url/>
