@@ -78,12 +78,12 @@ func validateWebhook(webhook TeamsChannel) error {
 
 	// ensure that all fields meet at least the minimum basic requirements
 
-	if len(webhook.Team) == 0 {
+	if webhook.Team == "" {
 		return fmt.Errorf("team name too short")
 
 	}
 
-	if len(webhook.Channel) == 0 {
+	if webhook.Channel == "" {
 		return fmt.Errorf("channel name too short")
 	}
 
