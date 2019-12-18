@@ -27,15 +27,19 @@ Help output is below. See the README for examples.
 	-channel string
 			The target channel where we will send a message
 	-color string
-			The hex color code used to set the desired trim color on submitted messages
+			The hex color code used to set the desired trim color on submitted messages (default "#832561")
 	-message string
 			The (optionally) Markdown-formatted message to submit
+	-silent
+			Whether ANY output should be shown after message submission success or failure
 	-team string
 			The name of the Team containing our target channel
 	-title string
 			The title for the message to submit
 	-url string
 			The Webhook URL provided by a preconfigured Connector
+	-verbose
+			Whether detailed output should be shown after message submission success or failure
 
 */
 package main
