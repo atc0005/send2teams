@@ -21,8 +21,7 @@ FEATURES
 
 • very few build dependencies
 
-• optional conversion of messages with Windows, Mac or Linux newlines to
-  `<br>` to increase compatibility with Teams formatting
+• optional conversion of messages with Windows, Mac or Linux newlines to `<br>` to increase compatibility with Teams formatting
 
 USAGE
 
@@ -33,6 +32,8 @@ Help output is below. See the README for examples.
 			The target channel where we will send a message
 	-color string
 			The hex color code used to set the desired trim color on submitted messages (default "#832561")
+	-convert-eol
+			Whether messages with Windows, Mac and Linux newlines are updated to use break statements before message submission
 	-message string
 			The (optionally) Markdown-formatted message to submit
 	-silent

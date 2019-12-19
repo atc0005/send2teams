@@ -26,6 +26,14 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
+## [v0.2.1] - 2019-12-19
+
+### Fixed
+
+- Add missing flag in help output
+- Remove forced line break/wrapping since GoDoc interprets
+  this as a code block instead of continuing the line
+
 ## [v0.2.0] - 2019-12-19
 
 ### Added
@@ -44,6 +52,7 @@ This initial prototype supports/provides:
 - GitHub Actions linting and build checks
 - Makefile for general use cases
 
-[Unreleased]: https://github.com/atc0005/send2teams/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/atc0005/send2teams/compare/v0.2.1...HEAD
+[v0.2.1]: https://github.com/atc0005/send2teams/releases/tag/v0.2.1
 [v0.2.0]: https://github.com/atc0005/send2teams/releases/tag/v0.2.0
 [v0.1.0]: https://github.com/atc0005/send2teams/releases/tag/v0.1.0
