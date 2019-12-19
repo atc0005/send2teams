@@ -26,6 +26,13 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
+## [v0.2.0] - 2019-12-19
+
+### Added
+
+- Optional conversion of messages with Windows, Mac or Linux newlines to
+  `<br>` to increase compatibility with Teams formatting
+
 ## [v0.1.0] - 2019-12-18
 
 ### Added
@@ -37,5 +44,6 @@ This initial prototype supports/provides:
 - GitHub Actions linting and build checks
 - Makefile for general use cases
 
-[Unreleased]: https://github.com/atc0005/send2teams/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/atc0005/send2teams/compare/v0.2.0...HEAD
+[v0.2.0]: https://github.com/atc0005/send2teams/releases/tag/v0.2.0
 [v0.1.0]: https://github.com/atc0005/send2teams/releases/tag/v0.1.0
