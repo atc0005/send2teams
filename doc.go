@@ -16,8 +16,13 @@ need to submit pass/fail results to a MS Teams channel.
 FEATURES
 
 • single binary, no outside dependencies
+
 • minimal configuration
+
 • very few build dependencies
+
+• optional conversion of messages with Windows, Mac or Linux newlines to
+  `<br>` to increase compatibility with Teams formatting
 
 USAGE
 
