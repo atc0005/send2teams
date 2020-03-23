@@ -26,6 +26,26 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
+## [v0.2.2] - 2020-03-23
+
+### Added
+
+- GitHub Actions Workflow
+  - print Go version used
+    - intended as a future troubleshooting aid
+
+### Fixed
+
+- README
+  - formatting for flags table
+- Code
+  - "slice bounds out of range" panic due to incorrect validity check against
+    webhook URL pattern
+- GitHub Actions Workflow
+  - use current Go versions
+    - remove Go v1.12
+    - add Go v1.14
+
 ## [v0.2.1] - 2019-12-19
 
 ### Fixed
@@ -52,7 +72,8 @@ This initial prototype supports/provides:
 - GitHub Actions linting and build checks
 - Makefile for general use cases
 
-[Unreleased]: https://github.com/atc0005/send2teams/compare/v0.2.1...HEAD
+[Unreleased]: https://github.com/atc0005/send2teams/compare/v0.2.2...HEAD
+[v0.2.2]: https://github.com/atc0005/send2teams/releases/tag/v0.2.2
 [v0.2.1]: https://github.com/atc0005/send2teams/releases/tag/v0.2.1
 [v0.2.0]: https://github.com/atc0005/send2teams/releases/tag/v0.2.0
 [v0.1.0]: https://github.com/atc0005/send2teams/releases/tag/v0.1.0
