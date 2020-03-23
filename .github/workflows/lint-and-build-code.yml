@@ -41,6 +41,12 @@ jobs:
           go-version: ${{ matrix.go-version }}
         id: go
 
+      # This could prove useful if we need to troubleshoot odd results and
+      # tie them back to a specific version of Go
+      - name: Print go version
+        run: |
+          go version
+
       - name: Check out code into the Go module directory
         uses: actions/checkout@v1
 
