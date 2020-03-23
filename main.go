@@ -29,6 +29,9 @@ const myAppURL string = "https://github.com/atc0005/send2teams"
 // this pattern.
 const webhookURLPrefix = "https://outlook.office.com/webhook/"
 
+// https://docs.microsoft.com/en-us/outlook/actionable-messages/send-via-connectors
+const webhookURLSample = "https://outlook.office365.com/webhook/a1269812-6d10-44b1-abc5-b84f93580ba0@9e7b80c7-d1eb-4b52-8582-76f921e416d9/IncomingWebhook/3fdd6767bae44ac58e5995547d66a4e4/f332c8d9-3397-4ac5-957b-b8e3fc465a8c"
+
 // Used if the user doesn't provide a value via commandline
 const defaultMessageThemeColor = "#832561"
 
@@ -104,13 +107,22 @@ func validateWebhook(webhook TeamsChannel) error {
 		return fmt.Errorf("channel name too short")
 	}
 
-	// Ensure that at least the prefix is present
-	// TODO: Is the URL pattern stable? If so, perhaps we can add a length
-	// check also?
+	// ensure that at least the prefix + SOMETHING is present
+	if len(webhook.WebhookURL) <= len(webhookURLPrefix) {
+		return fmt.Errorf("webhook URL shorter than or equal to prefix")
+	}
+
+	// ensure that webhookURL is not shorter than sample webhookURL from
+	// official docs
+	if len(webhook.WebhookURL) < len(webhookURLSample) {
+		return fmt.Errorf("webhook URL shorter than official sample URL")
+	}
+
+	// Ensure that the expected prefix is present
 	if !strings.HasPrefix(webhook.WebhookURL, webhookURLPrefix) {
 		webhookURLPrefixLength := len(webhookURLPrefix)
 		actualWebhookURLPrefix := webhook.WebhookURL[0:(webhookURLPrefixLength - 1)]
-		return fmt.Errorf("webhook URL missing expected prefix; got: %q, Expected: %q",
+		return fmt.Errorf("webhook URL missing expected prefix; got: %q, expected: %q",
 			actualWebhookURLPrefix, webhook.WebhookURL)
 	}
 
