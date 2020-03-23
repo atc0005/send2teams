@@ -25,7 +25,7 @@ jobs:
     strategy:
       matrix:
         # Supported versions of Go
-        go-version: [1.12.x, 1.13.x]
+        go-version: [1.13.x, 1.14.x]
 
         # Supported LTS and latest version of Ubuntu Linux
         #os: [ubuntu-16.04, ubuntu-18.04, ubuntu-latest]
