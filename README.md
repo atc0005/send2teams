@@ -103,20 +103,18 @@ Tested using:
 Currently `send2teams` only supports command-line configuration flags.
 Requests for other configuration sources will be considered.
 
-| Flag          | Required | Default   | Possible                                 | Description                                                                                          |
-| ------------- | -------- | --------- | ---------------------------------------- | ---------------------------------------------------------------------------------------------------- |
-| `h`, `help`   | No       | N/A       | N/A                                      | Display Help; show available flags.                                                                  |
-| `channel`     | Yes      |           | *valid Microsoft Teams channel name*     | The target channel where we will send a message.                                                     |
-| `color`       | No       | `#832561` | *valid hex color code with leading `#`*  | The hex color code used to set the desired trim color on submitted messages.                         |
-| `message`     | Yes      |           | *valid message string*                   | The (optionally) Markdown-formatted message to submit.                                               |
-| `team`        | Yes      |           | *valid Microsoft Teams team name*        | The name of the Team containing our target channel.                                                  |
-| `title`       | Yes      |           | *valid title string*                     | The title for the message to submit.                                                                 |
-| `url`         | Yes      |           | *valid Microsoft Office 365 Webhook URL* | The Webhook URL provided by a pre-configured Connector.                                              |
-| `verbose`     | No       | `false`   | `true`, `false`                          | Whether detailed output should be shown after message submission success or failure                  |
-| `silent`      | No       | `false`   | `true`, `false`                          | Whether ANY output should be shown after message submission success or failure                       |
-| `convert-eol` | No       | `false`   | `true`, `false`                          | Whether Windows, Mac and Linux newlines are replaced with break statements before message submission |
-conversion of messages with Windows, Mac or Linux newlines to
-  `<br>` to increase compatibility with Teams formatting
+| Flag          | Required | Default   | Possible                                 | Description                                                                                                         |
+| ------------- | -------- | --------- | ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| `h`, `help`   | No       | N/A       | N/A                                      | Display Help; show available flags.                                                                                 |
+| `channel`     | Yes      |           | *valid Microsoft Teams channel name*     | The target channel where we will send a message.                                                                    |
+| `color`       | No       | `#832561` | *valid hex color code with leading `#`*  | The hex color code used to set the desired trim color on submitted messages.                                        |
+| `message`     | Yes      |           | *valid message string*                   | The (optionally) Markdown-formatted message to submit.                                                              |
+| `team`        | Yes      |           | *valid Microsoft Teams team name*        | The name of the Team containing our target channel.                                                                 |
+| `title`       | Yes      |           | *valid title string*                     | The title for the message to submit.                                                                                |
+| `url`         | Yes      |           | *valid Microsoft Office 365 Webhook URL* | The Webhook URL provided by a pre-configured Connector.                                                             |
+| `verbose`     | No       | `false`   | `true`, `false`                          | Whether detailed output should be shown after message submission success or failure                                 |
+| `silent`      | No       | `false`   | `true`, `false`                          | Whether ANY output should be shown after message submission success or failure                                      |
+| `convert-eol` | No       | `false`   | `true`, `false`                          | Whether messages with Windows, Mac and Linux newlines are updated to use break statements before message submission |
 
 ## Examples
 
