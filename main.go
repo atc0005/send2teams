@@ -121,7 +121,7 @@ func validateWebhook(webhook TeamsChannel) error {
 	// ensure that at least the prefix + SOMETHING is present; test against
 	// the shorter of the two known prefixes
 	if len(webhook.WebhookURL) <= len(webhookURLOfficecomPrefix) {
-		return fmt.Errorf("webhook URL %q shorter than or equal to %q prefix",
+		return fmt.Errorf("incomplete webhook URL: %q shorter than or equal to just the %q prefix",
 			webhook.WebhookURL,
 			webhookURLOfficecomPrefix,
 		)
