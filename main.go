@@ -284,8 +284,8 @@ func main() {
 
 		// Display error output if silence is not requested
 		if !silentOutput {
-			fmt.Printf("\n\nERROR: Failed to submit message to %q channel in the %q team!\n\n",
-				webhook.Channel, webhook.Team)
+			fmt.Printf("\n\nERROR: Failed to submit message to %q channel in the %q team: %v\n\n",
+				webhook.Channel, webhook.Team, err)
 
 			if verboseOutput {
 				fmt.Printf("[Message]: %+v\n[Webhook]: %+v\n[Error]: %v", message, webhook, err)
