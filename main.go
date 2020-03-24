@@ -123,7 +123,7 @@ func validateWebhook(webhook TeamsChannel) error {
 		)
 	}
 
-	// ensure that the expected prefixes are used
+	// ensure that known/expected prefixes are used
 	switch {
 	case strings.HasPrefix(webhook.WebhookURL, webhookURLOfficecomPrefix):
 	case strings.HasPrefix(webhook.WebhookURL, webhookURLOffice365Prefix):
