@@ -12,6 +12,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"net/url"
 	"os"
 	"regexp"
 	"strings"
@@ -122,6 +123,30 @@ func validateWebhook(webhook TeamsChannel) error {
 		)
 	}
 
+	// ensure that the expected prefixes are used
+	switch {
+	case strings.HasPrefix(webhook.WebhookURL, webhookURLOfficecomPrefix):
+	case strings.HasPrefix(webhook.WebhookURL, webhookURLOffice365Prefix):
+	default:
+		u, err := url.Parse(webhook.WebhookURL)
+		if err != nil {
+			return fmt.Errorf(
+				"unable to parse webhook URL %q: %v",
+				webhook.WebhookURL,
+				err,
+			)
+		}
+		userProvidedWebhookURLPrefix := u.Scheme + "://" + u.Host
+
+		return fmt.Errorf(
+			"webhook URL does not contain expected prefix; got %q, expected one of %q or %q",
+			userProvidedWebhookURLPrefix,
+			webhookURLOfficecomPrefix,
+			webhookURLOffice365Prefix,
+		)
+	}
+
+	// This is pretty tight validation and will likely require future tending
 	matched, err := regexp.MatchString(validWebhookURLPrefixes, webhook.WebhookURL)
 	if !matched {
 		return fmt.Errorf(
