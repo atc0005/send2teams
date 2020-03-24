@@ -154,7 +154,7 @@ func validateWebhook(webhook TeamsChannel) error {
 				"got: %q\n"+
 				"expected one of:\n"+
 				"  * %q\n"+
-				"  * %q\n",
+				"  * %q",
 			err,
 			webhook.WebhookURL,
 			webhookURLOfficecomPrefix+webhookURLOfficialDocsSampleURI,
