@@ -17,7 +17,11 @@ import (
 	"regexp"
 	"strings"
 
-	goteamsnotify "gopkg.in/dasrick/go-teams-notify.v1"
+	//goteamsnotify "gopkg.in/dasrick/go-teams-notify.v1"
+
+	// temporarily use our fork until upstream webhook URL FQDN validation
+	// changes can be made
+	goteamsnotify "github.com/atc0005/go-teams-notify"
 )
 
 // Overridden via Makefile for release builds
