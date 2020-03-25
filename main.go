@@ -12,10 +12,16 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"net/url"
 	"os"
+	"regexp"
 	"strings"
 
-	goteamsnotify "gopkg.in/dasrick/go-teams-notify.v1"
+	//goteamsnotify "gopkg.in/dasrick/go-teams-notify.v1"
+
+	// temporarily use our fork until upstream webhook URL FQDN validation
+	// changes can be made
+	goteamsnotify "github.com/atc0005/go-teams-notify"
 )
 
 // Overridden via Makefile for release builds
@@ -25,12 +31,23 @@ var version string = "dev build"
 const myAppName string = "send2teams"
 const myAppURL string = "https://github.com/atc0005/send2teams"
 
-// All webhook URLs begin with this URL pattern. We check provided URLs against
-// this pattern.
-const webhookURLPrefix = "https://outlook.office.com/webhook/"
-
+// In practice, all new webhook URLs appear to use the outlook.office.com
+// FQDN. However, some older guides, and even the current official
+// documentation, use outlook.office365.com in their webhook URL examples.
 // https://docs.microsoft.com/en-us/outlook/actionable-messages/send-via-connectors
-const webhookURLSample = "https://outlook.office365.com/webhook/a1269812-6d10-44b1-abc5-b84f93580ba0@9e7b80c7-d1eb-4b52-8582-76f921e416d9/IncomingWebhook/3fdd6767bae44ac58e5995547d66a4e4/f332c8d9-3397-4ac5-957b-b8e3fc465a8c"
+const webhookURLOfficecomPrefix = "https://outlook.office.com"
+const webhookURLOffice365Prefix = "https://outlook.office365.com"
+const webhookURLOfficialDocsSampleURI = "webhook/a1269812-6d10-44b1-abc5-b84f93580ba0@9e7b80c7-d1eb-4b52-8582-76f921e416d9/IncomingWebhook/3fdd6767bae44ac58e5995547d66a4e4/f332c8d9-3397-4ac5-957b-b8e3fc465a8c"
+
+// Build a regular expression that we can use to validate incoming webhook
+// URLs provided by the user.
+//
+// Note: The regex allows for capital letters in the GUID patterns. This is
+// allowed based on light testing which shows that mixed case works and the
+// assumption that since Teams and Office 365 are Microsoft products case
+// would be ignored (e.g., Windows, IIS do not consider 'A' and 'a' to be
+// different).
+var validWebhookURLRegex = `^https:\/\/outlook.office(?:365)?.com\/webhook\/[-a-zA-Z0-9]{36}@[-a-zA-Z0-9]{36}\/IncomingWebhook\/[-a-zA-Z0-9]{32}\/[-a-zA-Z0-9]{36}$`
 
 // Used if the user doesn't provide a value via commandline
 const defaultMessageThemeColor = "#832561"
@@ -107,23 +124,52 @@ func validateWebhook(webhook TeamsChannel) error {
 		return fmt.Errorf("channel name too short")
 	}
 
-	// ensure that at least the prefix + SOMETHING is present
-	if len(webhook.WebhookURL) <= len(webhookURLPrefix) {
-		return fmt.Errorf("webhook URL shorter than or equal to prefix")
+	// ensure that at least the prefix + SOMETHING is present; test against
+	// the shorter of the two known prefixes
+	if len(webhook.WebhookURL) <= len(webhookURLOfficecomPrefix) {
+		return fmt.Errorf("incomplete webhook URL: provided URL %q shorter than or equal to just the %q URL prefix",
+			webhook.WebhookURL,
+			webhookURLOfficecomPrefix,
+		)
 	}
 
-	// ensure that webhookURL is not shorter than sample webhookURL from
-	// official docs
-	if len(webhook.WebhookURL) < len(webhookURLSample) {
-		return fmt.Errorf("webhook URL shorter than official sample URL")
+	// ensure that known/expected prefixes are used
+	switch {
+	case strings.HasPrefix(webhook.WebhookURL, webhookURLOfficecomPrefix):
+	case strings.HasPrefix(webhook.WebhookURL, webhookURLOffice365Prefix):
+	default:
+		u, err := url.Parse(webhook.WebhookURL)
+		if err != nil {
+			return fmt.Errorf(
+				"unable to parse webhook URL %q: %v",
+				webhook.WebhookURL,
+				err,
+			)
+		}
+		userProvidedWebhookURLPrefix := u.Scheme + "://" + u.Host
+
+		return fmt.Errorf(
+			"webhook URL does not contain expected prefix; got %q, expected one of %q or %q",
+			userProvidedWebhookURLPrefix,
+			webhookURLOfficecomPrefix,
+			webhookURLOffice365Prefix,
+		)
 	}
 
-	// Ensure that the expected prefix is present
-	if !strings.HasPrefix(webhook.WebhookURL, webhookURLPrefix) {
-		webhookURLPrefixLength := len(webhookURLPrefix)
-		actualWebhookURLPrefix := webhook.WebhookURL[0:(webhookURLPrefixLength - 1)]
-		return fmt.Errorf("webhook URL missing expected prefix; got: %q, expected: %q",
-			actualWebhookURLPrefix, webhook.WebhookURL)
+	// This is fairly tight validation and will likely require future tending
+	matched, err := regexp.MatchString(validWebhookURLRegex, webhook.WebhookURL)
+	if !matched {
+		return fmt.Errorf(
+			"webhook URL does not match expected pattern: %v\n"+
+				"got: %q\n"+
+				"expected one of:\n"+
+				"  * %q\n"+
+				"  * %q",
+			err,
+			webhook.WebhookURL,
+			webhookURLOfficecomPrefix+webhookURLOfficialDocsSampleURI,
+			webhookURLOffice365Prefix+webhookURLOfficialDocsSampleURI,
+		)
 	}
 
 	// Indicate that we didn't spot any problems
@@ -252,8 +298,8 @@ func main() {
 
 		// Display error output if silence is not requested
 		if !silentOutput {
-			fmt.Printf("\n\nERROR: Failed to submit message to %q channel in the %q team!\n\n",
-				webhook.Channel, webhook.Team)
+			fmt.Printf("\n\nERROR: Failed to submit message to %q channel in the %q team: %v\n\n",
+				webhook.Channel, webhook.Team, err)
 
 			if verboseOutput {
 				fmt.Printf("[Message]: %+v\n[Webhook]: %+v\n[Error]: %v", message, webhook, err)
