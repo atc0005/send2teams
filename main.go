@@ -290,6 +290,15 @@ func main() {
 	msgCard.Text = message.MessageText + messageTrailer
 	msgCard.ThemeColor = message.ThemeColor
 
+	// FIXME:
+	// hard-code additional values for testing purposes
+	msgCard.Summary = "Summary test"
+	// msgCard.Sections = goteamsnotify.MessageCard{
+	// 	Sections: {
+	// 		Title: "Hello",
+	// 	},
+	// },
+
 	// FIXME: Work around goteamsnotify package using `log.Println(err)`
 	// by directing all statements other than ours to /dev/null
 	log.SetOutput(ioutil.Discard)
