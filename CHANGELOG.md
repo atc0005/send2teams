@@ -26,6 +26,29 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
+## [v0.2.3] - 2020-03-25
+
+### Changed
+
+- Switch from upstream `dasrick/go-teams-notify` package to our fork,
+  `atc0005/go-teams-notify` (intended to be temporary) in order to allow both
+  valid webhook URL FQDNs
+  - upstream currently only allows the (apparently) more common
+    outlook.office.com FQDN
+  - an issue has been filed with upstream to extend the `isValidWebhookURL()`
+    validation function so that a fork is not necessary
+
+### Fixed
+
+- Update webhook URL validation checks
+  - allow either of the known valid webhook URL FQDNs
+    - outlook.office.com
+    - outlook.office365.com
+  - webhook URL length check to fail early with (hopefully) a useful error
+    message
+  - full regex pattern check in an effort to help catch poorly formatted
+    webhook URLs
+
 ## [v0.2.2] - 2020-03-23
 
 ### Added
@@ -72,7 +95,8 @@ This initial prototype supports/provides:
 - GitHub Actions linting and build checks
 - Makefile for general use cases
 
-[Unreleased]: https://github.com/atc0005/send2teams/compare/v0.2.2...HEAD
+[Unreleased]: https://github.com/atc0005/send2teams/compare/v0.2.3...HEAD
+[v0.2.3]: https://github.com/atc0005/send2teams/releases/tag/v0.2.3
 [v0.2.2]: https://github.com/atc0005/send2teams/releases/tag/v0.2.2
 [v0.2.1]: https://github.com/atc0005/send2teams/releases/tag/v0.2.1
 [v0.2.0]: https://github.com/atc0005/send2teams/releases/tag/v0.2.0
