@@ -160,15 +160,16 @@ func validateWebhook(webhook TeamsChannel) error {
 	matched, err := regexp.MatchString(validWebhookURLRegex, webhook.WebhookURL)
 	if !matched {
 		return fmt.Errorf(
-			"webhook URL does not match expected pattern: %v\n"+
+			"webhook URL does not match expected pattern;\n"+
 				"got: %q\n"+
-				"expected one of:\n"+
+				"expected webhook URL in one of these formats:\n"+
 				"  * %q\n"+
-				"  * %q",
-			err,
+				"  * %q\n"+
+				"error: %v",
 			webhook.WebhookURL,
-			webhookURLOfficecomPrefix+webhookURLOfficialDocsSampleURI,
-			webhookURLOffice365Prefix+webhookURLOfficialDocsSampleURI,
+			webhookURLOfficecomPrefix+"/"+webhookURLOfficialDocsSampleURI,
+			webhookURLOffice365Prefix+"/"+webhookURLOfficialDocsSampleURI,
+			err,
 		)
 	}
 
