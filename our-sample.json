@@ -36,7 +36,7 @@
             "@type": "ViewAction",
             "@id": null,
             "name": "View full Splunk report",
-            "isPrimaryAction": false
+            "isPrimaryAction": true
         }
     ]
 }
