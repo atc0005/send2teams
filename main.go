@@ -294,11 +294,38 @@ func main() {
 	// FIXME:
 	// hard-code additional values for testing purposes
 	msgCard.Summary = "Summary test"
-	// msgCard.Sections = goteamsnotify.MessageCard{
-	// 	Sections: {
-	// 		Title: "Hello",
-	// 	},
-	// },
+
+	// TODO: Add MessageCard methods to go-teams-notify package to make it
+	// easier to append new sections, facts, etc easily
+
+	// Define the first one explicitly, replacing anything already there
+	msgCard.Sections = []goteamsnotify.MessageCardSection{
+		goteamsnotify.MessageCardSection{
+			Title:      "## Section with title and one facts entry",
+			StartGroup: true,
+			Facts: []goteamsnotify.MessageCardSectionFact{
+				goteamsnotify.MessageCardSectionFact{
+					Name:  "First section key, added explicitly",
+					Value: "First section value, added explicitly",
+				},
+			},
+		},
+	}
+
+	msgCard.Sections = append(msgCard.Sections, goteamsnotify.MessageCardSection{
+		Title:      "## Section with only a title field/value",
+		StartGroup: true,
+	})
+
+	msgCard.Sections = append(msgCard.Sections, goteamsnotify.MessageCardSection{
+		Text: "Section with only text field sample content",
+		Facts: []goteamsnotify.MessageCardSectionFact{
+			goteamsnotify.MessageCardSectionFact{
+				Name:  "TestName",
+				Value: "TestValue",
+			},
+		},
+	})
 
 	// FIXME: Work around goteamsnotify package using `log.Println(err)`
 	// by directing all statements other than ours to /dev/null
