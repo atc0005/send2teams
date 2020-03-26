@@ -19,8 +19,8 @@ import (
 
 	//goteamsnotify "gopkg.in/dasrick/go-teams-notify.v1"
 
-	// temporarily use our fork until upstream webhook URL FQDN validation
-	// changes can be made
+	// temporarily use our fork while developing changes for potential
+	// inclusion in the upstream project
 	goteamsnotify "github.com/atc0005/go-teams-notify"
 )
 
