@@ -26,6 +26,21 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
+## [v0.2.4] - 2020-03-26
+
+### Changed
+
+- As with the `atc0005/send2teams` v0.2.3 release, this release still
+  references our fork for now
+  - further changes are being developed on our fork for potential inclusion
+    upstream
+
+### Fixed
+
+- Update go.mod to use v1.3.0 of `dasrick/go-teams-notify` package
+  - changes temporarily provided by our fork as noted in the
+    v0.2.3 release notes have been merged upstream
+
 ## [v0.2.3] - 2020-03-25
 
 ### Changed
@@ -95,7 +110,8 @@ This initial prototype supports/provides:
 - GitHub Actions linting and build checks
 - Makefile for general use cases
 
-[Unreleased]: https://github.com/atc0005/send2teams/compare/v0.2.3...HEAD
+[Unreleased]: https://github.com/atc0005/send2teams/compare/v0.2.4...HEAD
+[v0.2.4]: https://github.com/atc0005/send2teams/releases/tag/v0.2.4
 [v0.2.3]: https://github.com/atc0005/send2teams/releases/tag/v0.2.3
 [v0.2.2]: https://github.com/atc0005/send2teams/releases/tag/v0.2.2
 [v0.2.1]: https://github.com/atc0005/send2teams/releases/tag/v0.2.1
