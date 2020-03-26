@@ -7,6 +7,9 @@
     "themeColor": "#3479BF",
     "sections": [
         {
+            "title": "## Only item"
+        },
+        {
             "title": "## Received JSON payload",
             "text": "\n```{\n\t\"result\": {\n\t\t\"sourcetype\": \"mongod\",\n\t\t\"count\": \"8\"\n\t},\n\t\"sid\": \"scheduler_admin_search_W2_at_14232356_132\",\n\t\"results_link\": \"http://web.example.local:8000/app/search/@go?sid=scheduler_admin_search_W2_at_14232356_132\",\n\t\"search_name\": null,\n\t\"owner\": \"admin\",\n\t\"app\": \"search\"\n}\n```",
             "startGroup": true
