@@ -1,29 +1,43 @@
 {
     "@type": "MessageCard",
     "@context": "http://schema.org/extensions",
-    "themeColor": "0076D7",
-    "summary": "Summary text goes here",
-    "text": "Text example",
+    "summary": "Summary text here",
+    "title": "Title goes here",
+    "text": "Title text goes here",
+    "themeColor": "#3479BF",
     "sections": [
         {
-            "activityTitle": "![TestImage](https://47a92947.ngrok.io/Content/Images/default.png)Larry Bryant created a new task",
-            "activitySubtitle": "On Project Tango",
-            "activityImage": "https://teamsnodesample.azurewebsites.net/static/img/image5.png",
+            "title": "first section",
+            "text": "first section text here",
+            "markdown": true
+        },
+        {
+            "title": "Details",
+            "text": null,
+            "markdown": true,
             "facts": [
                 {
-                    "name": "Assigned to",
-                    "value": "Unassigned"
+                    "name": "Labels",
+                    "value": "Designs, redlines"
                 },
                 {
                     "name": "Due date",
-                    "value": "Mon May 01 2017 17:07:18 GMT-0700 (Pacific Daylight Time)"
-                },
-                {
-                    "name": "Status",
-                    "value": "Not started"
+                    "value": "Dec 7, 2016"
                 }
-            ],
-            "markdown": true
+            ]
         }
-    ]
+    ],
+    "entities": null,
+    "potentialAction": [
+        {
+            "target": [
+                "http://web.example.local:8000/app/search/@go?sid=scheduler_admin_search_W2_at_14232356_132"
+            ],
+            "@context": "http://schema.org",
+            "@type": "ViewAction",
+            "@id": null,
+            "name": "View full Splunk report",
+            "isPrimaryAction": false
+        }
+    ],
 }
