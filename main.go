@@ -305,24 +305,24 @@ func main() {
 			StartGroup: true,
 			Facts: []goteamsnotify.MessageCardSectionFact{
 				goteamsnotify.MessageCardSectionFact{
-					Name:  "First section key, added explicitly",
-					Value: "First section value, added explicitly",
+					Name:  "First section key, literal",
+					Value: "First section value, literal",
 				},
 			},
 		},
 	}
 
 	msgCard.Sections = append(msgCard.Sections, goteamsnotify.MessageCardSection{
-		Title:      "## Section with only a title field/value",
+		Title:      "## Section with only a title field/value, Markdown formatted",
 		StartGroup: true,
 	})
 
 	msgCard.Sections = append(msgCard.Sections, goteamsnotify.MessageCardSection{
-		Text: "Section with only text field sample content",
+		Text: "Section with only text field sample content, no Markdown",
 		Facts: []goteamsnotify.MessageCardSectionFact{
 			goteamsnotify.MessageCardSectionFact{
-				Name:  "TestName",
-				Value: "TestValue",
+				Name:  "Third section key",
+				Value: "`Third section value, Markdown`",
 			},
 		},
 	})
