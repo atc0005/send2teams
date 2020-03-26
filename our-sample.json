@@ -8,13 +8,13 @@
     "sections": [
         {
             "title": "## Received JSON payload",
-            "text": "```\r\n        \"result\": {\r\n                \"sourcetype\": \"mongod\",\r\n                \"count\": \"8\"\r\n        },\r\n        \"sid\": \"scheduler_admin_search_W2_at_14232356_132\",\r\n        \"results_link\": \"http:\/\/web.example.local:8000\/app\/search\/@go?sid=scheduler_admin_search_W2_at_14232356_132\",\r\n        \"search_name\": null,\r\n        \"owner\": \"admin\",\r\n        \"app\": \"search\"\r\n```",
+            "text": "\n```{\n\t\"result\": {\n\t\t\"sourcetype\": \"mongod\",\n\t\t\"count\": \"8\"\n\t},\n\t\"sid\": \"scheduler_admin_search_W2_at_14232356_132\",\n\t\"results_link\": \"http://web.example.local:8000/app/search/@go?sid=scheduler_admin_search_W2_at_14232356_132\",\n\t\"search_name\": null,\n\t\"owner\": \"admin\",\n\t\"app\": \"search\"\n}\n```",
             "markdown": true,
             "startGroup": true
         },
         {
-            "title": "## Client request details (Go struct fields) here",
-            "text": null,
+            "title": "## Client request details",
+            "text": "Go struct fields here",
             "markdown": true,
             "facts": [
                 {
