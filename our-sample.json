@@ -2,27 +2,27 @@
     "@type": "MessageCard",
     "@context": "http://schema.org/extensions",
     "summary": "Summary text here",
-    "title": "Title goes here",
-    "text": "Title text goes here",
+    "title": "Client submission received",
+    "text": "`GET` request received on `/api/v1/echo/json` endpoint",
     "themeColor": "#3479BF",
     "sections": [
         {
-            "title": "first section",
-            "text": "first section text here",
+            "title": "Received JSON payload",
+            "text": "```{\"title\":\"testing\"}```",
             "markdown": true
         },
         {
-            "title": "Details",
+            "title": "Individual Go struct fields here",
             "text": null,
             "markdown": true,
             "facts": [
                 {
-                    "name": "Labels",
-                    "value": "Designs, redlines"
+                    "name": "Client IP Address",
+                    "value": "1.2.3.4"
                 },
                 {
-                    "name": "Due date",
-                    "value": "Dec 7, 2016"
+                    "name": "Endpoint used",
+                    "value": "/api/v1/echo/json"
                 }
             ]
         }
