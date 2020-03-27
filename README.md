@@ -169,12 +169,15 @@ SOFTWARE.
 
 ## References
 
-- <https://github.com/dasrick/go-teams-notify/>
-  - the package/library this app depends on
+- Dependencies
+  - <https://github.com/dasrick/go-teams-notify/>
 
-- <https://sankalpit.com/how-to-get-channel-webhook-url/>
+- Webhook / Office 365
+  - <https://sankalpit.com/how-to-get-channel-webhook-url/>
+  - <https://docs.microsoft.com/en-us/outlook/actionable-messages/message-card-reference>
+  - <https://docs.microsoft.com/en-us/microsoftteams/platform/concepts/outgoingwebhook>
+  - <https://docs.microsoft.com/en-us/outlook/actionable-messages/send-via-connectors>
+  - <https://messagecardplayground.azurewebsites.net/>
 
-- <https://docs.microsoft.com/en-us/outlook/actionable-messages/message-card-reference>
-- <https://docs.microsoft.com/en-us/microsoftteams/platform/concepts/outgoingwebhook>
-- <https://docs.microsoft.com/en-us/outlook/actionable-messages/send-via-connectors>
-- <https://messagecardplayground.azurewebsites.net/>
+- General Golang
+  - <https://stackoverflow.com/questions/38807903/how-do-i-handle-plain-text-http-get-response-in-golang>
