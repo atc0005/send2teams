@@ -10,7 +10,6 @@ package main
 import (
 	"flag"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"net/url"
 	"os"
@@ -339,7 +338,7 @@ func main() {
 
 	// FIXME: Work around goteamsnotify package using `log.Println(err)`
 	// by directing all statements other than ours to /dev/null
-	log.SetOutput(ioutil.Discard)
+	//log.SetOutput(ioutil.Discard)
 
 	if err := sendMessage(webhook.WebhookURL, msgCard); err != nil {
 
