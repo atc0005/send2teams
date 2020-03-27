@@ -290,78 +290,12 @@ func main() {
 	// setup message card
 	msgCard := goteamsnotify.NewMessageCard()
 	msgCard.Title = message.MessageTitle
-
-	// Note: The "trailer" is now added as a final section
-	msgCard.Text = message.MessageText
 	msgCard.ThemeColor = message.ThemeColor
 
-	// FIXME:
-	// hard-code additional values for testing purposes
-	msgCard.Summary = "Summary test"
+	mainMsgSection := goteamsnotify.NewMessageCardSection()
+	mainMsgSection.Text = message.MessageText
 
-	// TODO: Add MessageCard methods to go-teams-notify package to make it
-	// easier to append new sections, facts, etc easily
-
-	// Define the first one explicitly, replacing anything already there
-	// msgCard.Sections = []goteamsnotify.MessageCardSection{
-	// 	goteamsnotify.MessageCardSection{
-	// 		Title:      "## Section with title and one facts entry",
-	// 		StartGroup: true,
-	// 		Facts: []goteamsnotify.MessageCardSectionFact{
-	// 			goteamsnotify.MessageCardSectionFact{
-	// 				Name:  "First section key, literal",
-	// 				Value: "First section value, literal",
-	// 			},
-	// 		},
-	// 	},
-	// }
-
-	// msgCard.Sections = append(msgCard.Sections, goteamsnotify.MessageCardSection{
-	// 	Title:      "## Section with only a title field/value, Markdown formatted",
-	// 	StartGroup: true,
-	// })
-
-	// msgCard.Sections = append(msgCard.Sections, goteamsnotify.MessageCardSection{
-	// 	Text: "Section with only text field sample content, no Markdown",
-	// 	Facts: []goteamsnotify.MessageCardSectionFact{
-	// 		goteamsnotify.MessageCardSectionFact{
-	// 			Name:  "Third section key",
-	// 			Value: "`Third section value, Markdown`",
-	// 		},
-	// 	},
-	// })
-
-	// Define loose key/value pair to manually add to section
-	testFactName := "Fact 1"
-	testFactValue := "Key/Value pair added via struct var"
-
-	// headerSection := goteamsnotify.MessageCardSection{}
-	headerSection := goteamsnotify.NewMessageCardSection()
-
-	headerSection.Markdown = true
-	headerSection.StartGroup = true
-	headerSection.Title = "First section"
-	headerSection.Text = "Pretend there is useful text here"
-
-	testFact := goteamsnotify.MessageCardSectionFact{
-		Name:  testFactName,
-		Value: testFactValue,
-	}
-	headerSection.AddFact(testFact)
-
-	if err := headerSection.AddFactFromKeyValue(
-		"Fact 2: AddFactFromKeyValue, explode slice",
-		[]string{"first value", "second value", "third value"}...,
-	); err != nil {
-		log.Println("error using AddFactFromKeyValue:", err)
-	}
-
-	headerSection.AddFact(goteamsnotify.MessageCardSectionFact{
-		Name:  "Fact 3",
-		Value: "Key/Value pair added via struct literal",
-	})
-
-	msgCard.AddSection(headerSection)
+	msgCard.AddSection(mainMsgSection)
 
 	// Setup branding
 	trailerSection := goteamsnotify.NewMessageCardSection()
