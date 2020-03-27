@@ -314,6 +314,14 @@ func main() {
 	// The error message generated:
 	// ERROR: Failed to submit message to "Testing" channel in the
 	// "Adam-Chalkely" team: error on notification: 400 Bad Request
+	//
+	//
+	// The message returned by curl:
+	//
+	// `Summary or Text is required.`
+	//
+	// FIXME: We need to make sure that this messages "rises" from the
+	// go-teams-notify package to this app.
 
 	msgCard.Text = "placeholder"
 	msgCard.ThemeColor = message.ThemeColor
