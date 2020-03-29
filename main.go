@@ -91,7 +91,12 @@ func main() {
 	msgCard.ThemeColor = cfg.ThemeColor
 
 	mainMsgSection := goteamsnotify.NewMessageCardSection()
-	mainMsgSection.Text = cfg.MessageText + " (section text)"
+
+	// This represents what the user would provide via CLI flag:
+	//mainMsgSection.Text = cfg.MessageText + " (section text)"
+
+	// This represents something programatically generated:
+	mainMsgSection.Text = "`GET` request received on `/api/v1/echo/json` endpoint"
 
 	msgCard.AddSection(mainMsgSection)
 
