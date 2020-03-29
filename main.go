@@ -96,15 +96,27 @@ func main() {
 	//mainMsgSection.Text = cfg.MessageText + " (section text)"
 
 	// This represents something programatically generated:
-	mainMsgSection.Text = "`GET` request received on `/api/v1/echo/json` endpoint"
+	unformattedTextSample := "GET request received on /api/v1/echo/json endpoint"
+	formattedTextSample, err := goteamsnotify.FormatAsCodeSnippet(unformattedTextSample)
+	if err != nil {
+		mainMsgSection.Text = unformattedTextSample
+		log.Printf("error formatting text as code snippet: %#v", err)
+		log.Printf("Current state of section: %+v", mainMsgSection)
+	}
+	mainMsgSection.Text = formattedTextSample
 
+	log.Printf("msgCard before adding mainMsgSection: %+v", msgCard)
 	msgCard.AddSection(mainMsgSection)
+	log.Printf("msgCard after adding mainMsgSection: %+v", msgCard)
 
 	// Setup branding
 	trailerSection := goteamsnotify.NewMessageCardSection()
 	trailerSection.Text = config.MessageTrailer()
 	trailerSection.StartGroup = true
+
+	log.Printf("msgCard before adding trailerSection: %+v", msgCard)
 	msgCard.AddSection(trailerSection)
+	log.Printf("msgCard after adding trailerSection: %+v", msgCard)
 
 	// Toggle library debug logging output
 	goteamsnotify.EnableLogging()
