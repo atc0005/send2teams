@@ -86,12 +86,12 @@ func main() {
 	//
 	// FIXME: We need to make sure that this messages "rises" from the
 	// go-teams-notify package to this app.
-	msgCard.Text = "placeholder"
+	msgCard.Text = "placeholder (top-level text content)"
 
 	msgCard.ThemeColor = cfg.ThemeColor
 
 	mainMsgSection := goteamsnotify.NewMessageCardSection()
-	mainMsgSection.Text = cfg.MessageText
+	mainMsgSection.Text = cfg.MessageText + " (section text)"
 
 	msgCard.AddSection(mainMsgSection)
 
@@ -101,9 +101,9 @@ func main() {
 	trailerSection.StartGroup = true
 	msgCard.AddSection(trailerSection)
 
-	// FIXME: Work around goteamsnotify package using `log.Println(err)`
-	// by directing all statements other than ours to /dev/null
-	//log.SetOutput(ioutil.Discard)
+	// Toggle library debug logging output
+	goteamsnotify.EnableLogging()
+	// goteamsnotify.DisableLogging()
 
 	if err := teams.SendMessage(cfg.WebhookURL, msgCard); err != nil {
 
@@ -121,14 +121,6 @@ func main() {
 		// Regardless of silent flag, explicitly note unsuccessful results
 		os.Exit(1)
 	}
-
-	// FIXME: Remove this workaround once the goteamsnotify package is
-	// updated or I learn of a better/proper way to handle this
-	//
-	// By this point any errors emitted by the goteamsnotify package
-	// should have already been emitted and then immediately redirected to
-	// dev/null, so go ahead and restore logging output
-	log.SetOutput(os.Stdout)
 
 	if !cfg.SilentOutput {
 
