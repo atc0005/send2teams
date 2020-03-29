@@ -105,18 +105,18 @@ func main() {
 	// }
 	// mainMsgSection.Text = formattedTextSample
 
-	log.Printf("msgCard before adding mainMsgSection: %+v", msgCard)
+	//log.Printf("msgCard before adding mainMsgSection: %+v", msgCard)
 	msgCard.AddSection(mainMsgSection)
-	log.Printf("msgCard after adding mainMsgSection: %+v", msgCard)
+	//log.Printf("msgCard after adding mainMsgSection: %+v", msgCard)
 
 	// Setup branding
 	trailerSection := goteamsnotify.NewMessageCardSection()
 	trailerSection.Text = config.MessageTrailer()
 	trailerSection.StartGroup = true
 
-	log.Printf("msgCard before adding trailerSection: %+v", msgCard)
+	//log.Printf("msgCard before adding trailerSection: %+v", msgCard)
 	msgCard.AddSection(trailerSection)
-	log.Printf("msgCard after adding trailerSection: %+v", msgCard)
+	//log.Printf("msgCard after adding trailerSection: %+v", msgCard)
 
 	// Toggle library debug logging output
 	goteamsnotify.EnableLogging()
