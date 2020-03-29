@@ -1,5 +1,5 @@
-github.com/atc0005/go-teams-notify v1.3.1-0.20200329152944-bbe103d0bcea h1:noMXXebniPWTPXNvud93lA5fjHs4ydctM0F8QpKwv0Q=
-github.com/atc0005/go-teams-notify v1.3.1-0.20200329152944-bbe103d0bcea/go.mod h1:oxauMCaFKXoPSk9FAOLVHUgHrVjhBmizbfD0wN/SnXo=
+github.com/atc0005/go-teams-notify v1.3.1-0.20200329160745-3a0b28c50981 h1:+GaYpEsrcOrMQ3ygrewcmz8dT7Iq1Pa5hW2xwB3TbiU=
+github.com/atc0005/go-teams-notify v1.3.1-0.20200329160745-3a0b28c50981/go.mod h1:oxauMCaFKXoPSk9FAOLVHUgHrVjhBmizbfD0wN/SnXo=
 github.com/davecgh/go-spew v1.1.0 h1:ZDRjVQ15GmhC3fiQ8ni8+OwkZQO4DARzQgrnXU1Liz8=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
