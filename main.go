@@ -55,8 +55,8 @@ func main() {
 	msgCard := goteamsnotify.NewMessageCard()
 	msgCard.Title = cfg.MessageTitle
 
-	// This field appears to be REQUIRED; otherwise I get a 400 Bad Request
-	// error. The JSON submitted:
+	// Either Text or Summary fields are REQUIRED; otherwise I get a 400 Bad
+	// Request error. The JSON submitted:
 	//
 	// {
 	//  "@type": "MessageCard",
@@ -75,9 +75,9 @@ func main() {
 	//  ]
 	// }
 	//
-	// The error message generated:
-	// ERROR: Failed to submit message to "Testing" channel in the
-	// "Adam-Chalkely" team: error on notification: 400 Bad Request
+	// The error message generated: ERROR: Failed to submit message to
+	// "Testing" channel in the "Adam-Chalkely" team: error on notification:
+	// 400 Bad Request
 	//
 	//
 	// The message returned by curl:
@@ -86,8 +86,8 @@ func main() {
 	//
 	// FIXME: We need to make sure that this messages "rises" from the
 	// go-teams-notify package to this app.
-
 	msgCard.Text = "placeholder"
+
 	msgCard.ThemeColor = cfg.ThemeColor
 
 	mainMsgSection := goteamsnotify.NewMessageCardSection()
