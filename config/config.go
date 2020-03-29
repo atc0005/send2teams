@@ -143,6 +143,11 @@ func NewConfig() (*Config, error) {
 
 	cfg.handleFlagsConfig()
 
+	// Return immediately if user just wants version details
+	if cfg.ShowVersion {
+		return &cfg, nil
+	}
+
 	//log.Debug("Validating configuration ...")
 	if err := cfg.Validate(); err != nil {
 		flag.Usage()
