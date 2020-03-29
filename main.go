@@ -93,17 +93,17 @@ func main() {
 	mainMsgSection := goteamsnotify.NewMessageCardSection()
 
 	// This represents what the user would provide via CLI flag:
-	//mainMsgSection.Text = cfg.MessageText + " (section text)"
+	mainMsgSection.Text = cfg.MessageText + " (section text)"
 
 	// This represents something programatically generated:
-	unformattedTextSample := "GET request received on /api/v1/echo/json endpoint"
-	formattedTextSample, err := goteamsnotify.FormatAsCodeSnippet(unformattedTextSample)
-	if err != nil {
-		mainMsgSection.Text = unformattedTextSample
-		log.Printf("error formatting text as code snippet: %#v", err)
-		log.Printf("Current state of section: %+v", mainMsgSection)
-	}
-	mainMsgSection.Text = formattedTextSample
+	// unformattedTextSample := "GET request received on /api/v1/echo/json endpoint"
+	// formattedTextSample, err := goteamsnotify.FormatAsCodeSnippet(unformattedTextSample)
+	// if err != nil {
+	// 	mainMsgSection.Text = unformattedTextSample
+	// 	log.Printf("error formatting text as code snippet: %#v", err)
+	// 	log.Printf("Current state of section: %+v", mainMsgSection)
+	// }
+	// mainMsgSection.Text = formattedTextSample
 
 	log.Printf("msgCard before adding mainMsgSection: %+v", msgCard)
 	msgCard.AddSection(mainMsgSection)

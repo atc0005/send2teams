@@ -5,7 +5,7 @@ require (
 
 	// temporarily use our fork while developing changes for potential
 	// inclusion in the upstream project
-	github.com/atc0005/go-teams-notify v1.3.1-0.20200329161401-8727d65a45a8
+	github.com/atc0005/go-teams-notify v1.3.1-0.20200329173631-272087aec000
 	github.com/stretchr/testify v1.4.0 // indirect
 	gopkg.in/yaml.v2 v2.2.4 // indirect
 )
