@@ -9,7 +9,7 @@ func (c *Config) handleFlagsConfig() {
 	flag.BoolVar(&c.VerboseOutput, "verbose", defaultVerboseOutput, verboseOutputFlagHelp)
 	flag.BoolVar(&c.SilentOutput, "silent", defaultSilentOutput, silentOutputFlagHelp)
 	flag.BoolVar(&c.ConvertEOL, "convert-eol", defaultConvertEOL, convertEOLFlagHelp)
-	flag.StringVar(&c.Team, "team", "", teamNameFlagHelp)
+	flag.StringVar(&c.Team, "team", defaultTeamName, teamNameFlagHelp)
 	flag.StringVar(&c.Channel, "channel", defaultChannelName, channelNameFlagHelp)
 	flag.StringVar(&c.WebhookURL, "url", defaultWebhookURL, webhookURLFlagHelp)
 	flag.StringVar(&c.ThemeColor, "color", defaultMessageThemeColor, themeColorFlagHelp)
