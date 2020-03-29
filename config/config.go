@@ -58,12 +58,13 @@ type Config struct {
 
 	// Team is the human-readable name of the Microsoft Teams "team" that
 	// contains the channel we wish to post a message to. This is used in
-	// informational output produced by this application.
+	// informational output produced by this application only; the remote API
+	// does not receive this value.
 	Team string
 
 	// Channel is human-readable name of the channel within a specific
 	// Microsoft Teams "team". This is used in informational output produced
-	// by this application.
+	// by this application only; the remote API does not receive this value.
 	Channel string
 
 	// WebhookURL is the full URL used to submit messages to the Teams channel
@@ -180,10 +181,18 @@ func (c Config) Validate() error {
 			c.ThemeColor, actualLength, expectedLength)
 	}
 
+	// Note: This is separate from goteamsnotify.IsValidMessageCard() That
+	// function specifically checks the results of creating and fleshing out a
+	// MessageCard value, this validation check is more concerned with the
+	// specific value supplied via flag input.
 	if c.MessageTitle == "" {
 		return fmt.Errorf("message title too short")
 	}
 
+	// Note: This is separate from goteamsnotify.IsValidMessageCard() That
+	// function specifically checks the results of creating and fleshing out a
+	// MessageCard value, this validation check is more concerned with the
+	// specific value supplied via flag input.
 	if c.MessageText == "" {
 		return fmt.Errorf("message content too short")
 	}
