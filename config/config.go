@@ -115,7 +115,7 @@ func flagsUsage() func() {
 
 		myBinaryName := filepath.Base(os.Args[0])
 
-		fmt.Fprintf(flag.CommandLine.Output(), Branding())
+		fmt.Fprintln(flag.CommandLine.Output(), Branding())
 
 		fmt.Fprintf(flag.CommandLine.Output(), "Usage of \"%s\":\n",
 			myBinaryName,
