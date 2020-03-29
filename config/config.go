@@ -74,18 +74,6 @@ type Config struct {
 	// application.
 	WebhookURL string
 
-	// Whether detailed output should be shown after message submission
-	// success or failure.
-	VerboseOutput bool
-
-	// Whether ANY output should be shown after message submission success or
-	// failure.
-	SilentOutput bool
-
-	// Whether messages with Windows, Mac and Linux newlines are updated to
-	// use break statements before message submission.
-	ConvertEOL bool
-
 	// ThemeColor is a hex color code string representing the desired border
 	// trim color for our submitted messages.
 	ThemeColor string
@@ -97,6 +85,18 @@ type Config struct {
 	// MessageText is an (optionally) Markdown-formatted string representing
 	// the message that we will submit.
 	MessageText string
+
+	// Whether detailed output should be shown after message submission
+	// success or failure.
+	VerboseOutput bool
+
+	// Whether ANY output should be shown after message submission success or
+	// failure.
+	SilentOutput bool
+
+	// Whether messages with Windows, Mac and Linux newlines are updated to
+	// use break statements before message submission.
+	ConvertEOL bool
 
 	// ShowVersion is a flag indicating whether the user opted to display only
 	// the version string and then immediately exit the application
