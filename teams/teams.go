@@ -88,7 +88,7 @@ func validateWebhookLength(webhookURL string) error {
 	return nil
 }
 
-// validateWebhookURLPrefix sensure that known/expected prefixes are used with
+// validateWebhookURLPrefix ensure that known/expected prefixes are used with
 // provided webhook URL
 func validateWebhookURLPrefix(webhookURL string) error {
 
