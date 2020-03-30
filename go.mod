@@ -1,11 +1,17 @@
 module github.com/atc0005/send2teams
 
+// Use local copy of library package (instead of fetching remote content)
+replace github.com/atc0005/go-teams-notify => T:\github\go-teams-notify
+
 require (
 	//gopkg.in/dasrick/go-teams-notify.v1 v1.2.0
 
 	// temporarily use our fork while developing changes for potential
 	// inclusion in the upstream project
-	github.com/atc0005/go-teams-notify v1.3.1-0.20200330095758-44af0b65a1b2
+	//
+	// Note: Due to `replace` directive and `v0.0.0` here, we use the current
+	// state of this library package instead of fetching remote content
+	github.com/atc0005/go-teams-notify v0.0.0
 	github.com/stretchr/testify v1.4.0 // indirect
 	gopkg.in/yaml.v2 v2.2.4 // indirect
 )
