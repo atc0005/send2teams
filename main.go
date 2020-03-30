@@ -25,6 +25,10 @@ import (
 
 func main() {
 
+	// Toggle library debug logging output
+	goteamsnotify.EnableLogging()
+	// goteamsnotify.DisableLogging()
+
 	//log.Debug("Initializing application")
 
 	cfg, err := config.NewConfig()
@@ -117,10 +121,6 @@ func main() {
 	//log.Printf("msgCard before adding trailerSection: %+v", msgCard)
 	msgCard.AddSection(trailerSection)
 	//log.Printf("msgCard after adding trailerSection: %+v", msgCard)
-
-	// Toggle library debug logging output
-	goteamsnotify.EnableLogging()
-	// goteamsnotify.DisableLogging()
 
 	if err := teams.SendMessage(cfg.WebhookURL, msgCard); err != nil {
 
