@@ -99,19 +99,32 @@ func main() {
 	// This represents what the user would provide via CLI flag:
 	mainMsgSection.Text = cfg.MessageText + " (section text)"
 
-	// This represents something programatically generated:
-	// unformattedTextSample := "GET request received on /api/v1/echo/json endpoint"
-	// formattedTextSample, err := goteamsnotify.FormatAsCodeSnippet(unformattedTextSample)
-	// if err != nil {
-	// 	mainMsgSection.Text = unformattedTextSample
-	// 	log.Printf("error formatting text as code snippet: %#v", err)
-	// 	log.Printf("Current state of section: %+v", mainMsgSection)
-	// }
-	// mainMsgSection.Text = formattedTextSample
-
 	//log.Printf("msgCard before adding mainMsgSection: %+v", msgCard)
 	msgCard.AddSection(mainMsgSection)
 	//log.Printf("msgCard after adding mainMsgSection: %+v", msgCard)
+
+	codeSampleSection := goteamsnotify.NewMessageCardSection()
+	codeSampleSection.Title = "Code Sample Section"
+
+	// This represents something programatically generated:
+	unformattedTextSample := "GET request received on /api/v1/echo/json endpoint"
+	// formattedTextSample, err := goteamsnotify.FormatAsCodeSnippet(unformattedTextSample)
+	sampleJSONInput := `{"result":{"sourcetype":"mongod","count":"8"},"sid":"scheduler_admin_search_W2_at_14232356_132","results_link":"http://web.example.local:8000/app/search/@go?sid=scheduler_admin_search_W2_at_14232356_132","search_name":null,"owner":"admin","app":"search"}`
+	_ = sampleJSONInput
+	// formattedTextSample, err := goteamsnotify.FormatAsCodeBlock(sampleJSONInput)
+	formattedTextSample, err := goteamsnotify.FormatAsCodeBlock(unformattedTextSample)
+	if err != nil {
+
+		log.Printf("error formatting text as code snippet: %#v", err)
+		log.Printf("Current state of section: %+v", codeSampleSection)
+
+		log.Println("Using unformattedTextSample")
+		codeSampleSection.Text = unformattedTextSample
+	}
+	log.Println("Using formattedTextSample")
+	codeSampleSection.Text = formattedTextSample
+
+	msgCard.AddSection(codeSampleSection)
 
 	// Setup branding
 	trailerSection := goteamsnotify.NewMessageCardSection()
