@@ -111,8 +111,11 @@ func main() {
 	// formattedTextSample, err := goteamsnotify.FormatAsCodeSnippet(unformattedTextSample)
 	sampleJSONInput := `{"result":{"sourcetype":"mongod","count":"8"},"sid":"scheduler_admin_search_W2_at_14232356_132","results_link":"http://web.example.local:8000/app/search/@go?sid=scheduler_admin_search_W2_at_14232356_132","search_name":null,"owner":"admin","app":"search"}`
 	_ = sampleJSONInput
-	// formattedTextSample, err := goteamsnotify.FormatAsCodeBlock(sampleJSONInput)
-	formattedTextSample, err := goteamsnotify.FormatAsCodeBlock(unformattedTextSample)
+	formattedTextSample, err := goteamsnotify.FormatAsCodeBlock(sampleJSONInput)
+	// formattedTextSample, err := goteamsnotify.FormatAsCodeSnippet(sampleJSONInput)
+
+	// formattedTextSample, err := goteamsnotify.FormatAsCodeBlock(unformattedTextSample)
+	// formattedTextSample, err := goteamsnotify.FormatAsCodeSnippet(unformattedTextSample)
 	if err != nil {
 
 		log.Printf("error formatting text as code snippet: %#v", err)
