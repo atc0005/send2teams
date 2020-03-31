@@ -149,8 +149,8 @@ func main() {
 	// 	os.Exit(1)
 	// }
 	heroImage := goteamsnotify.NewMessageCardSectionImage()
-	heroImage.Image = ""
-	heroImage.Title = ""
+	heroImage.Image = "https://live.staticflickr.com/3551/3388550814_0f4ac0d1a0.jpg"
+	heroImage.Title = "https://search.creativecommons.org/photos/78cdb549-3270-48be-9df3-84d53ab3d245"
 	if err := heroImageSection.AddHeroImage(heroImage); err != nil {
 		fmt.Printf("failed to add hero image: %s", err)
 		os.Exit(1)
@@ -184,13 +184,21 @@ func main() {
 		Bad Data: Image Gallery section
 	*/
 
-	badGalleryImageSection := goteamsnotify.NewMessageCardSection()
-	badBannerImg := goteamsnotify.NewMessageCardSectionImage()
-	badBannerImg.Image = ""
-	badBannerImg.Title = ""
-	badGalleryImageSection.AddImage(badBannerImg)
-	badGalleryImageSection.Title = "Testing empty fields for MessageCardSectionImage type"
-	msgCard.AddSection(badGalleryImageSection)
+	// badGalleryImageSection := goteamsnotify.NewMessageCardSection()
+	// badBannerImg := goteamsnotify.NewMessageCardSectionImage()
+	// badBannerImg.Image = ""
+	// badBannerImg.Title = ""
+
+	// // This doesn't check the return code
+	// //badGalleryImageSection.AddImage(badBannerImg)
+
+	// // Let's do that
+	// if err := badGalleryImageSection.AddImage(badBannerImg); err != nil {
+	// 	fmt.Printf("failed to add section image: %s", err)
+	// 	os.Exit(1)
+	// }
+	// badGalleryImageSection.Title = "Testing empty fields for MessageCardSectionImage type"
+	// msgCard.AddSection(badGalleryImageSection)
 
 	/*
 		Branding trailer section
