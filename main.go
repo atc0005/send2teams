@@ -160,7 +160,22 @@ func main() {
 	galleryImageSection.Title = "Testing gallery images"
 	msgCard.AddSection(galleryImageSection)
 
-	// Setup branding
+	/*
+		Bad Data: Image Gallery section
+	*/
+
+	badGalleryImageSection := goteamsnotify.NewMessageCardSection()
+	badBannerImg := goteamsnotify.NewMessageCardSectionImage()
+	badBannerImg.Image = ""
+	badBannerImg.Title = ""
+	badGalleryImageSection.AddImage(badBannerImg)
+	badGalleryImageSection.Title = "Testing empty fields for MessageCardSectionImage type"
+	msgCard.AddSection(badGalleryImageSection)
+
+	/*
+		Branding trailer section
+	*/
+
 	trailerSection := goteamsnotify.NewMessageCardSection()
 	trailerSection.Text = config.MessageTrailer()
 	trailerSection.StartGroup = true
