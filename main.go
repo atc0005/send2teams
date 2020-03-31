@@ -123,6 +123,43 @@ func main() {
 
 	msgCard.AddSection(codeBlockSampleSection)
 
+	/*
+		Activity section
+	*/
+
+	activitySection := goteamsnotify.NewMessageCardSection()
+	activitySection.Title = "Title: Testing activity properties"
+	activitySection.ActivityText = "ActivityText: Adam did something today."
+	activitySection.ActivitySubtitle = "ActivitySubtitle: Hopefully it was useful"
+	activitySection.ActivityImage = "https://avatars2.githubusercontent.com/u/36716992"
+	msgCard.AddSection(activitySection)
+
+	/*
+		Hero Image section
+	*/
+
+	heroImageSection := goteamsnotify.NewMessageCardSection()
+	heroImageSection.Title = "Testing hero image"
+	heroImageSection.Text = "Unfortunately this property is not supported by Microsoft Teams."
+	heroImageSection.AddHeroImage("https://live.staticflickr.com/3551/3388550814_0f4ac0d1a0.jpg", "https://search.creativecommons.org/photos/78cdb549-3270-48be-9df3-84d53ab3d245")
+	msgCard.AddSection(heroImageSection)
+
+	/*
+		Image Gallery section
+	*/
+
+	galleryImageSection := goteamsnotify.NewMessageCardSection()
+	bannerImg := goteamsnotify.NewMessageCardSectionImage()
+	bannerImg.Image = "https://live.staticflickr.com/3551/3388550814_0f4ac0d1a0.jpg"
+	bannerImg.Title = "https://search.creativecommons.org/photos/78cdb549-3270-48be-9df3-84d53ab3d245"
+	galleryImageSection.AddImage(bannerImg)
+	galleryImageSection.AddImage(goteamsnotify.MessageCardSectionImage{
+		Image: "https://farm3.staticflickr.com/2359/2149071817_0c0f7fd539.jpg",
+		Title: "https://search.creativecommons.org/photos/4393a3f3-ea51-438c-89da-1e3fa468d80b",
+	})
+	galleryImageSection.Title = "Testing gallery images"
+	msgCard.AddSection(galleryImageSection)
+
 	// Setup branding
 	trailerSection := goteamsnotify.NewMessageCardSection()
 	trailerSection.Text = config.MessageTrailer()
