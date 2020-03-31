@@ -61,6 +61,14 @@ func main() {
 	msgCard.Text = "placeholder (top-level text content)"
 	msgCard.ThemeColor = cfg.ThemeColor
 
+	// TODO: This results in an empty JSON sections array. This is what we're
+	// effectively asking for here. Is this an error condition that the library
+	// should be handling?
+	//
+	// // testEmptySection := goteamsnotify.NewMessageCardSection()
+	// testEmptySection := goteamsnotify.MessageCardSection{}
+	// msgCard.AddSection(testEmptySection)
+
 	mainMsgSection := goteamsnotify.NewMessageCardSection()
 
 	// This represents what the user would provide via CLI flag:
