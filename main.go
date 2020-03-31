@@ -128,10 +128,6 @@ func main() {
 	trailerSection.Text = config.MessageTrailer()
 	trailerSection.StartGroup = true
 
-	tempAction := goteamsnotify.NewMessageCardPotentialAction()
-
-	trailerSection.AddAction(tempAction)
-
 	//log.Printf("msgCard before adding trailerSection: %+v", msgCard)
 	msgCard.AddSection(trailerSection)
 	//log.Printf("msgCard after adding trailerSection: %+v", msgCard)
