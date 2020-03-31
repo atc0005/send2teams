@@ -60,11 +60,7 @@ func ConvertEOLToBreak(s string) string {
 // SendMessage is a wrapper function for setting up and using the
 // goteamsnotify client to send a message card to Microsoft Teams via a
 // webhook URL.
-func SendMessage(webhookURL string, message *goteamsnotify.MessageCard) error {
-
-	if message == nil {
-		return fmt.Errorf("uninitialized MessageCard pointer received")
-	}
+func SendMessage(webhookURL string, message goteamsnotify.MessageCard) error {
 
 	// init the client
 	mstClient, err := goteamsnotify.NewClient()
@@ -73,7 +69,7 @@ func SendMessage(webhookURL string, message *goteamsnotify.MessageCard) error {
 	}
 
 	// attempt to send message, return the pass/fail result to caller
-	return mstClient.Send(webhookURL, *message)
+	return mstClient.Send(webhookURL, message)
 }
 
 // validateWebhookLength ensures that at least the prefix + SOMETHING is
