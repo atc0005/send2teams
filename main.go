@@ -141,7 +141,27 @@ func main() {
 	heroImageSection := goteamsnotify.NewMessageCardSection()
 	heroImageSection.Title = "Testing hero image"
 	heroImageSection.Text = "Unfortunately this property is not supported by Microsoft Teams."
-	heroImageSection.AddHeroImage("https://live.staticflickr.com/3551/3388550814_0f4ac0d1a0.jpg", "https://search.creativecommons.org/photos/78cdb549-3270-48be-9df3-84d53ab3d245")
+	// if err := heroImageSection.AddHeroImage(
+	// 	"https://live.staticflickr.com/3551/3388550814_0f4ac0d1a0.jpg",
+	// 	"https://search.creativecommons.org/photos/78cdb549-3270-48be-9df3-84d53ab3d245",
+	// ); err != nil {
+	// 	fmt.Printf("failed to add hero image: %s", err)
+	// 	os.Exit(1)
+	// }
+	heroImage := goteamsnotify.NewMessageCardSectionImage()
+	heroImage.Image = ""
+	heroImage.Title = ""
+	if err := heroImageSection.AddHeroImage(heroImage); err != nil {
+		fmt.Printf("failed to add hero image: %s", err)
+		os.Exit(1)
+	}
+	if err := heroImageSection.AddHeroImageStr(
+		"https://live.staticflickr.com/3551/3388550814_0f4ac0d1a0.jpg",
+		"https://search.creativecommons.org/photos/78cdb549-3270-48be-9df3-84d53ab3d245",
+	); err != nil {
+		fmt.Printf("failed to add hero image: %s", err)
+		os.Exit(1)
+	}
 	msgCard.AddSection(heroImageSection)
 
 	/*
