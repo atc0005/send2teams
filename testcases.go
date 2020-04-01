@@ -9,8 +9,52 @@ import (
 	"github.com/atc0005/send2teams/config"
 )
 
-// testCase3 generates a message card with empty facts to confirm whether
-// the go-teams-notify package properly drops the empty facts JSON array.
+// testCase4 generates a message card with only invalid facts to confirm
+// whether the go-teams-notify package properly drops the empty facts JSON
+// array.
+func testCase4(cfg *config.Config) goteamsnotify.MessageCard {
+
+	// setup message card
+	msgCard := goteamsnotify.NewMessageCard()
+	msgCard.Title = cfg.MessageTitle
+	msgCard.Text = "Test Case 4 (top-level text content)"
+	msgCard.ThemeColor = cfg.ThemeColor
+
+	testSection := goteamsnotify.NewMessageCardSection()
+
+	badValues := []goteamsnotify.MessageCardSectionFact{
+		goteamsnotify.MessageCardSectionFact{},
+		goteamsnotify.MessageCardSectionFact{
+			Name: "Only name provided",
+		},
+		goteamsnotify.MessageCardSectionFact{
+			Value: "Only value provided",
+		},
+	}
+
+	log.Println("Calling AddFact from Test Case 4 with set of bad test values")
+	for _, v := range badValues {
+		if err := testSection.AddFact(v); err != nil {
+			log.Println("Error returned from adding bad fact value:", err)
+		}
+	}
+
+	if err := msgCard.AddSection(testSection); err != nil {
+		log.Println("Error returned from attempt to add testSection:", err)
+	}
+
+	structDetails, err := goteamsnotify.FormatAsCodeBlock(
+		fmt.Sprintf("This message card's fields: %+v", msgCard))
+	if err == nil {
+		msgCard.Text = structDetails
+	}
+
+	return msgCard
+}
+
+// testCase3 generates a message card with good and bad fact values to confirm
+// whether the go-teams-notify package properly drops the empty facts from the
+// JSON array.
 func testCase3(cfg *config.Config) goteamsnotify.MessageCard {
 
 	// setup message card

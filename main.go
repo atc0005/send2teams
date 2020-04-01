@@ -100,6 +100,7 @@ func main() {
 		testCase1(cfg),
 		testCase2(cfg),
 		testCase3(cfg),
+		testCase4(cfg),
 	}
 
 	for _, testCase := range testCases {
