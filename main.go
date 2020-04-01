@@ -30,7 +30,7 @@ func main() {
 
 	// Add extra trailing whitespace to align log message prefix with package
 	// log message prefix
-	log.SetPrefix("[send2teams]   ")
+	log.SetPrefix("[send2teams]    ")
 
 	// Toggle library debug logging output
 	goteamsnotify.EnableLogging()
