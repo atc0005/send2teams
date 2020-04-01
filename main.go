@@ -99,6 +99,7 @@ func main() {
 	testCases := []goteamsnotify.MessageCard{
 		testCase1(cfg),
 		testCase2(cfg),
+		testCase3(cfg),
 	}
 
 	for _, testCase := range testCases {
