@@ -19,7 +19,7 @@ func testCase2(cfg *config.Config) goteamsnotify.MessageCard {
 	msgCard.Text = "Test Case 2 (top-level text content)"
 	msgCard.ThemeColor = cfg.ThemeColor
 
-	fmt.Println("Calling AddSection from Test Case 2 with empty and nil test values")
+	log.Println("Calling AddSection from Test Case 2 with empty and nil test values")
 	badValues := []*goteamsnotify.MessageCardSection{
 		&goteamsnotify.MessageCardSection{},
 		nil,
@@ -30,7 +30,7 @@ func testCase2(cfg *config.Config) goteamsnotify.MessageCard {
 
 	for _, v := range badValues {
 		if err := msgCard.AddSection(v); err != nil {
-			fmt.Println("Error returned from adding bad section value:", err)
+			log.Println("Error returned from adding bad section value:", err)
 		}
 	}
 
@@ -63,7 +63,7 @@ func testCase1(cfg *config.Config) goteamsnotify.MessageCard {
 
 	//log.Printf("msgCard before adding mainMsgSection: %+v", msgCard)
 	if err := msgCard.AddSection(mainMsgSection); err != nil {
-		fmt.Println("Error returned from adding bad section value:", err)
+		log.Println("Error returned from adding bad section value:", err)
 	}
 	//log.Printf("msgCard after adding mainMsgSection: %+v", msgCard)
 
@@ -92,7 +92,7 @@ func testCase1(cfg *config.Config) goteamsnotify.MessageCard {
 		log.Println("Using formattedTextSample with code snippet formatting")
 		codeSnippetSampleSection.Text = formattedTextSample
 		if err := msgCard.AddSection(codeSnippetSampleSection); err != nil {
-			fmt.Println("Error returned from adding bad section value:", err)
+			log.Println("Error returned from adding bad section value:", err)
 		}
 	}
 
@@ -121,7 +121,7 @@ func testCase1(cfg *config.Config) goteamsnotify.MessageCard {
 	}
 
 	if err := msgCard.AddSection(codeBlockSampleSection); err != nil {
-		fmt.Println("Error returned from adding bad section value:", err)
+		log.Println("Error returned from adding bad section value:", err)
 	}
 
 	/*
@@ -135,7 +135,7 @@ func testCase1(cfg *config.Config) goteamsnotify.MessageCard {
 	activitySection.ActivityImage = "https://avatars2.githubusercontent.com/u/36716992"
 
 	if err := msgCard.AddSection(activitySection); err != nil {
-		fmt.Println("Error returned from adding bad section value:", err)
+		log.Println("Error returned from adding bad section value:", err)
 	}
 
 	/*
@@ -149,26 +149,26 @@ func testCase1(cfg *config.Config) goteamsnotify.MessageCard {
 	// 	"https://live.staticflickr.com/3551/3388550814_0f4ac0d1a0.jpg",
 	// 	"https://search.creativecommons.org/photos/78cdb549-3270-48be-9df3-84d53ab3d245",
 	// ); err != nil {
-	// 	fmt.Printf("failed to add hero image: %s", err)
+	// 	log.Printf("failed to add hero image: %s", err)
 	// 	os.Exit(1)
 	// }
 	heroImage := goteamsnotify.NewMessageCardSectionImage()
 	heroImage.Image = "https://live.staticflickr.com/3551/3388550814_0f4ac0d1a0.jpg"
 	heroImage.Title = "https://search.creativecommons.org/photos/78cdb549-3270-48be-9df3-84d53ab3d245"
 	if err := heroImageSection.AddHeroImage(heroImage); err != nil {
-		fmt.Printf("failed to add hero image: %s", err)
+		log.Printf("failed to add hero image: %s", err)
 		os.Exit(1)
 	}
 	if err := heroImageSection.AddHeroImageStr(
 		"https://live.staticflickr.com/3551/3388550814_0f4ac0d1a0.jpg",
 		"https://search.creativecommons.org/photos/78cdb549-3270-48be-9df3-84d53ab3d245",
 	); err != nil {
-		fmt.Printf("failed to add hero image: %s", err)
+		log.Printf("failed to add hero image: %s", err)
 		os.Exit(1)
 	}
 
 	if err := msgCard.AddSection(heroImageSection); err != nil {
-		fmt.Println("Error returned from adding bad section value:", err)
+		log.Println("Error returned from adding bad section value:", err)
 	}
 
 	/*
@@ -180,7 +180,7 @@ func testCase1(cfg *config.Config) goteamsnotify.MessageCard {
 	bannerImg.Image = "https://live.staticflickr.com/3551/3388550814_0f4ac0d1a0.jpg"
 	bannerImg.Title = "https://search.creativecommons.org/photos/78cdb549-3270-48be-9df3-84d53ab3d245"
 	if err := galleryImageSection.AddImage(bannerImg); err != nil {
-		fmt.Printf("failed to add image: %s", err)
+		log.Printf("failed to add image: %s", err)
 		os.Exit(1)
 	}
 
@@ -188,13 +188,13 @@ func testCase1(cfg *config.Config) goteamsnotify.MessageCard {
 		Image: "https://farm3.staticflickr.com/2359/2149071817_0c0f7fd539.jpg",
 		Title: "https://search.creativecommons.org/photos/4393a3f3-ea51-438c-89da-1e3fa468d80b",
 	}); err != nil {
-		fmt.Printf("failed to add hero image: %s", err)
+		log.Printf("failed to add hero image: %s", err)
 		os.Exit(1)
 	}
 	galleryImageSection.Title = "Testing gallery images"
 
 	if err := msgCard.AddSection(galleryImageSection); err != nil {
-		fmt.Println("Error returned from adding bad section value:", err)
+		log.Println("Error returned from adding bad section value:", err)
 	}
 
 	/*
@@ -211,7 +211,7 @@ func testCase1(cfg *config.Config) goteamsnotify.MessageCard {
 
 	// // Let's do that
 	// if err := badGalleryImageSection.AddImage(badBannerImg); err != nil {
-	// 	fmt.Printf("failed to add section image: %s", err)
+	// 	log.Printf("failed to add section image: %s", err)
 	// 	os.Exit(1)
 	// }
 	// badGalleryImageSection.Title = "Testing empty fields for MessageCardSectionImage type"
@@ -227,7 +227,7 @@ func testCase1(cfg *config.Config) goteamsnotify.MessageCard {
 
 	//log.Printf("msgCard before adding trailerSection: %+v", msgCard)
 	if err := msgCard.AddSection(trailerSection); err != nil {
-		fmt.Println("Error returned from adding bad section value:", err)
+		log.Println("Error returned from adding bad section value:", err)
 	}
 	//log.Printf("msgCard after adding trailerSection: %+v", msgCard)
 

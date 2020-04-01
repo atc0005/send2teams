@@ -10,7 +10,6 @@ package main
 import (
 	"errors"
 	"flag"
-	"fmt"
 	"log"
 	"os"
 
@@ -24,6 +23,14 @@ import (
 )
 
 func main() {
+
+	// Configure our logger to use more verbose, specific format to
+	// differentiate between the go-teams-notify package logger
+	log.SetFlags(log.Ldate | log.Ltime | log.Lshortfile)
+
+	// Add extra trailing whitespace to align log message prefix with package
+	// log message prefix
+	log.SetPrefix("[send2teams]   ")
 
 	// Toggle library debug logging output
 	goteamsnotify.EnableLogging()
@@ -42,7 +49,7 @@ func main() {
 	case errors.Is(err, flag.ErrHelp):
 		os.Exit(0)
 	default:
-		fmt.Printf("failed to initialize application: %s", err)
+		log.Printf("failed to initialize application: %s", err)
 		os.Exit(1)
 	}
 
@@ -67,11 +74,11 @@ func main() {
 
 			// Display error output if silence is not requested
 			if !cfg.SilentOutput {
-				fmt.Printf("\n\nERROR: Failed to submit message to %q channel in the %q team: %v\n\n",
+				log.Printf("\n\nERROR: Failed to submit message to %q channel in the %q team: %v\n\n",
 					cfg.Channel, cfg.Team, err)
 
 				if cfg.VerboseOutput {
-					fmt.Printf("[Config]: %+v\n[Error]: %v", cfg, err)
+					log.Printf("[Config]: %+v\n[Error]: %v", cfg, err)
 				}
 
 			}
