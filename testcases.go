@@ -128,11 +128,18 @@ func testCase1(cfg *config.Config) goteamsnotify.MessageCard {
 	bannerImg := goteamsnotify.NewMessageCardSectionImage()
 	bannerImg.Image = "https://live.staticflickr.com/3551/3388550814_0f4ac0d1a0.jpg"
 	bannerImg.Title = "https://search.creativecommons.org/photos/78cdb549-3270-48be-9df3-84d53ab3d245"
-	galleryImageSection.AddImage(bannerImg)
-	galleryImageSection.AddImage(goteamsnotify.MessageCardSectionImage{
+	if err := galleryImageSection.AddImage(bannerImg); err != nil {
+		fmt.Printf("failed to add image: %s", err)
+		os.Exit(1)
+	}
+
+	if err := galleryImageSection.AddImage(goteamsnotify.MessageCardSectionImage{
 		Image: "https://farm3.staticflickr.com/2359/2149071817_0c0f7fd539.jpg",
 		Title: "https://search.creativecommons.org/photos/4393a3f3-ea51-438c-89da-1e3fa468d80b",
-	})
+	}); err != nil {
+		fmt.Printf("failed to add hero image: %s", err)
+		os.Exit(1)
+	}
 	galleryImageSection.Title = "Testing gallery images"
 	msgCard.AddSection(galleryImageSection)
 
