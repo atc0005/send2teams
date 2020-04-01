@@ -61,16 +61,10 @@ func main() {
 	msgCard.Text = "placeholder (top-level text content)"
 	msgCard.ThemeColor = cfg.ThemeColor
 
-	// TODO: This results in an empty JSON sections array. This is what we're
-	// effectively asking for here. Is this an error condition that the library
-	// should be handling?
-	//
-	// // testEmptySection := goteamsnotify.NewMessageCardSection()
-	// testEmptySection := goteamsnotify.MessageCardSection{}
-	// msgCard.AddSection(testEmptySection)
-
+	// Assign a test case to our message card
 	msgCard = testCase1(cfg)
 
+	// Submit message card
 	if err := teams.SendMessage(cfg.WebhookURL, msgCard); err != nil {
 
 		// Display error output if silence is not requested

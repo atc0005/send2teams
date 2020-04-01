@@ -9,6 +9,32 @@ import (
 	"github.com/atc0005/send2teams/config"
 )
 
+// testCase2 generates a message card with an empty section to confirm whether
+// the go-teams-notify package properly drops the empty section JSON array.
+func testCase2(cfg *config.Config) goteamsnotify.MessageCard {
+
+	// setup message card
+	msgCard := goteamsnotify.NewMessageCard()
+	msgCard.Title = cfg.MessageTitle
+	msgCard.Text = "placeholder (top-level text content)"
+	msgCard.ThemeColor = cfg.ThemeColor
+
+	// TODO: This results in an empty JSON sections array. This is what we're
+	// effectively asking for here. Is this an error condition that the library
+	// should be handling?
+	//
+	// testEmptySection := goteamsnotify.NewMessageCardSection()
+	testEmptySection := goteamsnotify.MessageCardSection{}
+	msgCard.AddSection(testEmptySection)
+
+	return msgCard
+}
+
+// testCase1 generates a message card with a number of useful sections and
+// content. This includes activity fields, gallery images, code snippet
+// section, code block section and branding trailer section. This test case is
+// close to, but not quite what the bounce application might generate from its
+// input.
 func testCase1(cfg *config.Config) goteamsnotify.MessageCard {
 
 	// setup message card
