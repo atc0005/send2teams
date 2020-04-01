@@ -16,7 +16,7 @@ func testCase2(cfg *config.Config) goteamsnotify.MessageCard {
 	// setup message card
 	msgCard := goteamsnotify.NewMessageCard()
 	msgCard.Title = cfg.MessageTitle
-	msgCard.Text = "placeholder (top-level text content)"
+	msgCard.Text = "Test Case 2 (top-level text content)"
 	msgCard.ThemeColor = cfg.ThemeColor
 
 	// TODO: This results in an empty JSON sections array. This is what we're
@@ -40,7 +40,7 @@ func testCase1(cfg *config.Config) goteamsnotify.MessageCard {
 	// setup message card
 	msgCard := goteamsnotify.NewMessageCard()
 	msgCard.Title = cfg.MessageTitle
-	msgCard.Text = "placeholder (top-level text content)"
+	msgCard.Text = "Test Case 1 (top-level text content)"
 	msgCard.ThemeColor = cfg.ThemeColor
 
 	mainMsgSection := goteamsnotify.NewMessageCardSection()

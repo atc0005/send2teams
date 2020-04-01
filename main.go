@@ -56,37 +56,46 @@ func main() {
 	}
 
 	// setup message card
-	msgCard := goteamsnotify.NewMessageCard()
-	msgCard.Title = cfg.MessageTitle
-	msgCard.Text = "placeholder (top-level text content)"
-	msgCard.ThemeColor = cfg.ThemeColor
+	// msgCard := goteamsnotify.NewMessageCard()
+	// msgCard.Title = cfg.MessageTitle
+	// msgCard.Text = "placeholder (top-level text content)"
+	// msgCard.ThemeColor = cfg.ThemeColor
 
-	// Assign a test case to our message card
-	msgCard = testCase1(cfg)
+	send := func(cfg *config.Config, msgCard goteamsnotify.MessageCard) {
+		// Submit message card
+		if err := teams.SendMessage(cfg.WebhookURL, msgCard); err != nil {
 
-	// Submit message card
-	if err := teams.SendMessage(cfg.WebhookURL, msgCard); err != nil {
+			// Display error output if silence is not requested
+			if !cfg.SilentOutput {
+				fmt.Printf("\n\nERROR: Failed to submit message to %q channel in the %q team: %v\n\n",
+					cfg.Channel, cfg.Team, err)
 
-		// Display error output if silence is not requested
-		if !cfg.SilentOutput {
-			fmt.Printf("\n\nERROR: Failed to submit message to %q channel in the %q team: %v\n\n",
-				cfg.Channel, cfg.Team, err)
+				if cfg.VerboseOutput {
+					fmt.Printf("[Config]: %+v\n[Error]: %v", cfg, err)
+				}
 
-			if cfg.VerboseOutput {
-				fmt.Printf("[Config]: %+v\n[Error]: %v", cfg, err)
 			}
 
+			// Regardless of silent flag, explicitly note unsuccessful results
+			os.Exit(1)
 		}
 
-		// Regardless of silent flag, explicitly note unsuccessful results
-		os.Exit(1)
+		if !cfg.SilentOutput {
+
+			// Emit basic success message
+			log.Println("Message successfully sent!")
+
+		}
 	}
 
-	if !cfg.SilentOutput {
+	// Assign test cases
+	testCases := []goteamsnotify.MessageCard{
+		testCase1(cfg),
+		testCase2(cfg),
+	}
 
-		// Emit basic success message
-		log.Println("Message successfully sent!")
-
+	for _, testCase := range testCases {
+		send(cfg, testCase)
 	}
 
 }
