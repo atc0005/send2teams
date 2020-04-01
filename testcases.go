@@ -19,20 +19,23 @@ func testCase2(cfg *config.Config) goteamsnotify.MessageCard {
 	msgCard.Text = "Test Case 2 (top-level text content)"
 	msgCard.ThemeColor = cfg.ThemeColor
 
-	// TODO: This results in an empty JSON sections array. This is what we're
-	// effectively asking for here. Is this an error condition that the library
-	// should be handling?
-	//
-	//testEmptySection := goteamsnotify.NewMessageCardSection()
-	testEmptySection := goteamsnotify.MessageCardSection{}
-	fmt.Println("Calling AddSection from Test Case 2 with empty section")
-	msgCard.AddSection(&testEmptySection)
-	msgCard.AddSection(nil)
-	msgCard.AddSection(nil)
-	msgCard.AddSection(nil)
-	msgCard.AddSection(nil)
+	fmt.Println("Calling AddSection from Test Case 2 with empty and nil test values")
+	badValues := []*goteamsnotify.MessageCardSection{
+		&goteamsnotify.MessageCardSection{},
+		nil,
+		nil,
+		nil,
+		nil,
+	}
 
-	structDetails, err := goteamsnotify.FormatAsCodeBlock(fmt.Sprintf("This message card's fields: %+v", msgCard))
+	for _, v := range badValues {
+		if err := msgCard.AddSection(v); err != nil {
+			fmt.Println("Error returned from adding bad section value:", err)
+		}
+	}
+
+	structDetails, err := goteamsnotify.FormatAsCodeBlock(
+		fmt.Sprintf("This message card's fields: %+v", msgCard))
 	if err == nil {
 		msgCard.Text = structDetails
 	}
