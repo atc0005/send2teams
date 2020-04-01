@@ -23,9 +23,19 @@ func testCase2(cfg *config.Config) goteamsnotify.MessageCard {
 	// effectively asking for here. Is this an error condition that the library
 	// should be handling?
 	//
-	// testEmptySection := goteamsnotify.NewMessageCardSection()
+	//testEmptySection := goteamsnotify.NewMessageCardSection()
 	testEmptySection := goteamsnotify.MessageCardSection{}
-	msgCard.AddSection(testEmptySection)
+	fmt.Println("Calling AddSection from Test Case 2 with empty section")
+	msgCard.AddSection(&testEmptySection)
+	msgCard.AddSection(nil)
+	msgCard.AddSection(nil)
+	msgCard.AddSection(nil)
+	msgCard.AddSection(nil)
+
+	structDetails, err := goteamsnotify.FormatAsCodeBlock(fmt.Sprintf("This message card's fields: %+v", msgCard))
+	if err == nil {
+		msgCard.Text = structDetails
+	}
 
 	return msgCard
 }
