@@ -86,10 +86,10 @@ func testCase1(cfg *config.Config) goteamsnotify.MessageCard {
 		log.Printf("error formatting text as code snippet: %#v", err)
 		log.Printf("Current state of section: %+v", codeSnippetSampleSection)
 
-		log.Println("Using unformattedTextSample")
+		log.Println("Using unformattedTextSample without code snippet formatting")
 		codeSnippetSampleSection.Text = unformattedTextSample
 	} else {
-		log.Println("Using formattedTextSample")
+		log.Println("Using formattedTextSample with code snippet formatting")
 		codeSnippetSampleSection.Text = formattedTextSample
 		if err := msgCard.AddSection(codeSnippetSampleSection); err != nil {
 			fmt.Println("Error returned from adding bad section value:", err)
@@ -113,10 +113,10 @@ func testCase1(cfg *config.Config) goteamsnotify.MessageCard {
 		log.Printf("error formatting text as code snippet: %#v", err)
 		log.Printf("Current state of section: %+v", codeBlockSampleSection)
 
-		log.Println("Using unformattedTextSample")
+		log.Println("Using unformattedTextSample without code block formatting")
 		codeBlockSampleSection.Text = unformattedTextSample
 	} else {
-		log.Println("Using formattedTextSample")
+		log.Println("Using formattedTextSample with code block formatting")
 		codeBlockSampleSection.Text = formattedTextSample
 	}
 
