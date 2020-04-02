@@ -68,11 +68,11 @@ type Config struct {
 	Channel string
 
 	// WebhookURL is the full URL used to submit messages to the Teams channel
-	// This URL is in the form of https://outlook.office.com/webhook/xxx This
-	// URL is REQUIRED in order for this application to function and needs to
-	// be created in advance by adding/configuring a Webhook Connector in a
-	// Microsoft Teams channel that you wish to submit messages to using this
-	// application.
+	// This URL is in the form of https://outlook.office.com/webhook/xxx or
+	// https://outlook.office365.com/webhook/xxx. This URL is REQUIRED in
+	// order for this application to function and needs to be created in
+	// advance by adding/configuring a Webhook Connector in a Microsoft Teams
+	// channel that you wish to submit messages to using this application.
 	WebhookURL string
 
 	// ThemeColor is a hex color code string representing the desired border
