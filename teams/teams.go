@@ -2,6 +2,7 @@ package teams
 
 import (
 	"fmt"
+	"log"
 	"net/url"
 	"regexp"
 	"strings"
@@ -38,21 +39,31 @@ var validWebhookURLRegex = `^https:\/\/outlook.office(?:365)?.com\/webhook\/[-a-
 const breakStatement = "<br>"
 
 // CR LF \r\n (windows)
-const windowsEOL = "\\r\\n"
+const windowsEOLActual = "\r\n"
+const windowsEOLEscaped = `\r\n`
 
 // CF \r (mac)
-const macEOL = "\\r"
+const macEOLActual = "\r"
+const macEOLEscaped = `\r`
 
 // LF \n (unix)
-const unixEOL = "\\n"
+const unixEOLActual = "\n"
+const unixEOLEscaped = `\n`
 
 // ConvertEOLToBreak converts \r\n (windows), \r (mac) and \n (unix) into <br>
 // HTML/Markdown break statements
 func ConvertEOLToBreak(s string) string {
 
-	s = strings.ReplaceAll(s, windowsEOL, breakStatement)
-	s = strings.ReplaceAll(s, macEOL, breakStatement)
-	s = strings.ReplaceAll(s, unixEOL, breakStatement)
+	log.Printf("ConvertEOLToBreak: Received %q", s)
+
+	s = strings.ReplaceAll(s, windowsEOLActual, breakStatement)
+	s = strings.ReplaceAll(s, windowsEOLEscaped, breakStatement)
+	s = strings.ReplaceAll(s, macEOLActual, breakStatement)
+	s = strings.ReplaceAll(s, macEOLEscaped, breakStatement)
+	s = strings.ReplaceAll(s, unixEOLActual, breakStatement)
+	s = strings.ReplaceAll(s, unixEOLEscaped, breakStatement)
+
+	log.Printf("ConvertEOLToBreak: Returning %q", s)
 
 	return s
 }
