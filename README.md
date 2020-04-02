@@ -181,3 +181,5 @@ SOFTWARE.
 
 - General Golang
   - <https://stackoverflow.com/questions/38807903/how-do-i-handle-plain-text-http-get-response-in-golang>
+  - <https://stackoverflow.com/questions/32042989/go-lang-differentiate-n-and-line-break>
+    - <https://stackoverflow.com/a/42793954/903870>
