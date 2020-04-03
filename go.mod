@@ -1,7 +1,7 @@
 module github.com/atc0005/send2teams
 
 // Use local copy of library package (instead of fetching remote content)
-replace github.com/atc0005/go-teams-notify => T:\github\go-teams-notify
+replace github.com/atc0005/go-teams-notify => ../go-teams-notify
 
 require (
 	//gopkg.in/dasrick/go-teams-notify.v1 v1.2.0
