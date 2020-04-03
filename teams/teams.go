@@ -249,7 +249,7 @@ func formatAsCode(input string, prefix string, suffix string) (string, error) {
 // HTML/Markdown break statements
 func ConvertEOLToBreak(s string) string {
 
-	logger.Printf("ConvertEOLToBreak: Received %q", s)
+	logger.Printf("ConvertEOLToBreak: Received %#v", s)
 
 	s = strings.ReplaceAll(s, windowsEOLActual, breakStatement)
 	s = strings.ReplaceAll(s, windowsEOLEscaped, breakStatement)
@@ -258,7 +258,7 @@ func ConvertEOLToBreak(s string) string {
 	s = strings.ReplaceAll(s, unixEOLActual, breakStatement)
 	s = strings.ReplaceAll(s, unixEOLEscaped, breakStatement)
 
-	logger.Printf("ConvertEOLToBreak: Returning %q", s)
+	logger.Printf("ConvertEOLToBreak: Returning %#v", s)
 
 	return s
 }
