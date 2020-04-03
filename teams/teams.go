@@ -248,20 +248,20 @@ func formatAsCode(input string, prefix string, suffix string) (string, error) {
 
 	// if neither start or end character are double-quotes
 	case formattedJSON[formattedJSONStartChar] != '"' && formattedJSON[formattedJSONEndChar] != '"':
-		codeContentForSubmission = prefix + string(formattedJSON) + suffix
+		codeContentForSubmission = prefix + formattedJSON + suffix
 
 	// if only start character is not a double-quote
 	case formattedJSON[formattedJSONStartChar] != '"':
 		logger.Println("[WARN]: escapedFormattedJSON is missing leading double-quote")
-		codeContentForSubmission = prefix + string(formattedJSON)
+		codeContentForSubmission = prefix + formattedJSON
 
 	// if only end character is not a double-quote
 	case formattedJSON[formattedJSONEndChar] != '"':
 		logger.Println("[WARN]: escapedFormattedJSON is missing trailing double-quote")
-		codeContentForSubmission = codeContentForSubmission + suffix
+		codeContentForSubmission += suffix
 
 	default:
-		codeContentForSubmission = prefix + formattedJSON[1:formattedJSONEndChar] + suffix
+		codeContentForSubmission = prefix + strings.Trim(formattedJSON, "\"") + suffix
 	}
 
 	logger.Printf("DEBUG: ... as-is:\n%s\n\n", formattedJSON)
