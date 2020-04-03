@@ -2,7 +2,6 @@ package teams
 
 import (
 	"fmt"
-	"log"
 	"net/url"
 	"regexp"
 	"strings"
@@ -54,7 +53,7 @@ const unixEOLEscaped = `\n`
 // HTML/Markdown break statements
 func ConvertEOLToBreak(s string) string {
 
-	log.Printf("ConvertEOLToBreak: Received %q", s)
+	//log.Printf("ConvertEOLToBreak: Received %q", s)
 
 	s = strings.ReplaceAll(s, windowsEOLActual, breakStatement)
 	s = strings.ReplaceAll(s, windowsEOLEscaped, breakStatement)
@@ -63,7 +62,7 @@ func ConvertEOLToBreak(s string) string {
 	s = strings.ReplaceAll(s, unixEOLActual, breakStatement)
 	s = strings.ReplaceAll(s, unixEOLEscaped, breakStatement)
 
-	log.Printf("ConvertEOLToBreak: Returning %q", s)
+	//log.Printf("ConvertEOLToBreak: Returning %q", s)
 
 	return s
 }
