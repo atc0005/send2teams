@@ -199,8 +199,8 @@ func formatAsCode(input string, prefix string, suffix string) (string, error) {
 	// If the input string is already valid JSON, don't double-encode and
 	// escape the content
 	case json.Valid([]byte(input)):
-		logger.Printf("DEBUG: input string already valid JSON; input: %+v", input)
-		logger.Printf("DEBUG: Calling json.RawMessage([]byte(input)); input: %+v", input)
+		logger.Printf("formatAsCode: input string already valid JSON; input: %+v", input)
+		logger.Printf("formatAsCode: Calling json.RawMessage([]byte(input)); input: %+v", input)
 
 		// FIXME: Is json.RawMessage() really needed if the input string is *already* JSON?
 		// https://golang.org/pkg/encoding/json/#RawMessage seems to imply a different use case.
@@ -208,37 +208,37 @@ func formatAsCode(input string, prefix string, suffix string) (string, error) {
 		//
 		// From light testing, it appears to not be necessary:
 		//
-		// logger.Printf("DEBUG: Skipping json.RawMessage, converting string directly to byte slice; input: %+v", input)
+		// logger.Printf("formatAsCode: Skipping json.RawMessage, converting string directly to byte slice; input: %+v", input)
 		// byteSlice = []byte(input)
 
 	default:
-		logger.Printf("DEBUG: input string not valid JSON; input: %+v", input)
-		logger.Printf("DEBUG: Calling json.Marshal(input); input: %+v", input)
+		logger.Printf("formatAsCode: input string not valid JSON; input: %+v", input)
+		logger.Printf("formatAsCode: Calling json.Marshal(input); input: %+v", input)
 		byteSlice, err = json.Marshal(input)
 		if err != nil {
 			return "", err
 		}
 	}
 
-	logger.Println("DEBUG: byteSlice as string:", string(byteSlice))
+	logger.Println("formatAsCode: byteSlice as string:", string(byteSlice))
 
 	var prettyJSON bytes.Buffer
 
-	logger.Println("DEBUG: calling json.Indent")
+	logger.Println("formatAsCode: calling json.Indent")
 	err = json.Indent(&prettyJSON, byteSlice, "", "\t")
 	if err != nil {
 		return "", err
 	}
 	formattedJSON := prettyJSON.String()
 
-	logger.Println("DEBUG: Formatted JSON:", formattedJSON)
+	logger.Println("formatAsCode: Formatted JSON:", formattedJSON)
 
 	// handle both cases: where the formatted JSON string was not wrapped with
 	// double-quotes and when it was
 	codeContentForSubmission := prefix + strings.Trim(formattedJSON, "\"") + suffix
 
-	logger.Printf("DEBUG: formatted JSON as-is:\n%s\n\n", formattedJSON)
-	logger.Printf("DEBUG: formatted JSON wrapped with code prefix/suffix: \n%s\n\n", codeContentForSubmission)
+	logger.Printf("formatAsCode: formatted JSON as-is:\n%s\n\n", formattedJSON)
+	logger.Printf("formatAsCode: formatted JSON wrapped with code prefix/suffix: \n%s\n\n", codeContentForSubmission)
 
 	// err should be nil if everything worked as expected
 	return codeContentForSubmission, err
@@ -249,7 +249,7 @@ func formatAsCode(input string, prefix string, suffix string) (string, error) {
 // HTML/Markdown break statements
 func ConvertEOLToBreak(s string) string {
 
-	//log.Printf("ConvertEOLToBreak: Received %q", s)
+	logger.Printf("ConvertEOLToBreak: Received %q", s)
 
 	s = strings.ReplaceAll(s, windowsEOLActual, breakStatement)
 	s = strings.ReplaceAll(s, windowsEOLEscaped, breakStatement)
@@ -258,7 +258,7 @@ func ConvertEOLToBreak(s string) string {
 	s = strings.ReplaceAll(s, unixEOLActual, breakStatement)
 	s = strings.ReplaceAll(s, unixEOLEscaped, breakStatement)
 
-	//log.Printf("ConvertEOLToBreak: Returning %q", s)
+	logger.Printf("ConvertEOLToBreak: Returning %q", s)
 
 	return s
 }
