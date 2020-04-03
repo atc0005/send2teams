@@ -233,47 +233,12 @@ func formatAsCode(input string, prefix string, suffix string) (string, error) {
 
 	logger.Println("DEBUG: Formatted JSON:", formattedJSON)
 
-	var codeContentForSubmission string
+	// handle both cases: where the formatted JSON string was not wrapped with
+	// double-quotes and when it was
+	codeContentForSubmission := prefix + strings.Trim(formattedJSON, "\"") + suffix
 
-	// try to prevent "runtime error: slice bounds out of range"
-	formattedJSONStartChar := 0
-	formattedJSONEndChar := len(formattedJSON) - 1
-	if formattedJSONEndChar < 0 {
-		formattedJSONEndChar = 0
-	}
-
-	// handle cases where the formatted JSON string was not wrapped with
-	// double-quotes
-	switch {
-
-	// if neither start or end character are double-quotes
-	case formattedJSON[formattedJSONStartChar] != '"' && formattedJSON[formattedJSONEndChar] != '"':
-		codeContentForSubmission = prefix + formattedJSON + suffix
-
-	// if only start character is not a double-quote
-	case formattedJSON[formattedJSONStartChar] != '"':
-		logger.Println("[WARN]: escapedFormattedJSON is missing leading double-quote")
-		codeContentForSubmission = prefix + formattedJSON
-
-	// if only end character is not a double-quote
-	case formattedJSON[formattedJSONEndChar] != '"':
-		logger.Println("[WARN]: escapedFormattedJSON is missing trailing double-quote")
-		codeContentForSubmission += suffix
-
-	default:
-		codeContentForSubmission = prefix + strings.Trim(formattedJSON, "\"") + suffix
-	}
-
-	logger.Printf("DEBUG: ... as-is:\n%s\n\n", formattedJSON)
-
-	// this requires that the formattedJSON be at least two characters long
-	if len(formattedJSON) > 2 {
-		logger.Printf("DEBUG: ... without first and last characters: \n%s\n\n", formattedJSON[formattedJSONStartChar+1:formattedJSONEndChar])
-	} else {
-		logger.Printf("DEBUG: formattedJSON is less than two chars: \n%s\n\n", formattedJSON)
-	}
-
-	logger.Printf("DEBUG: codeContentForSubmission: \n%s\n\n", codeContentForSubmission)
+	logger.Printf("DEBUG: formatted JSON as-is:\n%s\n\n", formattedJSON)
+	logger.Printf("DEBUG: formatted JSON wrapped with code prefix/suffix: \n%s\n\n", codeContentForSubmission)
 
 	// err should be nil if everything worked as expected
 	return codeContentForSubmission, err
