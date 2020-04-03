@@ -1,0 +1,10 @@
+{
+    "@type": "MessageCard",
+    "@context": "https://schema.org/extensions",
+    "title": "Testing from send2teams",
+    "text": "Test Case 2 (top-level text content)",
+    "themeColor": "#832561",
+    "sections": [
+        {}
+    ]
+}
