@@ -7,6 +7,7 @@ import (
 
 	goteamsnotify "github.com/atc0005/go-teams-notify"
 	"github.com/atc0005/send2teams/config"
+	"github.com/atc0005/send2teams/teams"
 )
 
 // testCase4 generates a message card with only invalid facts to confirm
@@ -43,7 +44,7 @@ func testCase4(cfg *config.Config) goteamsnotify.MessageCard {
 		log.Println("Error returned from attempt to add testSection:", err)
 	}
 
-	structDetails, err := goteamsnotify.FormatAsCodeBlock(
+	structDetails, err := teams.FormatAsCodeBlock(
 		fmt.Sprintf("This message card's fields: %+v", msgCard))
 	if err == nil {
 		msgCard.Text = structDetails
@@ -94,7 +95,7 @@ func testCase3(cfg *config.Config) goteamsnotify.MessageCard {
 		log.Println("Error returned from attempt to add testSection:", err)
 	}
 
-	structDetails, err := goteamsnotify.FormatAsCodeBlock(
+	structDetails, err := teams.FormatAsCodeBlock(
 		fmt.Sprintf("This message card's fields: %+v", msgCard))
 	if err == nil {
 		msgCard.Text = structDetails
@@ -128,7 +129,7 @@ func testCase2(cfg *config.Config) goteamsnotify.MessageCard {
 		}
 	}
 
-	structDetails, err := goteamsnotify.FormatAsCodeBlock(
+	structDetails, err := teams.FormatAsCodeBlock(
 		fmt.Sprintf("This message card's fields: %+v", msgCard))
 	if err == nil {
 		msgCard.Text = structDetails
@@ -174,7 +175,7 @@ func testCase1(cfg *config.Config) goteamsnotify.MessageCard {
 
 	// This represents something programatically generated:
 	unformattedTextSample := "GET request received on /api/v1/echo/json endpoint"
-	formattedTextSample, err := goteamsnotify.FormatAsCodeSnippet(unformattedTextSample)
+	formattedTextSample, err := teams.FormatAsCodeSnippet(unformattedTextSample)
 	if err != nil {
 
 		log.Printf("error formatting text as code snippet: %#v", err)
@@ -201,7 +202,7 @@ func testCase1(cfg *config.Config) goteamsnotify.MessageCard {
 
 	// This represents something programatically generated:
 	sampleJSONInput := `{"result":{"sourcetype":"mongod","count":"8"},"sid":"scheduler_admin_search_W2_at_14232356_132","results_link":"http://web.example.local:8000/app/search/@go?sid=scheduler_admin_search_W2_at_14232356_132","search_name":null,"owner":"admin","app":"search"}`
-	formattedTextSample, err = goteamsnotify.FormatAsCodeBlock(sampleJSONInput)
+	formattedTextSample, err = teams.FormatAsCodeBlock(sampleJSONInput)
 	if err != nil {
 
 		log.Printf("error formatting text as code snippet: %#v", err)
