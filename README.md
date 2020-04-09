@@ -86,7 +86,12 @@ Tested using:
 1. Build
    - for current operating system with default `go` build options
      - `go build`
-   - for all supported platforms
+       - Go 1.14+ automatically uses bundled dependencies in top-level
+         `vendor` folder
+       - Go 1.11, 1.12 and 1.13 will default to fetching dependencies
+     - `go build -mod=vendor`
+       - force build to use bundled dependencies in top-level `vendor` folder
+   - for all supported platforms (where `make` is installed)
       - `make all`
    - for Windows
       - `make windows`
@@ -103,18 +108,19 @@ Tested using:
 Currently `send2teams` only supports command-line configuration flags.
 Requests for other configuration sources will be considered.
 
-| Flag          | Required | Default   | Possible                                 | Description                                                                                                         |
-| ------------- | -------- | --------- | ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
-| `h`, `help`   | No       | N/A       | N/A                                      | Display Help; show available flags.                                                                                 |
-| `channel`     | Yes      |           | *valid Microsoft Teams channel name*     | The target channel where we will send a message.                                                                    |
-| `color`       | No       | `#832561` | *valid hex color code with leading `#`*  | The hex color code used to set the desired trim color on submitted messages.                                        |
-| `message`     | Yes      |           | *valid message string*                   | The (optionally) Markdown-formatted message to submit.                                                              |
-| `team`        | Yes      |           | *valid Microsoft Teams team name*        | The name of the Team containing our target channel.                                                                 |
-| `title`       | Yes      |           | *valid title string*                     | The title for the message to submit.                                                                                |
-| `url`         | Yes      |           | *valid Microsoft Office 365 Webhook URL* | The Webhook URL provided by a pre-configured Connector.                                                             |
-| `verbose`     | No       | `false`   | `true`, `false`                          | Whether detailed output should be shown after message submission success or failure                                 |
-| `silent`      | No       | `false`   | `true`, `false`                          | Whether ANY output should be shown after message submission success or failure                                      |
-| `convert-eol` | No       | `false`   | `true`, `false`                          | Whether messages with Windows, Mac and Linux newlines are updated to use break statements before message submission |
+| Flag           | Required | Default   | Possible                                 | Description                                                                                                         |
+| -------------- | -------- | --------- | ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| `h`, `help`    | No       | N/A       | N/A                                      | Display Help; show available flags.                                                                                 |
+| `v`, `version` | No       | `false`   | `true`, `false`                          | Whether to display application version and then immediately exit application.                                       |
+| `channel`      | Yes      |           | *valid Microsoft Teams channel name*     | The target channel where we will send a message.                                                                    |
+| `color`        | No       | `#832561` | *valid hex color code with leading `#`*  | The hex color code used to set the desired trim color on submitted messages.                                        |
+| `message`      | Yes      |           | *valid message string*                   | The (optionally) Markdown-formatted message to submit.                                                              |
+| `team`         | Yes      |           | *valid Microsoft Teams team name*        | The name of the Team containing our target channel.                                                                 |
+| `title`        | Yes      |           | *valid title string*                     | The title for the message to submit.                                                                                |
+| `url`          | Yes      |           | *valid Microsoft Office 365 Webhook URL* | The Webhook URL provided by a pre-configured Connector.                                                             |
+| `verbose`      | No       | `false`   | `true`, `false`                          | Whether detailed output should be shown after message submission success or failure                                 |
+| `silent`       | No       | `false`   | `true`, `false`                          | Whether ANY output should be shown after message submission success or failure                                      |
+| `convert-eol`  | No       | `false`   | `true`, `false`                          | Whether messages with Windows, Mac and Linux newlines are updated to use break statements before message submission |
 
 ## Examples
 
@@ -169,12 +175,17 @@ SOFTWARE.
 
 ## References
 
-- <https://github.com/dasrick/go-teams-notify/>
-  - the package/library this app depends on
+- Dependencies
+  - <https://github.com/dasrick/go-teams-notify/>
 
-- <https://sankalpit.com/how-to-get-channel-webhook-url/>
+- Webhook / Office 365
+  - <https://sankalpit.com/how-to-get-channel-webhook-url/>
+  - <https://docs.microsoft.com/en-us/outlook/actionable-messages/message-card-reference>
+  - <https://docs.microsoft.com/en-us/microsoftteams/platform/concepts/outgoingwebhook>
+  - <https://docs.microsoft.com/en-us/outlook/actionable-messages/send-via-connectors>
+  - <https://messagecardplayground.azurewebsites.net/>
 
-- <https://docs.microsoft.com/en-us/outlook/actionable-messages/message-card-reference>
-- <https://docs.microsoft.com/en-us/microsoftteams/platform/concepts/outgoingwebhook>
-- <https://docs.microsoft.com/en-us/outlook/actionable-messages/send-via-connectors>
-- <https://messagecardplayground.azurewebsites.net/>
+- General Golang
+  - <https://stackoverflow.com/questions/38807903/how-do-i-handle-plain-text-http-get-response-in-golang>
+  - <https://stackoverflow.com/questions/32042989/go-lang-differentiate-n-and-line-break>
+    - <https://stackoverflow.com/a/42793954/903870>

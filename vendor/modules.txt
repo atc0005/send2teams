@@ -1,2 +1,2 @@
-# github.com/atc0005/go-teams-notify v1.3.1
+# github.com/atc0005/go-teams-notify v1.3.1-0.20200409143202-ebfbb4503f85
 github.com/atc0005/go-teams-notify
