@@ -15,6 +15,7 @@ Small CLI tool used to submit messages to Microsoft Teams.
   - [Requirements](#requirements)
   - [How to install it](#how-to-install-it)
   - [Configuration Options](#configuration-options)
+    - [Webhook URLs](#webhook-urls)
     - [Command-line](#command-line)
   - [Examples](#examples)
     - [One-off](#one-off)
@@ -29,12 +30,22 @@ inclusion into the project.
 
 ## Overview
 
-Small CLI tool used to submit messages to Microsoft Teams. `send2teams` is
-intended for use by Nagios, scripts or other actions that may need to submit
-pass/fail results to a MS Teams channel.
+First of all, many thanks to the developer/contributors of the
+`dasrick/go-teams-notify` package for making this tool possible.
 
-Many thanks to the developer/contributors of the `dasrick/go-teams-notify`
-package for making this tool possible.
+This project provides several resources:
+
+- `send2teams`
+  - Small CLI tool used to submit messages to Microsoft Teams. `send2teams` is
+    intended for use by Nagios, scripts or other actions that may need to submit
+    pass/fail results to a MS Teams channel.
+
+- `teams` subpackage
+  - The functions provided by this package extend or enhance existing
+    functionality provided by the `dasrick/go-teams-notify` package. At
+    present, the focus is primarily on text formatting and conversion
+    functions that make it easier for externally submitted data to be
+    formatted for proper display in Microsoft Teams.
 
 ## Features
 
@@ -103,24 +114,40 @@ Tested using:
 
 ## Configuration Options
 
+### Webhook URLs
+
+Valid webhook URLs for Microsoft Teams use one of two (confirmed) FQDNs:
+
+- `outlook.office.com`
+- `outlook.office365.com`
+
+Using a webhook URL with either FQDN appears to give identical results.
+
+Here is a complete example webhook URL from Microsoft's documentation using
+both FQDNs:
+
+- <https://outlook.office.com/webhook/a1269812-6d10-44b1-abc5-b84f93580ba0@9e7b80c7-d1eb-4b52-8582-76f921e416d9/IncomingWebhook/3fdd6767bae44ac58e5995547d66a4e4/f332c8d9-3397-4ac5-957b-b8e3fc465a8c>
+
+- <https://outlook.office365.com/webhook/a1269812-6d10-44b1-abc5-b84f93580ba0@9e7b80c7-d1eb-4b52-8582-76f921e416d9/IncomingWebhook/3fdd6767bae44ac58e5995547d66a4e4/f332c8d9-3397-4ac5-957b-b8e3fc465a8c>
+
 ### Command-line
 
 Currently `send2teams` only supports command-line configuration flags.
 Requests for other configuration sources will be considered.
 
-| Flag           | Required | Default   | Possible                                 | Description                                                                                                         |
-| -------------- | -------- | --------- | ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
-| `h`, `help`    | No       | N/A       | N/A                                      | Display Help; show available flags.                                                                                 |
-| `v`, `version` | No       | `false`   | `true`, `false`                          | Whether to display application version and then immediately exit application.                                       |
-| `channel`      | Yes      |           | *valid Microsoft Teams channel name*     | The target channel where we will send a message.                                                                    |
-| `color`        | No       | `#832561` | *valid hex color code with leading `#`*  | The hex color code used to set the desired trim color on submitted messages.                                        |
-| `message`      | Yes      |           | *valid message string*                   | The (optionally) Markdown-formatted message to submit.                                                              |
-| `team`         | Yes      |           | *valid Microsoft Teams team name*        | The name of the Team containing our target channel.                                                                 |
-| `title`        | Yes      |           | *valid title string*                     | The title for the message to submit.                                                                                |
-| `url`          | Yes      |           | *valid Microsoft Office 365 Webhook URL* | The Webhook URL provided by a pre-configured Connector.                                                             |
-| `verbose`      | No       | `false`   | `true`, `false`                          | Whether detailed output should be shown after message submission success or failure                                 |
-| `silent`       | No       | `false`   | `true`, `false`                          | Whether ANY output should be shown after message submission success or failure                                      |
-| `convert-eol`  | No       | `false`   | `true`, `false`                          | Whether messages with Windows, Mac and Linux newlines are updated to use break statements before message submission |
+| Flag           | Required | Default   | Possible                                                  | Description                                                                                                         |
+| -------------- | -------- | --------- | --------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| `h`, `help`    | No       | N/A       | N/A                                                       | Display Help; show available flags.                                                                                 |
+| `v`, `version` | No       | `false`   | `true`, `false`                                           | Whether to display application version and then immediately exit application.                                       |
+| `channel`      | Yes      |           | *valid Microsoft Teams channel name*                      | The target channel where we will send a message.                                                                    |
+| `color`        | No       | `#832561` | *valid hex color code with leading `#`*                   | The hex color code used to set the desired trim color on submitted messages.                                        |
+| `message`      | Yes      |           | *valid message string*                                    | The (optionally) Markdown-formatted message to submit.                                                              |
+| `team`         | Yes      |           | *valid Microsoft Teams team name*                         | The name of the Team containing our target channel.                                                                 |
+| `title`        | Yes      |           | *valid title string*                                      | The title for the message to submit.                                                                                |
+| `url`          | Yes      |           | [*valid Microsoft Office 365 Webhook URL*](#webhook-urls) | The Webhook URL provided by a pre-configured Connector.                                                             |
+| `verbose`      | No       | `false`   | `true`, `false`                                           | Whether detailed output should be shown after message submission success or failure                                 |
+| `silent`       | No       | `false`   | `true`, `false`                                           | Whether ANY output should be shown after message submission success or failure                                      |
+| `convert-eol`  | No       | `false`   | `true`, `false`                                           | Whether messages with Windows, Mac and Linux newlines are updated to use break statements before message submission |
 
 ## Examples
 
