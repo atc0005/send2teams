@@ -12,7 +12,6 @@ require (
 	// Note: Due to `replace` directive and `v0.0.0` here, we use the current
 	// state of this library package instead of fetching remote content
 	github.com/atc0005/go-teams-notify v0.0.0
-	github.com/stretchr/testify v1.4.0 // indirect
 	gopkg.in/yaml.v2 v2.2.4 // indirect
 )
 
