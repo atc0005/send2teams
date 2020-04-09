@@ -26,6 +26,51 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
+## [v0.2.5] - 2020-04-09
+
+### Added
+
+- `teams` subpackage
+  - intentionally exported for external use
+  - the goal is to have as much of the code accepted into the
+    `dasrick/go-teams-notify` project as is feasible, and maintain the
+    remaining content and anything new related to Microsoft Teams for shared
+    use in other projects I work with.
+- `config` subpackage
+  - will probably move it into an `internal` package structure at some point
+    once I read more about it as it is intended only for this project to use
+- `README`
+  - add brief coverage of new `teams` package
+  - add brief coverage of known valid webhook URL FQDNs and provided examples
+    of complete webhook URLs using each of the known FQDNs
+
+### Changed
+
+- Using [vendoring](https://golang.org/cmd/go/#hdr-Vendor_Directories)
+  - created top-level `vendor` directory using `go mod vendor`
+  - locked-in specific commit from the prototype
+    `test-extended-messagecard-type` branch from the `atc0005/go-teams-notify`
+    fork in order to provide the required functionality used by recent changes
+    to this project
+  - updated GitHub Actions Workflow to specify `-mod=vendor` build flag for
+    all `go` commands that I know of that respect the flag
+  - updated GitHub Actions Workflow to exclude `vendor` directory from
+    Markdown file linting to prevent potential linting issues in vendored
+    dependencies from affecting our CI checks
+  - updated `Makefile` to use `-mod=vendor` where applicable
+  - updated `go vet` linting check to use `-mod=vendor`
+
+- Updated dependencies
+  - `gopkg.in/yaml.v2`
+    - `v2.2.4` to `v2.28`
+  - `atc0005/go-teams-notify`
+    - see note above
+
+### Fixed
+
+- `ConvertEOLToBreak()` function updated to properly handle literal embedded
+  newlines as well as the matching escape sequence
+
 ## [v0.2.4] - 2020-03-26
 
 ### Changed
@@ -110,7 +155,8 @@ This initial prototype supports/provides:
 - GitHub Actions linting and build checks
 - Makefile for general use cases
 
-[Unreleased]: https://github.com/atc0005/send2teams/compare/v0.2.4...HEAD
+[Unreleased]: https://github.com/atc0005/send2teams/compare/v0.2.5...HEAD
+[v0.2.5]: https://github.com/atc0005/send2teams/releases/tag/v0.2.5
 [v0.2.4]: https://github.com/atc0005/send2teams/releases/tag/v0.2.4
 [v0.2.3]: https://github.com/atc0005/send2teams/releases/tag/v0.2.3
 [v0.2.2]: https://github.com/atc0005/send2teams/releases/tag/v0.2.2
