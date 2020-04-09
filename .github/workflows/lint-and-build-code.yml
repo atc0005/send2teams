@@ -50,14 +50,17 @@ jobs:
       - name: Check out code into the Go module directory
         uses: actions/checkout@v1
 
-      - name: Get dependencies
-        run: |
-          go get -v -t -d ./...
+      # NOTE: Disabled in favor of top-level `vendor` folder
+      #
+      # - name: Get dependencies
+      #   run: |
+      #     go get -v -t -d ./...
 
       # Force tests to run early as it isn't worth doing much else if the
       # tests fail to run properly.
+      # Note: Exclude `vendor` top-level folder.
       - name: Run all tests
-        run: go test -v ./...
+        run: go test -mod=vendor -v $(shell go list ./... | grep -v /vendor/)
 
       - name: Install Go linting tools
         run: |
@@ -79,8 +82,10 @@ jobs:
           export PATH=${PATH}:$(go env GOPATH)/bin
           make linting
 
-      - name: Build with default options
-        run: go build -v .
+      - name: Build with (mostly) default options
+        # Note: We use the `-mod=vendor` flag to explicitly request that our
+        # top-level vendor folder be used instead of fetching remote packages
+        run: go build -v -mod=vendor .
 
       - name: Build using project Makefile
         run: make all

@@ -39,7 +39,11 @@ jobs:
         uses: actions/checkout@v1
 
       - name: Run Markdown linting tools
+        # The `.markdownlint.yml` file specifies config settings for this
+        # linter, including which linting rules to ignore.
+        #
+        # Note: Explicitly ignoring top-level vendor folder; we do not want
+        # potential linting issues in bundled documentation to fail linting CI
+        # runs for *our* documentation
         run: |
-          # The `.markdownlint.yml` file specifies config settings for this
-          # linter, including which linting rules to ignore.
-          markdownlint '**/*.md' --ignore node_modules
+          markdownlint '**/*.md' --ignore node_modules --ignore vendor
