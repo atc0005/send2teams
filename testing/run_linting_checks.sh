@@ -34,7 +34,9 @@ if [[ $status -ne 0 ]]; then
     echo "Non-zero exit code from $failed_app: $status"
 fi
 
-go vet ./...
+# Explicitly request that our top-level vendor folder be used instead of
+# fetching remote packages
+go vet -mod=vendor ./...
 
 status=$?
 if [[ $status -ne 0 ]]; then

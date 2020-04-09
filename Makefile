@@ -25,7 +25,10 @@ VERSION 				= $(shell git describe --always --long --dirty)
 
 # The default `go build` process embeds debugging information. Building
 # without that debugging information reduces the binary size by around 28%.
-BUILDCMD				=	go build -a -ldflags="-s -w -X main.version=${VERSION}"
+#
+# Note: We use the `-mod=vendor` flag to explicitly request that our top-level
+# vendor folder be used instead of fetching remote packages
+BUILDCMD				=	go build -mod=vendor -a -ldflags="-s -w -X main.version=${VERSION}"
 GOCLEANCMD				=	go clean
 GITCLEANCMD				= 	git clean -xfd
 CHECKSUMCMD				=	sha256sum -b
