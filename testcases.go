@@ -24,11 +24,11 @@ func testCase4(cfg *config.Config) goteamsnotify.MessageCard {
 	testSection := goteamsnotify.NewMessageCardSection()
 
 	badValues := []goteamsnotify.MessageCardSectionFact{
-		goteamsnotify.MessageCardSectionFact{},
-		goteamsnotify.MessageCardSectionFact{
+		{},
+		{
 			Name: "Only name provided",
 		},
-		goteamsnotify.MessageCardSectionFact{
+		{
 			Value: "Only value provided",
 		},
 	}
@@ -70,11 +70,11 @@ func testCase3(cfg *config.Config) goteamsnotify.MessageCard {
 	fact1.Value = "Fact1 Value"
 
 	badValues := []goteamsnotify.MessageCardSectionFact{
-		goteamsnotify.MessageCardSectionFact{},
-		goteamsnotify.MessageCardSectionFact{
+		{},
+		{
 			Name: "Only name provided",
 		},
-		goteamsnotify.MessageCardSectionFact{
+		{
 			Value: "Only value provided",
 		},
 	}
@@ -116,7 +116,7 @@ func testCase2(cfg *config.Config) goteamsnotify.MessageCard {
 
 	log.Println("Calling AddSection from Test Case 2 with empty and nil test values")
 	badValues := []*goteamsnotify.MessageCardSection{
-		&goteamsnotify.MessageCardSection{},
+		{},
 		nil,
 		nil,
 		nil,
