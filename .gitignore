@@ -12,3 +12,6 @@ send2teams-*
 
 # Ignore Visual Studio Code workspace-level settings
 .vscode/settings.json
+
+# Ignore local scratch/temporary files
+/scratch
