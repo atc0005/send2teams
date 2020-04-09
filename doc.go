@@ -1,3 +1,10 @@
+// Copyright 2020 Adam Chalkley
+//
+// https://github.com/atc0005/send2teams
+//
+// Licensed under the MIT License. See LICENSE file in the project root for
+// full license information.
+
 /*
 
 send2teams is a small CLI tool used to submit messages to Microsoft Teams.
