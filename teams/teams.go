@@ -281,10 +281,7 @@ func ConvertEOLToBreak(s string) string {
 func SendMessage(webhookURL string, message goteamsnotify.MessageCard) error {
 
 	// init the client
-	mstClient, err := goteamsnotify.NewClient()
-	if err != nil {
-		return err
-	}
+	mstClient := goteamsnotify.NewClient()
 
 	// attempt to send message, return the pass/fail result to caller
 	return mstClient.Send(webhookURL, message)
