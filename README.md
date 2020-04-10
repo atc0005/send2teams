@@ -100,11 +100,11 @@ Tested using:
      1. `sudo yum install make gcc`
 1. Build
    - for current operating system with default `go` build options
-     - `go build`
+     - `go build ./cmd/send2teams/`
        - Go 1.14+ automatically uses bundled dependencies in top-level
          `vendor` folder
        - Go 1.11, 1.12 and 1.13 will default to fetching dependencies
-     - `go build -mod=vendor`
+     - `go build -mod=vendor ./cmd/send2teams/`
        - force build to use bundled dependencies in top-level `vendor` folder
    - for all supported platforms (where `make` is installed)
       - `make all`
