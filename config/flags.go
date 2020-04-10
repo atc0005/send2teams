@@ -15,7 +15,8 @@ func (c *Config) handleFlagsConfig() {
 	flag.StringVar(&c.ThemeColor, "color", defaultMessageThemeColor, themeColorFlagHelp)
 	flag.StringVar(&c.MessageTitle, "title", defaultMessageTitle, titleFlagHelp)
 	flag.StringVar(&c.MessageText, "message", defaultMessageText, messageFlagHelp)
-
+	flag.IntVar(&c.Retries, "retries", defaultRetries, retriesFlagHelp)
+	flag.IntVar(&c.RetriesDelay, "retries-delay", defaultRetriesDelay, retriesDelayFlagHelp)
 	flag.BoolVar(&c.ShowVersion, "version", defaultDisplayVersionAndExit, versionFlagHelp)
 	flag.BoolVar(&c.ShowVersion, "v", defaultDisplayVersionAndExit, versionFlagHelp+" (shorthand)")
 

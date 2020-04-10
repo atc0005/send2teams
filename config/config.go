@@ -27,6 +27,8 @@ const (
 	themeColorFlagHelp    = "The hex color code used to set the desired trim color on submitted messages."
 	titleFlagHelp         = "The title for the message to submit."
 	messageFlagHelp       = "The message to submit. This message may be provided in Markdown format."
+	retriesFlagHelp       = "The number of attempts that this application will make to deliver messages before giving up."
+	retriesDelayFlagHelp  = "The number of seconds that this application will wait before making another delivery attempt."
 )
 
 // Default flag settings if not overridden by user input
@@ -41,6 +43,8 @@ const (
 	defaultMessageTitle          string = ""
 	defaultMessageText           string = ""
 	defaultDisplayVersionAndExit bool   = false
+	defaultRetries               int    = 2
+	defaultRetriesDelay          int    = 2
 )
 
 // Overridden via Makefile for release builds
@@ -53,6 +57,13 @@ const myAppURL string = "https://github.com/atc0005/" + myAppName
 // Config is a unified set of configuration values for this application. This
 // struct is configured via command-line flags provided by the user.
 type Config struct {
+
+	// Retries is the number of attempts that this application will make
+	// to deliver messages before giving up.
+	Retries int
+
+	// RetriesDelay is the number of seconds to wait between retry attempts.
+	RetriesDelay int
 
 	// Team is the human-readable name of the Microsoft Teams "team" that
 	// contains the channel we wish to post a message to. This is used in
@@ -197,11 +208,18 @@ func (c Config) Validate() error {
 
 	if c.Team == "" {
 		return fmt.Errorf("team name too short")
-
 	}
 
 	if c.Channel == "" {
 		return fmt.Errorf("channel name too short")
+	}
+
+	if c.Retries < 0 {
+		return fmt.Errorf("retries too short")
+	}
+
+	if c.RetriesDelay < 0 {
+		return fmt.Errorf("retries delay too short")
 	}
 
 	// TODO: Replace with upstream validation checks?

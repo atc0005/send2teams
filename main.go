@@ -79,8 +79,9 @@ func main() {
 		os.Exit(1)
 	}
 
-	// Submit message card
-	if err := teams.SendMessage(cfg.WebhookURL, msgCard); err != nil {
+	// Submit message card, retry submission if needed up to specified number
+	// of retry attempts.
+	if err := teams.SendMessage(cfg.WebhookURL, msgCard, cfg.Retries, cfg.RetriesDelay); err != nil {
 
 		// Display error output if silence is not requested
 		if !cfg.SilentOutput {
