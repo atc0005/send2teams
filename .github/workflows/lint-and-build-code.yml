@@ -85,7 +85,7 @@ jobs:
       - name: Build with (mostly) default options
         # Note: We use the `-mod=vendor` flag to explicitly request that our
         # top-level vendor folder be used instead of fetching remote packages
-        run: go build -v -mod=vendor .
+        run: go build -v -mod=vendor ./cmd/send2teams
 
       - name: Build using project Makefile
         run: make all
