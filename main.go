@@ -18,7 +18,7 @@ import (
 	// temporarily use our fork while developing changes for potential
 	// inclusion in the upstream project
 	goteamsnotify "github.com/atc0005/go-teams-notify"
-	"github.com/atc0005/send2teams/config"
+	"github.com/atc0005/send2teams/internal/config"
 	"github.com/atc0005/send2teams/teams"
 )
 
