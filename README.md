@@ -54,6 +54,10 @@ This project provides several resources:
 - very few build dependencies
 - optional conversion of messages with Windows, Mac or Linux newlines to
   `<br>` to increase compatibility with Teams formatting
+- exported `teams` package to handle formatting text content as code for
+  proper display within Microsoft Teams
+- message delivery retry support with retry and retry delay values
+  configurable via flag
 
 Worth noting: This project uses Go modules (vs classic `GOPATH` setup)
 
@@ -135,19 +139,21 @@ both FQDNs:
 Currently `send2teams` only supports command-line configuration flags.
 Requests for other configuration sources will be considered.
 
-| Flag           | Required | Default   | Possible                                                  | Description                                                                                                         |
-| -------------- | -------- | --------- | --------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
-| `h`, `help`    | No       | N/A       | N/A                                                       | Display Help; show available flags.                                                                                 |
-| `v`, `version` | No       | `false`   | `true`, `false`                                           | Whether to display application version and then immediately exit application.                                       |
-| `channel`      | Yes      |           | *valid Microsoft Teams channel name*                      | The target channel where we will send a message.                                                                    |
-| `color`        | No       | `#832561` | *valid hex color code with leading `#`*                   | The hex color code used to set the desired trim color on submitted messages.                                        |
-| `message`      | Yes      |           | *valid message string*                                    | The (optionally) Markdown-formatted message to submit.                                                              |
-| `team`         | Yes      |           | *valid Microsoft Teams team name*                         | The name of the Team containing our target channel.                                                                 |
-| `title`        | Yes      |           | *valid title string*                                      | The title for the message to submit.                                                                                |
-| `url`          | Yes      |           | [*valid Microsoft Office 365 Webhook URL*](#webhook-urls) | The Webhook URL provided by a pre-configured Connector.                                                             |
-| `verbose`      | No       | `false`   | `true`, `false`                                           | Whether detailed output should be shown after message submission success or failure                                 |
-| `silent`       | No       | `false`   | `true`, `false`                                           | Whether ANY output should be shown after message submission success or failure                                      |
-| `convert-eol`  | No       | `false`   | `true`, `false`                                           | Whether messages with Windows, Mac and Linux newlines are updated to use break statements before message submission |
+| Flag            | Required | Default   | Possible                                                  | Description                                                                                                         |
+| --------------- | -------- | --------- | --------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| `h`, `help`     | No       | N/A       | N/A                                                       | Display Help; show available flags.                                                                                 |
+| `v`, `version`  | No       | `false`   | `true`, `false`                                           | Whether to display application version and then immediately exit application.                                       |
+| `channel`       | Yes      |           | *valid Microsoft Teams channel name*                      | The target channel where we will send a message.                                                                    |
+| `color`         | No       | `#832561` | *valid hex color code with leading `#`*                   | The hex color code used to set the desired trim color on submitted messages.                                        |
+| `message`       | Yes      |           | *valid message string*                                    | The (optionally) Markdown-formatted message to submit.                                                              |
+| `team`          | Yes      |           | *valid Microsoft Teams team name*                         | The name of the Team containing our target channel.                                                                 |
+| `title`         | Yes      |           | *valid title string*                                      | The title for the message to submit.                                                                                |
+| `url`           | Yes      |           | [*valid Microsoft Office 365 Webhook URL*](#webhook-urls) | The Webhook URL provided by a pre-configured Connector.                                                             |
+| `verbose`       | No       | `false`   | `true`, `false`                                           | Whether detailed output should be shown after message submission success or failure                                 |
+| `silent`        | No       | `false`   | `true`, `false`                                           | Whether ANY output should be shown after message submission success or failure                                      |
+| `convert-eol`   | No       | `false`   | `true`, `false`                                           | Whether messages with Windows, Mac and Linux newlines are updated to use break statements before message submission |
+| `retries`       | No       | `2`       | *positive whole number*                                   | The number of attempts that this application will make to deliver messages before giving up.                        |
+| `retries-delay` | No       | `2`       | *positive whole number*                                   | The number of seconds that this application will wait before making another delivery attempt.                       |
 
 ## Examples
 

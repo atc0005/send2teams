@@ -18,6 +18,7 @@ import (
 	"os"
 	"regexp"
 	"strings"
+	"time"
 
 	//goteamsnotify "gopkg.in/dasrick/go-teams-notify.v1"
 	goteamsnotify "github.com/atc0005/go-teams-notify"
@@ -272,13 +273,34 @@ func ConvertEOLToBreak(s string) string {
 // SendMessage is a wrapper function for setting up and using the
 // goteamsnotify client to send a message card to Microsoft Teams via a
 // webhook URL.
-func SendMessage(webhookURL string, message goteamsnotify.MessageCard) error {
+func SendMessage(webhookURL string, message goteamsnotify.MessageCard, retries int, retriesDelay int) error {
 
 	// init the client
 	mstClient := goteamsnotify.NewClient()
 
-	// attempt to send message, return the pass/fail result to caller
-	return mstClient.Send(webhookURL, message)
+	var result error
+
+	// initial attempt + number of specified retries
+	attemptsAllowed := 1 + retries
+
+	// attempt to send message to Microsoft Teams, retry specified number of
+	// times before giving up
+	for attempt := 1; attempt <= attemptsAllowed; attempt++ {
+
+		// the result from the last attempt is returned to the caller
+		result = mstClient.Send(webhookURL, message)
+		if result != nil {
+			logger.Printf("SendMessage: Attempt %d of %d to send messaged failed: %v",
+				attempt, attemptsAllowed, result)
+			time.Sleep(time.Duration(retriesDelay) * time.Second)
+			continue
+		}
+
+		logger.Println("SendMessage: successfully sent message")
+		break
+	}
+
+	return result
 }
 
 // validateWebhookLength ensures that at least the prefix + SOMETHING is
