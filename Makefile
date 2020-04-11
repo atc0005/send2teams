@@ -85,20 +85,8 @@ linting:
 	@echo "Running golint ..."
 	@golint -set_exit_status ./...
 
-	@echo "Running golangci-lint ..."
-	@golangci-lint run \
-		-E goimports \
-		-E gosec \
-		-E stylecheck \
-		-E goconst \
-		-E depguard \
-		-E prealloc \
-		-E misspell \
-		-E maligned \
-		-E dupl \
-		-E unconvert \
-		-E golint \
-		-E gocritic
+	@echo "Running golangci-lint using settings from .golangci.yml ..."
+	@golangci-lint run
 
 	@echo "Running staticcheck ..."
 	@staticcheck ./...
