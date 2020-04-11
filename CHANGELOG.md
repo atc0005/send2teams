@@ -26,6 +26,26 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
+## [v0.3.0] - 2020-04-10
+
+### Added
+
+- Add configurable message submission retry and retry delay flag with default
+  setting of two retries, two seconds apart
+- `golangci-lint` config file created with current linters + `scopelint`
+  linter enabled
+
+### Changed
+
+- `config` subpackage moved into `internal` subdirectory to make it private to
+  this project
+- `send2teams` app moved into `cmd` subdirectory structure
+
+### Fixed
+
+- Restore version embedding broken in v0.2.5
+- Bump copyright year
+
 ## [v0.2.5] - 2020-04-09
 
 ### Added
@@ -155,7 +175,8 @@ This initial prototype supports/provides:
 - GitHub Actions linting and build checks
 - Makefile for general use cases
 
-[Unreleased]: https://github.com/atc0005/send2teams/compare/v0.2.5...HEAD
+[Unreleased]: https://github.com/atc0005/send2teams/compare/v0.3.0...HEAD
+[v0.3.0]: https://github.com/atc0005/send2teams/releases/tag/v0.3.0
 [v0.2.5]: https://github.com/atc0005/send2teams/releases/tag/v0.2.5
 [v0.2.4]: https://github.com/atc0005/send2teams/releases/tag/v0.2.4
 [v0.2.3]: https://github.com/atc0005/send2teams/releases/tag/v0.2.3
