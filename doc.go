@@ -32,7 +32,7 @@ FEATURES
 
 • exported `teams` package to handle formatting text content as code for proper display within Microsoft Teams
 
-•  message delivery retry support with retry and retry delay values configurable via flag
+• message delivery retry support with retry and retry delay values configurable via flag
 
 
 USAGE
