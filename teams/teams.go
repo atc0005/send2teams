@@ -14,7 +14,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
-	"net/url"
 	"os"
 	"regexp"
 	"strings"
@@ -319,41 +318,6 @@ func validateWebhookLength(webhookURL string) error {
 	return nil
 }
 
-// validateWebhookURLPrefix ensure that known/expected prefixes are used with
-// provided webhook URL
-func validateWebhookURLPrefix(webhookURL string) error {
-
-	// TODO: Inquire about merging this upstream
-	// Reasons:
-	//
-	// Move urls to constants for easier, less error-prone references
-	// User-friendly error messages
-	//
-	switch {
-	case strings.HasPrefix(webhookURL, webhookURLOfficecomPrefix):
-	case strings.HasPrefix(webhookURL, webhookURLOffice365Prefix):
-	default:
-		u, err := url.Parse(webhookURL)
-		if err != nil {
-			return fmt.Errorf(
-				"unable to parse webhook URL %q: %v",
-				webhookURL,
-				err,
-			)
-		}
-		userProvidedWebhookURLPrefix := u.Scheme + "://" + u.Host
-
-		return fmt.Errorf(
-			"webhook URL does not contain expected prefix; got %q, expected one of %q or %q",
-			userProvidedWebhookURLPrefix,
-			webhookURLOfficecomPrefix,
-			webhookURLOffice365Prefix,
-		)
-	}
-
-	return nil
-}
-
 // validateWebhookURLRegex applies a regular expression pattern check against
 // the provided webhook URL to ensure that the URL matches the expected
 // pattern.
@@ -386,10 +350,6 @@ func validateWebhookURLRegex(webhookURL string) error {
 func ValidateWebhook(webhookURL string) error {
 
 	if err := validateWebhookLength(webhookURL); err != nil {
-		return err
-	}
-
-	if err := validateWebhookURLPrefix(webhookURL); err != nil {
 		return err
 	}
 
