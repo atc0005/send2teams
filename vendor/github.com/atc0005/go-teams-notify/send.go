@@ -2,6 +2,7 @@ package goteamsnotify
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -23,9 +24,14 @@ const (
 	WebhookURLOffice365Prefix = "https://outlook.office365.com"
 )
 
+// WebhookSendTimeout specifies how long the message operation may take before
+// it times out and is cancelled.
+const WebhookSendTimeout = 5 * time.Second
+
 // API - interface of MS Teams notify
 type API interface {
 	Send(webhookURL string, webhookMessage MessageCard) error
+	SendWithContext(ctx context.Context, webhookURL string, webhookMessage MessageCard) error
 }
 
 type teamsClient struct {
@@ -59,16 +65,36 @@ func DisableLogging() {
 func NewClient() API {
 	client := teamsClient{
 		httpClient: &http.Client{
-			Timeout: 5 * time.Second,
+			// FIXME: See context changes below (this note wouldn't appear in
+			// the real PR)
+			// Timeout: WebhookSendTimeout,
 		},
 	}
 	return &client
 }
 
-// Send - will post a notification to MS Teams webhook URL
+// Send is a wrapper function around the SendWithContext method in order to
+// provide backwards compatibility.
 func (c teamsClient) Send(webhookURL string, webhookMessage MessageCard) error {
 
+	// Create context that can be used to emulate existing timeout behavior.
+	ctx, cancel := context.WithTimeout(context.Background(), WebhookSendTimeout)
+	defer cancel()
+
+	err := c.SendWithContext(ctx, webhookURL, webhookMessage)
+	return err
+}
+
+// SendWithContext posts a notification to the provided MS Teams webhook URL.
+// The http client request honors the cancellation or timeout of the provided
+// context.
+func (c teamsClient) SendWithContext(ctx context.Context, webhookURL string, webhookMessage MessageCard) error {
+
 	logger.Printf("Send: Webhook message received: %#v\n", webhookMessage)
+
+	if ctx.Err() != nil {
+		logger.Println("Context has expired before validation:", time.Now().Format("15:04:05"))
+	}
 
 	// Validate input data
 	if valid, err := IsValidInput(webhookMessage, webhookURL); !valid {
@@ -82,18 +108,35 @@ func (c teamsClient) Send(webhookURL string, webhookMessage MessageCard) error {
 	// Basic, unformatted JSON
 	//logger.Printf("Send: %+v\n", string(webhookMessageByte))
 
+	if ctx.Err() != nil {
+		logger.Println("Context has expired before json.Ident:", time.Now().Format("15:04:05"))
+	}
+
 	var prettyJSON bytes.Buffer
 	if err := json.Indent(&prettyJSON, webhookMessageByte, "", "\t"); err != nil {
 		return err
 	}
 	logger.Printf("Send: Payload for Microsoft Teams: \n\n%v\n\n", prettyJSON.String())
 
+	if ctx.Err() != nil {
+		logger.Println("Context has expired before NewRequestWithContext:", time.Now().Format("15:04:05"))
+	}
+
 	// prepare request (error not possible)
-	req, _ := http.NewRequest(http.MethodPost, webhookURL, webhookMessageBuffer)
+	req, _ := http.NewRequestWithContext(ctx, http.MethodPost, webhookURL, webhookMessageBuffer)
 	req.Header.Add("Content-Type", "application/json;charset=utf-8")
+
+	if ctx.Err() != nil {
+		logger.Println("Context has expired before Do(req):", time.Now().Format("15:04:05"))
+	}
 
 	// do the request
 	res, err := c.httpClient.Do(req)
+
+	if ctx.Err() != nil {
+		logger.Println("Context has expired after Do(req):", time.Now().Format("15:04:05"))
+	}
+
 	if err != nil {
 		logger.Println(err)
 		return err

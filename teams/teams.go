@@ -9,6 +9,7 @@ package teams
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -272,7 +273,9 @@ func ConvertEOLToBreak(s string) string {
 // SendMessage is a wrapper function for setting up and using the
 // goteamsnotify client to send a message card to Microsoft Teams via a
 // webhook URL.
-func SendMessage(webhookURL string, message goteamsnotify.MessageCard, retries int, retriesDelay int) error {
+func SendMessage(ctx context.Context, webhookURL string, message goteamsnotify.MessageCard, retries int, retriesDelay int) error {
+
+	// NOTE: The caller is responsible for setting the desired context timeout
 
 	// init the client
 	mstClient := goteamsnotify.NewClient()
@@ -286,16 +289,57 @@ func SendMessage(webhookURL string, message goteamsnotify.MessageCard, retries i
 	// times before giving up
 	for attempt := 1; attempt <= attemptsAllowed; attempt++ {
 
+		// While the context is passed to mstClient.SendWithContext and it
+		// should ensure that it is respected, we check here at the start of
+		// the loop iteration (either first or subsequent) in order to return
+		// early in an effort to prevent undesired message attempts
+		if ctx.Err() != nil {
+			msg := fmt.Sprintf(
+				"SendMessage: context cancelled or expired: %v; aborting message submission after %d of %d attempts",
+				ctx.Err().Error(),
+				attempt,
+				attemptsAllowed,
+			)
+
+			// if this is set, we're looking at the second (incomplete)
+			// iteration
+			if result != nil {
+				msg += ": " + result.Error()
+			}
+
+			logger.Println(msg)
+			return fmt.Errorf(msg)
+		}
+
 		// the result from the last attempt is returned to the caller
-		result = mstClient.Send(webhookURL, message)
+		result = mstClient.SendWithContext(ctx, webhookURL, message)
 		if result != nil {
-			logger.Printf("SendMessage: Attempt %d of %d to send messaged failed: %v",
+
+			// check context again?
+			if ctx.Err() != nil {
+				errMsg := fmt.Errorf(
+					"SendMessage: Attempt %d of %d to send message failed: %v",
+					attempt,
+					attemptsAllowed,
+					result,
+				)
+				logger.Println(errMsg.Error())
+
+				return errMsg
+			}
+
+			// logger.Printf("Type of err: %T\n", result)
+			logger.Printf("SendMessage: Attempt %d of %d to send message failed: %v\n",
 				attempt, attemptsAllowed, result)
 			time.Sleep(time.Duration(retriesDelay) * time.Second)
 			continue
 		}
 
-		logger.Println("SendMessage: successfully sent message")
+		logger.Printf(
+			"SendMessage: successfully sent message after %d of %d attempts\n",
+			attempt,
+			attemptsAllowed,
+		)
 		break
 	}
 
