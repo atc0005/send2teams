@@ -26,6 +26,14 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
+## [v0.3.1] - 2020-04-18
+
+### Fixed
+
+- Remove internal validation func merged upstream
+- Update bundled `atc0005/go-teams-notify` fork to reflect inclusion of commit
+  943cdeb90f3e53d1ead03bcc1f86cb5de9b4f264
+
 ## [v0.3.0] - 2020-04-10
 
 ### Added
@@ -175,7 +183,8 @@ This initial prototype supports/provides:
 - GitHub Actions linting and build checks
 - Makefile for general use cases
 
-[Unreleased]: https://github.com/atc0005/send2teams/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/atc0005/send2teams/compare/v0.3.1...HEAD
+[v0.3.1]: https://github.com/atc0005/send2teams/releases/tag/v0.3.1
 [v0.3.0]: https://github.com/atc0005/send2teams/releases/tag/v0.3.0
 [v0.2.5]: https://github.com/atc0005/send2teams/releases/tag/v0.2.5
 [v0.2.4]: https://github.com/atc0005/send2teams/releases/tag/v0.2.4
