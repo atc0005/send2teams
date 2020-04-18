@@ -3,7 +3,6 @@ package goteamsnotify
 import (
 	"bytes"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -17,6 +16,12 @@ import (
 // logger is a package logger that can be enabled from client code to allow
 // logging output from this package when desired/needed for troubleshooting
 var logger *log.Logger
+
+// Known webhook URL prefixes for submitting messages to Microsoft Teams
+const (
+	WebhookURLOfficecomPrefix = "https://outlook.office.com"
+	WebhookURLOffice365Prefix = "https://outlook.office365.com"
+)
 
 // API - interface of MS Teams notify
 type API interface {
@@ -146,19 +151,29 @@ func IsValidInput(webhookMessage MessageCard, webhookURL string) (bool, error) {
 // IsValidWebhookURL performs validation checks on the webhook URL used to
 // submit messages to Microsoft Teams.
 func IsValidWebhookURL(webhookURL string) (bool, error) {
-	// basic URL check
-	_, err := url.Parse(webhookURL)
-	if err != nil {
-		return false, err
-	}
-	// only pass MS teams webhook URLs
+
 	switch {
-	case strings.HasPrefix(webhookURL, "https://outlook.office.com/webhook/"):
-	case strings.HasPrefix(webhookURL, "https://outlook.office365.com/webhook/"):
+	case strings.HasPrefix(webhookURL, WebhookURLOfficecomPrefix):
+	case strings.HasPrefix(webhookURL, WebhookURLOffice365Prefix):
 	default:
-		err = errors.New("invalid ms teams webhook url")
-		return false, err
+		u, err := url.Parse(webhookURL)
+		if err != nil {
+			return false, fmt.Errorf(
+				"unable to parse webhook URL %q: %v",
+				webhookURL,
+				err,
+			)
+		}
+		userProvidedWebhookURLPrefix := u.Scheme + "://" + u.Host
+
+		return false, fmt.Errorf(
+			"webhook URL does not contain expected prefix; got %q, expected one of %q or %q",
+			userProvidedWebhookURLPrefix,
+			WebhookURLOfficecomPrefix,
+			WebhookURLOffice365Prefix,
+		)
 	}
+
 	return true, nil
 }
 
