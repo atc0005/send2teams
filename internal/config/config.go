@@ -14,6 +14,10 @@ import (
 	"path/filepath"
 
 	"github.com/atc0005/send2teams/teams"
+
+	// temporarily use our fork while developing changes for potential
+	// inclusion in the upstream project
+	goteamsnotify "github.com/atc0005/go-teams-notify"
 )
 
 const (
@@ -53,6 +57,11 @@ var version string = "dev build"
 // Primarily used with branding
 const myAppName string = "send2teams"
 const myAppURL string = "https://github.com/atc0005/" + myAppName
+
+// TeamsSubmissionTimeout mirrors the upstream timeout value for sending
+// messages to Microsoft Teams. This value is used to build a context with
+// the desired timeout value.
+const TeamsSubmissionTimeout = goteamsnotify.WebhookSendTimeout
 
 // Config is a unified set of configuration values for this application. This
 // struct is configured via command-line flags provided by the user.

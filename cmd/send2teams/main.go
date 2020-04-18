@@ -20,6 +20,7 @@ import (
 	goteamsnotify "github.com/atc0005/go-teams-notify"
 	"github.com/atc0005/send2teams/internal/config"
 	"github.com/atc0005/send2teams/teams"
+	"golang.org/x/net/context"
 )
 
 func main() {
@@ -79,9 +80,12 @@ func main() {
 		os.Exit(1)
 	}
 
+	ctxSubmissionTimeout, cancel := context.WithTimeout(context.Background(), config.TeamsSubmissionTimeout)
+	defer cancel()
+
 	// Submit message card, retry submission if needed up to specified number
-	// of retry attempts.
-	if err := teams.SendMessage(cfg.WebhookURL, msgCard, cfg.Retries, cfg.RetriesDelay); err != nil {
+	// of retry attempts or until context expires.
+	if err := teams.SendMessage(ctxSubmissionTimeout, cfg.WebhookURL, msgCard, cfg.Retries, cfg.RetriesDelay); err != nil {
 
 		// Display error output if silence is not requested
 		if !cfg.SilentOutput {

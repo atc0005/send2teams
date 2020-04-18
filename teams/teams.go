@@ -9,6 +9,7 @@ package teams
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -272,7 +273,7 @@ func ConvertEOLToBreak(s string) string {
 // SendMessage is a wrapper function for setting up and using the
 // goteamsnotify client to send a message card to Microsoft Teams via a
 // webhook URL.
-func SendMessage(webhookURL string, message goteamsnotify.MessageCard, retries int, retriesDelay int) error {
+func SendMessage(ctx context.Context, webhookURL string, message goteamsnotify.MessageCard, retries int, retriesDelay int) error {
 
 	// init the client
 	mstClient := goteamsnotify.NewClient()
@@ -286,8 +287,12 @@ func SendMessage(webhookURL string, message goteamsnotify.MessageCard, retries i
 	// times before giving up
 	for attempt := 1; attempt <= attemptsAllowed; attempt++ {
 
+		if ctx.Err() != nil {
+			log.Println("SendMessage: context cancelled or expired, aborting message submission attempt")
+		}
+
 		// the result from the last attempt is returned to the caller
-		result = mstClient.Send(webhookURL, message)
+		result = mstClient.SendWithContext(ctx, webhookURL, message)
 		if result != nil {
 			logger.Printf("SendMessage: Attempt %d of %d to send messaged failed: %v",
 				attempt, attemptsAllowed, result)
