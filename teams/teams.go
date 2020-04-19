@@ -275,6 +275,8 @@ func ConvertEOLToBreak(s string) string {
 // webhook URL.
 func SendMessage(ctx context.Context, webhookURL string, message goteamsnotify.MessageCard, retries int, retriesDelay int) error {
 
+	// NOTE: The caller is responsible for setting the desired context timeout
+
 	// init the client
 	mstClient := goteamsnotify.NewClient()
 
@@ -287,8 +289,19 @@ func SendMessage(ctx context.Context, webhookURL string, message goteamsnotify.M
 	// times before giving up
 	for attempt := 1; attempt <= attemptsAllowed; attempt++ {
 
+		// While the context is passed to mstClient.SendWithContext and it
+		// should ensure that it is respected, we check here at the start of
+		// the loop iteration (either first or subsequent) in order to return
+		// early in an effort to prevent undesired message attempts
 		if ctx.Err() != nil {
-			log.Println("SendMessage: context cancelled or expired, aborting message submission attempt")
+			msg := fmt.Sprintf(
+				"SendMessage: context cancelled or expired: %v; aborting message submission after %d of %d attempts",
+				ctx.Err().Error(),
+				attempt,
+				attemptsAllowed,
+			)
+			logger.Println(msg)
+			return fmt.Errorf("msg")
 		}
 
 		// the result from the last attempt is returned to the caller
@@ -300,7 +313,11 @@ func SendMessage(ctx context.Context, webhookURL string, message goteamsnotify.M
 			continue
 		}
 
-		logger.Println("SendMessage: successfully sent message")
+		logger.Printf(
+			"SendMessage: successfully sent message after %d of %d attempts",
+			attempt,
+			attemptsAllowed,
+		)
 		break
 	}
 
