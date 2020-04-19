@@ -301,7 +301,7 @@ func SendMessage(ctx context.Context, webhookURL string, message goteamsnotify.M
 				attemptsAllowed,
 			)
 			logger.Println(msg)
-			return fmt.Errorf("msg")
+			return fmt.Errorf(msg)
 		}
 
 		// the result from the last attempt is returned to the caller
