@@ -26,6 +26,26 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
+## [v0.4.0] - 2020-04-19
+
+### Added
+
+- Pin `atc0005/go-teams-notify` at commit
+  atc0005/go-teams-notify@55cca556e7267ec69dc41180591bf666b12321f5
+  - provides new `API.SendWithContext()` method
+
+- `teams` subpackage `SendMessage()` now accepts a context and uses it to
+  instrument the new `API.SendWithContext()` method
+
+- Add default `TeamsSubmissionTimeout` to mirror original
+  `dasrick/go-teams-notify` v1 http client timeout
+
+### Changed
+
+- `teams.SendMessage()`
+  - now requires a context
+  - Tweak log messages to note the current and total number of attempts allowed
+
 ## [v0.3.1] - 2020-04-18
 
 ### Fixed
@@ -183,7 +203,8 @@ This initial prototype supports/provides:
 - GitHub Actions linting and build checks
 - Makefile for general use cases
 
-[Unreleased]: https://github.com/atc0005/send2teams/compare/v0.3.1...HEAD
+[Unreleased]: https://github.com/atc0005/send2teams/compare/v0.4.0...HEAD
+[v0.4.0]: https://github.com/atc0005/send2teams/releases/tag/v0.4.0
 [v0.3.1]: https://github.com/atc0005/send2teams/releases/tag/v0.3.1
 [v0.3.0]: https://github.com/atc0005/send2teams/releases/tag/v0.3.0
 [v0.2.5]: https://github.com/atc0005/send2teams/releases/tag/v0.2.5
