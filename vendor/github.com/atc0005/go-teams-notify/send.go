@@ -92,6 +92,10 @@ func (c teamsClient) SendWithContext(ctx context.Context, webhookURL string, web
 
 	logger.Printf("Send: Webhook message received: %#v\n", webhookMessage)
 
+	if ctx.Err() != nil {
+		logger.Println("Context has expired before validation:", time.Now().Format("15:04:05"))
+	}
+
 	// Validate input data
 	if valid, err := IsValidInput(webhookMessage, webhookURL); !valid {
 		return err
@@ -104,18 +108,35 @@ func (c teamsClient) SendWithContext(ctx context.Context, webhookURL string, web
 	// Basic, unformatted JSON
 	//logger.Printf("Send: %+v\n", string(webhookMessageByte))
 
+	if ctx.Err() != nil {
+		logger.Println("Context has expired before json.Ident:", time.Now().Format("15:04:05"))
+	}
+
 	var prettyJSON bytes.Buffer
 	if err := json.Indent(&prettyJSON, webhookMessageByte, "", "\t"); err != nil {
 		return err
 	}
 	logger.Printf("Send: Payload for Microsoft Teams: \n\n%v\n\n", prettyJSON.String())
 
+	if ctx.Err() != nil {
+		logger.Println("Context has expired before NewRequestWithContext:", time.Now().Format("15:04:05"))
+	}
+
 	// prepare request (error not possible)
 	req, _ := http.NewRequestWithContext(ctx, http.MethodPost, webhookURL, webhookMessageBuffer)
 	req.Header.Add("Content-Type", "application/json;charset=utf-8")
 
+	if ctx.Err() != nil {
+		logger.Println("Context has expired before Do(req):", time.Now().Format("15:04:05"))
+	}
+
 	// do the request
 	res, err := c.httpClient.Do(req)
+
+	if ctx.Err() != nil {
+		logger.Println("Context has expired after Do(req):", time.Now().Format("15:04:05"))
+	}
+
 	if err != nil {
 		logger.Println(err)
 		return err

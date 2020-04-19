@@ -1,4 +1,2 @@
-# github.com/atc0005/go-teams-notify v1.3.1-0.20200418135531-d35cfbe04599
+# github.com/atc0005/go-teams-notify v1.3.1-0.20200419155834-55cca556e726
 github.com/atc0005/go-teams-notify
-# golang.org/x/net v0.0.0-20200324143707-d3edc9973b7e
-golang.org/x/net/context

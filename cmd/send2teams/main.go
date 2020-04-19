@@ -8,6 +8,7 @@
 package main
 
 import (
+	"context"
 	"errors"
 	"flag"
 	"log"
@@ -20,7 +21,6 @@ import (
 	goteamsnotify "github.com/atc0005/go-teams-notify"
 	"github.com/atc0005/send2teams/internal/config"
 	"github.com/atc0005/send2teams/teams"
-	"golang.org/x/net/context"
 )
 
 func main() {
