@@ -289,9 +289,6 @@ func SendMessage(ctx context.Context, webhookURL string, message goteamsnotify.M
 	// times before giving up
 	for attempt := 1; attempt <= attemptsAllowed; attempt++ {
 
-		// FIXME: Handle a second loop where result is already set
-		// TODO: Decrement the attempt counter?
-
 		// While the context is passed to mstClient.SendWithContext and it
 		// should ensure that it is respected, we check here at the start of
 		// the loop iteration (either first or subsequent) in order to return
@@ -303,6 +300,13 @@ func SendMessage(ctx context.Context, webhookURL string, message goteamsnotify.M
 				attempt,
 				attemptsAllowed,
 			)
+
+			// if this is set, we're looking at the second (incomplete)
+			// iteration
+			if result != nil {
+				msg += ": " + result.Error()
+			}
+
 			logger.Println(msg)
 			return fmt.Errorf(msg)
 		}
