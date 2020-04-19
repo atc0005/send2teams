@@ -307,7 +307,7 @@ func SendMessage(ctx context.Context, webhookURL string, message goteamsnotify.M
 		// the result from the last attempt is returned to the caller
 		result = mstClient.SendWithContext(ctx, webhookURL, message)
 		if result != nil {
-			logger.Printf("SendMessage: Attempt %d of %d to send messaged failed: %v",
+			logger.Printf("SendMessage: Attempt %d of %d to send message failed: %v",
 				attempt, attemptsAllowed, result)
 			time.Sleep(time.Duration(retriesDelay) * time.Second)
 			continue
