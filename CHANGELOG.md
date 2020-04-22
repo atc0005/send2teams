@@ -26,6 +26,13 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
+## [v0.4.1] - 2020-04-22
+
+### Changed
+
+- message trailer now includes RFC3339 formatted datestamp for troubleshooting
+  purposes
+
 ## [v0.4.0] - 2020-04-19
 
 ### Added
@@ -203,7 +210,8 @@ This initial prototype supports/provides:
 - GitHub Actions linting and build checks
 - Makefile for general use cases
 
-[Unreleased]: https://github.com/atc0005/send2teams/compare/v0.4.0...HEAD
+[Unreleased]: https://github.com/atc0005/send2teams/compare/v0.4.1...HEAD
+[v0.4.1]: https://github.com/atc0005/send2teams/releases/tag/v0.4.1
 [v0.4.0]: https://github.com/atc0005/send2teams/releases/tag/v0.4.0
 [v0.3.1]: https://github.com/atc0005/send2teams/releases/tag/v0.3.1
 [v0.3.0]: https://github.com/atc0005/send2teams/releases/tag/v0.3.0
