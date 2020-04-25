@@ -32,6 +32,10 @@ OUTPUTDIR 				= release_assets
 # https://gist.github.com/TheHippo/7e4d9ec4b7ed4c0d7a39839e6800cc16
 VERSION 				= $(shell git describe --always --long --dirty)
 
+# https://github.com/golangci/golangci-lint#install
+# https://github.com/golangci/golangci-lint/releases/latest
+GOLANGCI_LINT_VERSION		= v1.25.0
+
 # The default `go build` process embeds debugging information. Building
 # without that debugging information reduces the binary size by around 28%.
 BUILDCMD				=	go build -mod=vendor -a -ldflags="-s -w -X $(VERSION_VAR_PKG).version=$(VERSION)"
@@ -63,8 +67,12 @@ lintinstall:
 
 	@echo "Explicitly enabling Go modules mode per command"
 	(cd; GO111MODULE="on" go get golang.org/x/lint/golint)
-	(cd; GO111MODULE="on" go get github.com/golangci/golangci-lint/cmd/golangci-lint)
 	(cd; GO111MODULE="on" go get honnef.co/go/tools/cmd/staticcheck)
+
+	@echo Installing golangci-lint ${GOLANGCI_LINT_VERSION} per official binary installation docs ...
+	curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(shell go env GOPATH)/bin ${GOLANGCI_LINT_VERSION}
+	golangci-lint --version
+
 	@echo "Finished updating linting tools"
 
 .PHONY: linting
