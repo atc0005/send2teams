@@ -80,16 +80,16 @@ linting:
 		&& exit 1 )
 
 	@echo "Running go vet ..."
-	@go vet ./...
+	@go vet -mod=vendor $(shell go list ./... | grep -v /vendor/)
 
 	@echo "Running golint ..."
-	@golint -set_exit_status ./...
+	@golint -set_exit_status $(shell go list ./... | grep -v /vendor/)
 
-	@echo "Running golangci-lint using settings from .golangci.yml ..."
+	@echo "Running golangci-lint ..."
 	@golangci-lint run
 
 	@echo "Running staticcheck ..."
-	@staticcheck ./...
+	@staticcheck $(shell go list ./... | grep -v /vendor/)
 
 	@echo "Finished running linting checks"
 
