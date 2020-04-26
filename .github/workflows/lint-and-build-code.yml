@@ -58,9 +58,9 @@ jobs:
 
       # Force tests to run early as it isn't worth doing much else if the
       # tests fail to run properly.
-      # Note: Exclude `vendor` top-level folder.
+      # Note: The `vendor` top-level folder appears to be skipped by default.
       - name: Run all tests
-        run: go test -mod=vendor -v $(shell go list ./... | grep -v /vendor/)
+        run: go test -mod=vendor -v ./...
 
       - name: Install Go linting tools
         run: |

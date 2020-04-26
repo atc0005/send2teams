@@ -88,16 +88,16 @@ linting:
 		&& exit 1 )
 
 	@echo "Running go vet ..."
-	@go vet -mod=vendor $(shell go list ./... | grep -v /vendor/)
+	@go vet -mod=vendor $(shell go list -mod=vendor ./... | grep -v /vendor/)
 
 	@echo "Running golint ..."
-	@golint -set_exit_status $(shell go list ./... | grep -v /vendor/)
+	@golint -set_exit_status $(shell go list -mod=vendor ./... | grep -v /vendor/)
 
 	@echo "Running golangci-lint ..."
 	@golangci-lint run
 
 	@echo "Running staticcheck ..."
-	@staticcheck $(shell go list ./... | grep -v /vendor/)
+	@staticcheck $(shell go list -mod=vendor ./... | grep -v /vendor/)
 
 	@echo "Finished running linting checks"
 
@@ -105,7 +105,7 @@ linting:
 ## gotests: runs go test recursively, verbosely
 gotests:
 	@echo "Running go tests ..."
-	@go test ./...
+	@go test -mod=vendor ./...
 	@echo "Finished running go tests"
 
 .PHONY: goclean
