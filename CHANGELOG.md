@@ -26,15 +26,21 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
+## [v0.4.4] - 2020-04-28
+
+### Fixed
+
+- CHANGELOG formatting
+
 ## [v0.4.3] - 2020-04-28
 
-## Fixes
+### Fixed
 
 - Remove bash shebang from GitHub Actions Workflow files
 - Update README to list accurate build/deploy steps based
   on recent restructuring work
 
-## Changes
+### Changes
 
 - Update golangci-lint to v1.25.1
 - Remove gofmt and golint as separate checks, enable
@@ -236,7 +242,8 @@ This initial prototype supports/provides:
 - GitHub Actions linting and build checks
 - Makefile for general use cases
 
-[Unreleased]: https://github.com/atc0005/send2teams/compare/v0.4.3...HEAD
+[Unreleased]: https://github.com/atc0005/send2teams/compare/v0.4.4...HEAD
+[v0.4.4]: https://github.com/atc0005/send2teams/releases/tag/v0.4.4
 [v0.4.3]: https://github.com/atc0005/send2teams/releases/tag/v0.4.3
 [v0.4.2]: https://github.com/atc0005/send2teams/releases/tag/v0.4.2
 [v0.4.1]: https://github.com/atc0005/send2teams/releases/tag/v0.4.1
