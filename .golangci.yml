@@ -18,6 +18,7 @@ linters:
     - maligned
     - dupl
     - unconvert
+    - gofmt
     - golint
     - gocritic
     - scopelint
