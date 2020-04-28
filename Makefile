@@ -34,7 +34,7 @@ VERSION 				= $(shell git describe --always --long --dirty)
 
 # https://github.com/golangci/golangci-lint#install
 # https://github.com/golangci/golangci-lint/releases/latest
-GOLANGCI_LINT_VERSION		= v1.25.0
+GOLANGCI_LINT_VERSION		= v1.25.1
 
 # The default `go build` process embeds debugging information. Building
 # without that debugging information reduces the binary size by around 28%.
@@ -66,7 +66,6 @@ lintinstall:
 	@export PATH="${PATH}:$(go env GOPATH)/bin"
 
 	@echo "Explicitly enabling Go modules mode per command"
-	(cd; GO111MODULE="on" go get golang.org/x/lint/golint)
 	(cd; GO111MODULE="on" go get honnef.co/go/tools/cmd/staticcheck)
 
 	@echo Installing golangci-lint ${GOLANGCI_LINT_VERSION} per official binary installation docs ...
@@ -77,21 +76,11 @@ lintinstall:
 
 .PHONY: linting
 ## linting: runs common linting checks
-# https://stackoverflow.com/a/42510278/903870
 linting:
 	@echo "Running linting tools ..."
 
-	@echo "Running gofmt ..."
-
-	@test -z $(shell gofmt -l -e .) || (echo "WARNING: gofmt linting errors found" \
-		&& gofmt -l -e -d . \
-		&& exit 1 )
-
 	@echo "Running go vet ..."
 	@go vet -mod=vendor $(shell go list -mod=vendor ./... | grep -v /vendor/)
-
-	@echo "Running golint ..."
-	@golint -set_exit_status $(shell go list -mod=vendor ./... | grep -v /vendor/)
 
 	@echo "Running golangci-lint ..."
 	@golangci-lint run
