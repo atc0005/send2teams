@@ -111,7 +111,7 @@ Tested using:
      - `make linux`
 1. Copy the applicable binary to whatever systems needs to run it
    - if using `Makefile`: look in `/tmp/release_assets/send2teams/`
-   - if using `go build`: look in `/tmp/check-mail/`
+   - if using `go build`: look in `/tmp/send2teams/`
 
 ## Configuration Options
 
