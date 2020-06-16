@@ -1,0 +1,44 @@
+# Copyright 2020 Adam Chalkley
+#
+# https://github.com/atc0005/send2teams
+#
+# Licensed under the MIT License. See LICENSE file in the project root for
+# full license information.
+
+# https://help.github.com/en/github/administering-a-repository/configuration-options-for-dependency-updates
+
+version: 2
+updates:
+
+  # Enable version updates for Go modules
+  - package-ecosystem: "gomod"
+
+    # Look for a `go.mod` file in the `root` directory
+    directory: "/"
+
+    # Default is a maximum of five pull requests for version updates
+    open-pull-requests-limit: 10
+
+    target-branch: "master"
+
+    # Daily update checks; default version checks are performed at 05:00 UTC
+    schedule:
+      interval: "daily"
+      time: "02:00"
+      timezone: "America/Chicago"
+
+    # Assign everything to me by default
+    assignees:
+      - "atc0005"
+    labels:
+      - "dependencies"
+
+    allow:
+      # Allow both direct and indirect updates for all packages
+      - dependency-type: "all"
+
+    commit-message:
+      # Prefix all commit messages with "go.mod"
+      prefix: "go.mod"
+
+
