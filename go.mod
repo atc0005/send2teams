@@ -20,6 +20,7 @@ require (
 	//github.com/atc0005/go-teams-notify v0.0.0
 	github.com/atc0005/go-teams-notify v1.3.1-0.20200419155834-55cca556e726
 	github.com/davecgh/go-spew v1.1.1 // indirect
+	gopkg.in/yaml.v2 v2.3.0 //indirect
 )
 
 go 1.13
