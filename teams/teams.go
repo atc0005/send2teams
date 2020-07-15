@@ -315,23 +315,28 @@ func SendMessage(ctx context.Context, webhookURL string, message goteamsnotify.M
 		result = mstClient.SendWithContext(ctx, webhookURL, message)
 		if result != nil {
 
-			// check context again?
-			if ctx.Err() != nil {
-				errMsg := fmt.Errorf(
-					"SendMessage: Attempt %d of %d to send message failed: %v",
-					attempt,
-					attemptsAllowed,
-					result,
-				)
-				logger.Println(errMsg.Error())
+			ourRetryDelay := time.Duration(retriesDelay) * time.Second
 
-				return errMsg
+			errMsg := fmt.Errorf(
+				"SendMessage: Attempt %d of %d to send message failed: %v",
+				attempt,
+				attemptsAllowed,
+				result,
+			)
+
+			logger.Println(errMsg.Error())
+
+			// apply retry delay if our context hasn't been cancelled yet,
+			// otherwise continue with the loop to allow context cancellation
+			// handling logic to be applied
+			if ctx.Err() == nil {
+				logger.Printf(
+					"SendMessage: Context not cancelled yet, applying retry delay of %v",
+					ourRetryDelay,
+				)
+				time.Sleep(ourRetryDelay)
 			}
 
-			// logger.Printf("Type of err: %T\n", result)
-			logger.Printf("SendMessage: Attempt %d of %d to send message failed: %v\n",
-				attempt, attemptsAllowed, result)
-			time.Sleep(time.Duration(retriesDelay) * time.Second)
 			continue
 		}
 
