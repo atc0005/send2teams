@@ -34,7 +34,7 @@ jobs:
     steps:
       - name: Set up Go
         # https://github.com/actions/setup-go
-        uses: actions/setup-go@v2.1.1
+        uses: actions/setup-go@v2.1.2
         with:
           go-version: ${{ matrix.go-version }}
         id: go
