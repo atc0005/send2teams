@@ -1,0 +1,39 @@
+# Copyright 2020 Adam Chalkley
+#
+# https://github.com/atc0005/send2teams
+#
+# Licensed under the MIT License. See LICENSE file in the project root for
+# full license information.
+
+name: Quick Validation
+
+# Run builds for Pull Requests (new, updated)
+# `synchronized` seems to equate to pushing new commits to a linked branch
+# (whether force-pushed or not)
+on:
+  push:
+
+jobs:
+  lint_and_test_code:
+    name: Lint and test using latest stable container
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    container:
+      image: index.docker.io/atc0005/go-ci:go-ci-lint-only
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2.3.2
+
+      - name: Remove repo-provided golangci-lint config file
+        run: |
+          # Remove the copy of the config file bundled with the repo/code so
+          # that the configuration provided by the atc0005/go-ci project is
+          # used instead
+          rm -vf .golangci.yml
+
+      - name: Run golangci-lint using container-provided config file settings
+        run: golangci-lint run -v
+
+      - name: Run all tests
+        run: go test -mod=vendor -v ./...

@@ -11,79 +11,75 @@ name: Validate Codebase
 # `synchronized` seems to equate to pushing new commits to a linked branch
 # (whether force-pushed or not)
 on:
+  #push:
   pull_request:
     types: [opened, synchronize]
 
 jobs:
-  lint_and_build_code:
-    name: Lint and Build codebase
-    runs-on: ${{ matrix.os }}
+  lint_code:
+    name: Lint codebase
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    container:
+      image: index.docker.io/atc0005/go-ci:go-ci-lint-only
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2.3.2
+
+      - name: Remove repo-provided golangci-lint config file
+        run: |
+          # Remove the copy of the config file bundled with the repo/code so
+          # that the configuration provided by the atc0005/go-ci project is
+          # used instead
+          rm -vf .golangci.yml
+
+      - name: Run golangci-lint using container-provided config file settings
+        run: golangci-lint run -v
+
+      # This is the very latest stable version of staticcheck provided by the
+      # atc0005/go-ci container. The version included with golangci-lint often
+      # lags behind the official stable releases.
+      - name: Run staticcheck
+        run: staticcheck $(go list -mod=vendor ./... | grep -v /vendor/)
+
+  test_code:
+    name: Run tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      matrix:
+        container-image: ["go-ci-oldstable", "go-ci-stable", "go-ci-unstable"]
+
+    container:
+      image: "index.docker.io/atc0005/go-ci:${{ matrix.container-image}}"
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2.3.2
+
+      - name: Run all tests
+        run: go test -mod=vendor -v ./...
+
+  build_code:
+    name: Build codebase
+    runs-on: ubuntu-latest
     # Default: 360 minutes
     timeout-minutes: 10
     strategy:
       matrix:
-        # Supported versions of Go
-        go-version: [1.13.x, 1.14.x]
+        container-image: ["go-ci-oldstable", "go-ci-stable", "go-ci-unstable"]
 
-        # Supported LTS and latest version of Ubuntu Linux
-        #os: [ubuntu-16.04, ubuntu-18.04, ubuntu-latest]
-
-        # This should be good enough until we learn otherwise
-        os: [ubuntu-latest]
+    container:
+      image: "index.docker.io/atc0005/go-ci:${{ matrix.container-image}}"
 
     steps:
-      - name: Set up Go
-        # https://github.com/actions/setup-go
-        uses: actions/setup-go@v2.1.2
-        with:
-          go-version: ${{ matrix.go-version }}
-        id: go
-
-      # This could prove useful if we need to troubleshoot odd results and
-      # tie them back to a specific version of Go
       - name: Print go version
-        run: |
-          go version
+        run: go version
 
-      - name: Check out code into the Go module directory
+      - name: Check out code
         uses: actions/checkout@v2.3.2
 
-      # NOTE: Disabled in favor of top-level `vendor` folder
-      #
-      # - name: Get dependencies
-      #   run: |
-      #     go get -v -t -d ./...
-
-      # Force tests to run early as it isn't worth doing much else if the
-      # tests fail to run properly.
-      # Note: The `vendor` top-level folder appears to be skipped by default.
-      - name: Run all tests
-        run: go test -mod=vendor -v ./...
-
-      - name: Install Go linting tools
+      - name: Build using vendored dependencies
         run: |
-          # add executables installed with go get to PATH
-          # TODO: this will hopefully be fixed by
-          # https://github.com/actions/setup-go/issues/14
-          export PATH=${PATH}:$(go env GOPATH)/bin
-          make lintinstall
-
-      - name: Install Ubuntu packages
-        if: contains(matrix.os, 'ubuntu')
-        run: sudo apt update && sudo apt install -y --no-install-recommends make gcc
-
-      - name: Run Go linting tools using project Makefile
-        run: |
-          # add executables installed with go get to PATH
-          # TODO: this will hopefully be fixed by
-          # https://github.com/actions/setup-go/issues/14
-          export PATH=${PATH}:$(go env GOPATH)/bin
-          make linting
-
-      - name: Build with (mostly) default options
-        # Note: We use the `-mod=vendor` flag to explicitly request that our
-        # top-level vendor folder be used instead of fetching remote packages
-        run: go build -v -mod=vendor ./cmd/send2teams
-
-      - name: Build using project Makefile
-        run: make all
+          go build -v -mod=vendor ./cmd/send2teams
