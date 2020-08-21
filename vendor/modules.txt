@@ -1,2 +1,7 @@
 # github.com/atc0005/go-teams-notify v1.3.1-0.20200419155834-55cca556e726
+## explicit
 github.com/atc0005/go-teams-notify
+# github.com/davecgh/go-spew v1.1.1
+## explicit
+# gopkg.in/yaml.v2 v2.3.0
+## explicit
