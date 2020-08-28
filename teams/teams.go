@@ -20,8 +20,7 @@ import (
 	"strings"
 	"time"
 
-	//goteamsnotify "gopkg.in/dasrick/go-teams-notify.v1"
-	goteamsnotify "github.com/atc0005/go-teams-notify"
+	goteamsnotify "github.com/atc0005/go-teams-notify/v2"
 )
 
 // logger is a package logger that can be enabled from client code to allow

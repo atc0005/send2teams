@@ -14,11 +14,7 @@ import (
 	"log"
 	"os"
 
-	//goteamsnotify "gopkg.in/dasrick/go-teams-notify.v1"
-
-	// temporarily use our fork while developing changes for potential
-	// inclusion in the upstream project
-	goteamsnotify "github.com/atc0005/go-teams-notify"
+	goteamsnotify "github.com/atc0005/go-teams-notify/v2"
 	"github.com/atc0005/send2teams/internal/config"
 	"github.com/atc0005/send2teams/teams"
 )
