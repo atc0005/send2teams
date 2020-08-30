@@ -26,7 +26,30 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
-## [v0.4.6] - 2020-8-21
+## [v0.4.7] - 2020-08-30
+
+### Changed
+
+- Dependencies
+  - upgrade `atc0005/go-teams-notify`
+    - `v2.2.0` to `v2.3.0`
+
+- Exclusive use of `atc0005/go-teams-notify` for functionality previously
+  provided by the (since removed) `teams` subpackage
+
+- Documentation updates to reflect these changes
+
+### Removed
+
+- This project no longer provides the `teams` subpackage
+  - all functionality previously provided by that package has been moved into
+    the separate `atc0005/go-teams-notify` project
+
+### Fixed
+
+- `YYYY-MM-DD` date references in this CHANGELOG file
+
+## [v0.4.6] - 2020-08-21
 
 ### Added
 
@@ -331,7 +354,8 @@ This initial prototype supports/provides:
 - GitHub Actions linting and build checks
 - Makefile for general use cases
 
-[Unreleased]: https://github.com/atc0005/send2teams/compare/v0.4.6...HEAD
+[Unreleased]: https://github.com/atc0005/send2teams/compare/v0.4.7...HEAD
+[v0.4.7]: https://github.com/atc0005/send2teams/releases/tag/v0.4.7
 [v0.4.6]: https://github.com/atc0005/send2teams/releases/tag/v0.4.6
 [v0.4.5]: https://github.com/atc0005/send2teams/releases/tag/v0.4.5
 [v0.4.4]: https://github.com/atc0005/send2teams/releases/tag/v0.4.4
