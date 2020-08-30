@@ -30,8 +30,6 @@ FEATURES
 
 • optional conversion of messages with Windows, Mac or Linux newlines to `<br>` to increase compatibility with Teams formatting
 
-• exported `teams` package to handle formatting text content as code for proper display within Microsoft Teams
-
 • message delivery retry support with retry and retry delay values configurable via flag
 
 
