@@ -32,22 +32,23 @@ inclusion into the project.
 
 ## Overview
 
-First of all, many thanks to the developer/contributors of the
-`dasrick/go-teams-notify` package for making this tool possible.
+First of all, many thanks to the developer/contributors of the original
+`dasrick/go-teams-notify` package. While this project now uses a fork of that
+original project, this project would likely not have been possible without the
+efforts of the original developer.
 
-This project provides several resources:
+This project provides:
 
 - `send2teams`
   - Small CLI tool used to submit messages to Microsoft Teams. `send2teams` is
     intended for use by Nagios, scripts or other actions that may need to submit
     pass/fail results to a MS Teams channel.
 
-- `teams` subpackage
-  - The functions provided by this package extend or enhance existing
-    functionality provided by the `dasrick/go-teams-notify` package. At
-    present, the focus is primarily on text formatting and conversion
-    functions that make it easier for externally submitted data to be
-    formatted for proper display in Microsoft Teams.
+Prior to `v0.4.7`, this project also provided a `teams` subpackage. All of
+that functionality has since been migrated to the `atc0005/go-teams-notify`
+project. All know client code for that package has been updated to use
+`atc0005/go-teams-notify` in place of the previous `teams` subpackage of this
+project.
 
 ## Features
 
@@ -56,12 +57,8 @@ This project provides several resources:
 - very few build dependencies
 - optional conversion of messages with Windows, Mac or Linux newlines to
   `<br>` to increase compatibility with Teams formatting
-- exported `teams` package to handle formatting text content as code for
-  proper display within Microsoft Teams
 - message delivery retry support with retry and retry delay values
   configurable via flag
-
-Worth noting: This project uses Go modules (vs classic `GOPATH` setup)
 
 ## Changelog
 
@@ -207,8 +204,11 @@ SOFTWARE.
 
 ## References
 
-- Dependencies
+- Related projects
   - <https://github.com/dasrick/go-teams-notify/>
+  - <https://github.com/atc0005/go-teams-notify/>
+  - <https://github.com/atc0005/bounce/>
+  - <https://github.com/atc0005/brick/>
 
 - Webhook / Office 365
   - <https://sankalpit.com/how-to-get-channel-webhook-url/>

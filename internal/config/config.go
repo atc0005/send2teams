@@ -14,9 +14,7 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/atc0005/send2teams/teams"
-	// temporarily use our fork while developing changes for potential
-	// inclusion in the upstream project
+	goteamsnotify "github.com/atc0005/go-teams-notify/v2"
 )
 
 const (
@@ -236,8 +234,7 @@ func (c Config) Validate() error {
 		return fmt.Errorf("retries delay too short")
 	}
 
-	// TODO: Replace with upstream validation checks?
-	if err := teams.ValidateWebhook(c.WebhookURL); err != nil {
+	if ok, err := goteamsnotify.IsValidWebhookURL(c.WebhookURL); !ok {
 		return err
 	}
 

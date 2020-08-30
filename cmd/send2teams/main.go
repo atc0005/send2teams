@@ -16,7 +16,6 @@ import (
 
 	goteamsnotify "github.com/atc0005/go-teams-notify/v2"
 	"github.com/atc0005/send2teams/internal/config"
-	"github.com/atc0005/send2teams/teams"
 )
 
 func main() {
@@ -31,7 +30,6 @@ func main() {
 	// teams.DisableLogging()
 
 	goteamsnotify.DisableLogging()
-	teams.DisableLogging()
 
 	//log.Debug("Initializing application")
 
@@ -56,7 +54,7 @@ func main() {
 
 	// Convert EOL if user requested it (useful for converting script output)
 	if cfg.ConvertEOL {
-		cfg.MessageText = teams.ConvertEOLToBreak(cfg.MessageText)
+		cfg.MessageText = goteamsnotify.ConvertEOLToBreak(cfg.MessageText)
 	}
 
 	// Setup base message card
@@ -79,9 +77,12 @@ func main() {
 	ctxSubmissionTimeout, cancel := context.WithTimeout(context.Background(), config.TeamsSubmissionTimeout)
 	defer cancel()
 
-	// Submit message card, retry submission if needed up to specified number
-	// of retry attempts or until context expires.
-	if err := teams.SendMessage(ctxSubmissionTimeout, cfg.WebhookURL, msgCard, cfg.Retries, cfg.RetriesDelay); err != nil {
+	// Create Microsoft Teams client
+	mstClient := goteamsnotify.NewClient()
+
+	// Submit message card using Microsoft Teams client, retry submission
+	// if needed up to specified number of retry attempts.
+	if err := mstClient.SendWithRetry(ctxSubmissionTimeout, cfg.WebhookURL, msgCard, cfg.Retries, cfg.RetriesDelay); err != nil {
 
 		// Display error output if silence is not requested
 		if !cfg.SilentOutput {
