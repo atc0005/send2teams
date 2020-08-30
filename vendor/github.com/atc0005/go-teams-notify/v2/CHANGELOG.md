@@ -26,7 +26,23 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
-## [v2.2.0] - 2020-8-28
+## [v2.3.0] - 2020-08-29
+
+### Added
+
+- Add package-level logging for formatting functions
+  - as with other package-level logging, this is disabled by default
+
+- API
+  - add `SendWithRetry` method based on the `teams.SendMessage` function from
+    the `atc0005/send2teams` project
+    - actively working to move relevant content from that project to this one
+
+### Fixed
+
+- YYYY-MM-DD date formatting of changelog version entries
+
+## [v2.2.0] - 2020-08-28
 
 ### Added
 
@@ -188,7 +204,7 @@ The following types of changes will be recorded in this file:
 - switch from `golint` to `golangci-lint`
 - add more golang versions to pass via travis-ci
 
-## [v1.3.1] - 2020-3-29
+## [v1.3.1] - 2020-03-29
 
 ### Fixed
 
@@ -240,7 +256,8 @@ The following types of changes will be recorded in this file:
 
 - add initial functionality of sending messages to MS Teams channel
 
-[Unreleased]: https://github.com/atc0005/go-teams-notify/compare/v2.2.0...HEAD
+[Unreleased]: https://github.com/atc0005/go-teams-notify/compare/v2.3.0...HEAD
+[v2.3.0]: https://github.com/atc0005/go-teams-notify/releases/tag/v2.3.0
 [v2.2.0]: https://github.com/atc0005/go-teams-notify/releases/tag/v2.2.0
 [v2.1.1]: https://github.com/atc0005/go-teams-notify/releases/tag/v2.1.1
 [v2.1.0]: https://github.com/atc0005/go-teams-notify/releases/tag/v2.1.0
