@@ -24,7 +24,7 @@ jobs:
     steps:
       - name: Setup Node
         # https://github.com/actions/setup-node
-        uses: actions/setup-node@v2.1.1
+        uses: actions/setup-node@v2.1.2
         with:
           node-version: "10.x"
 
