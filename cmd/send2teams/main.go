@@ -31,21 +31,37 @@ func main() {
 
 	goteamsnotify.DisableLogging()
 
-	//log.Debug("Initializing application")
+	// Emulate returning exit code from main function by "queuing up" a
+	// default exit code that matches expectations, but allow explicitly
+	// setting the exit code in such a way that is compatible with using
+	// deferred function calls throughout the application.
+	var appExitCode *int
+	defer func(code *int) {
+		var exitCode int
+		if code != nil {
+			exitCode = *code
+		}
+		os.Exit(exitCode)
+	}(appExitCode)
+
+	// log.Debug("Initializing application")
 
 	cfg, err := config.NewConfig()
 	switch {
 	// TODO: How else to guard against nil cfg object?
 	case cfg != nil && cfg.ShowVersion:
 		config.Branding()
-		os.Exit(0)
+		*appExitCode = 0
+		return
 	case err == nil:
 		// do nothing for this one
 	case errors.Is(err, flag.ErrHelp):
-		os.Exit(0)
+		*appExitCode = 0
+		return
 	default:
 		log.Printf("failed to initialize application: %s", err)
-		os.Exit(1)
+		*appExitCode = 1
+		return
 	}
 
 	if cfg.VerboseOutput {
@@ -71,7 +87,8 @@ func main() {
 	// Add branding trailer section, bail if unexpected error occurs
 	if err := msgCard.AddSection(trailerSection); err != nil {
 		log.Println("error encountered when adding section value:", err)
-		os.Exit(1)
+		*appExitCode = 1
+		return
 	}
 
 	ctxSubmissionTimeout, cancel := context.WithTimeout(context.Background(), config.TeamsSubmissionTimeout)
@@ -96,7 +113,8 @@ func main() {
 		}
 
 		// Regardless of silent flag, explicitly note unsuccessful results
-		os.Exit(1)
+		*appExitCode = 1
+		return
 	}
 
 	if !cfg.SilentOutput {

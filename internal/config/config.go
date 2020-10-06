@@ -176,12 +176,12 @@ func NewConfig() (*Config, error) {
 		return &cfg, nil
 	}
 
-	//log.Debug("Validating configuration ...")
+	// log.Debug("Validating configuration ...")
 	if err := cfg.Validate(); err != nil {
 		flag.Usage()
 		return nil, err
 	}
-	//log.Debug("Configuration validated")
+	// log.Debug("Configuration validated")
 
 	return &cfg, nil
 }
