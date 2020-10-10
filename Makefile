@@ -24,7 +24,8 @@
 
 SHELL = /bin/bash
 
-APPNAME					= send2teams
+# Space-separated list of cmd/BINARY_NAME directories to build
+WHAT					= send2teams
 
 # What package holds the "version" variable used in branding/version output?
 VERSION_VAR_PKG			= $(shell go list .)/internal/config
@@ -130,17 +131,18 @@ all: clean windows linux
 windows:
 	@echo "Building release assets for windows ..."
 
-	@mkdir -p $(OUTPUTDIR)/$(APPNAME)
-
-	@echo "Building 386 binaries"
-	@env GOOS=windows GOARCH=386 $(BUILDCMD) -o $(OUTPUTDIR)/$(APPNAME)/$(APPNAME)-$(VERSION)-windows-386.exe ${PWD}/cmd/$(APPNAME)
-
-	@echo "Building amd64 binaries"
-	@env GOOS=windows GOARCH=amd64 $(BUILDCMD) -o $(OUTPUTDIR)/$(APPNAME)/$(APPNAME)-$(VERSION)-windows-amd64.exe ${PWD}/cmd/$(APPNAME)
-
-	@echo "Generating checksum files"
-	@$(CHECKSUMCMD) $(OUTPUTDIR)/$(APPNAME)/$(APPNAME)-$(VERSION)-windows-386.exe > $(OUTPUTDIR)/$(APPNAME)/$(APPNAME)-$(VERSION)-windows-386.exe.sha256
-	@$(CHECKSUMCMD) $(OUTPUTDIR)/$(APPNAME)/$(APPNAME)-$(VERSION)-windows-amd64.exe > $(OUTPUTDIR)/$(APPNAME)/$(APPNAME)-$(VERSION)-windows-amd64.exe.sha256
+	@for target in $(WHAT); do \
+		mkdir -p $(OUTPUTDIR)/$$target && \
+		echo "Building $$target 386 binaries" && \
+		env GOOS=windows GOARCH=386 $(BUILDCMD) -o $(OUTPUTDIR)/$$target/$$target-$(VERSION)-windows-386.exe ${PWD}/cmd/$$target && \
+		echo "Building $$target amd64 binaries" && \
+		env GOOS=windows GOARCH=amd64 $(BUILDCMD) -o $(OUTPUTDIR)/$$target/$$target-$(VERSION)-windows-amd64.exe ${PWD}/cmd/$$target && \
+		echo "Generating $$target checksum files" && \
+		cd $(OUTPUTDIR)/$$target && \
+		$(CHECKSUMCMD) $$target-$(VERSION)-windows-386.exe > $$target-$(VERSION)-windows-386.exe.sha256 && \
+		$(CHECKSUMCMD) $$target-$(VERSION)-windows-amd64.exe > $$target-$(VERSION)-windows-amd64.exe.sha256 && \
+		cd $$OLDPWD; \
+	done
 
 	@echo "Completed build tasks for windows"
 
@@ -149,16 +151,17 @@ windows:
 linux:
 	@echo "Building release assets for linux ..."
 
-	@mkdir -p $(OUTPUTDIR)/$(APPNAME)
-
-	@echo "Building 386 binaries"
-	@env GOOS=linux GOARCH=386 $(BUILDCMD) -o $(OUTPUTDIR)/$(APPNAME)/$(APPNAME)-$(VERSION)-linux-386 ${PWD}/cmd/$(APPNAME)
-
-	@echo "Building amd64 binaries"
-	@env GOOS=linux GOARCH=amd64 $(BUILDCMD) -o $(OUTPUTDIR)/$(APPNAME)/$(APPNAME)-$(VERSION)-linux-amd64 ${PWD}/cmd/$(APPNAME)
-
-	@echo "Generating checksum files"
-	@$(CHECKSUMCMD) "$(OUTPUTDIR)/$(APPNAME)/$(APPNAME)-$(VERSION)-linux-386" > "$(OUTPUTDIR)/$(APPNAME)/$(APPNAME)-$(VERSION)-linux-386.sha256"
-	@$(CHECKSUMCMD) "$(OUTPUTDIR)/$(APPNAME)/$(APPNAME)-$(VERSION)-linux-amd64" > "$(OUTPUTDIR)/$(APPNAME)/$(APPNAME)-$(VERSION)-linux-amd64.sha256"
+	@for target in $(WHAT); do \
+		mkdir -p $(OUTPUTDIR)/$$target && \
+		echo "Building $$target 386 binaries" && \
+		env GOOS=linux GOARCH=386 $(BUILDCMD) -o $(OUTPUTDIR)/$$target/$$target-$(VERSION)-linux-386 ${PWD}/cmd/$$target && \
+		echo "Building $$target amd64 binaries" && \
+		env GOOS=linux GOARCH=amd64 $(BUILDCMD) -o $(OUTPUTDIR)/$$target/$$target-$(VERSION)-linux-amd64 ${PWD}/cmd/$$target && \
+		echo "Generating $$target checksum files" && \
+		cd $(OUTPUTDIR)/$$target && \
+		$(CHECKSUMCMD) $$target-$(VERSION)-linux-386 > $$target-$(VERSION)-linux-386.sha256 && \
+		$(CHECKSUMCMD) $$target-$(VERSION)-linux-amd64 > $$target-$(VERSION)-linux-amd64.sha256 && \
+		cd $$OLDPWD; \
+	done
 
 	@echo "Completed build tasks for linux"
