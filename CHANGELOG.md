@@ -26,6 +26,37 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
+## [v0.4.8] - 2020-10-11
+
+### Added
+
+- Binary release
+  - Built using Go 1.15.2
+  - **Statically linked**
+  - Windows
+    - x86
+    - x64
+  - Linux
+    - x86
+    - x64
+
+### Changed
+
+- Dependencies
+  - `actions/setup-node`
+    - updated from `v2.1.1` to `v2.1.2`
+  - `actions/checkout`
+    - updated from `v2.3.2` to `v2.3.3`
+
+- Add `-trimpath` build flag
+
+### Fixed
+
+- Makefile build options do not generate static binaries
+- Misc linting errors raised by latest `gocritic` release included with
+  `golangci-lint` `v1.31.0`
+- Makefile generates checksums with qualified path
+
 ## [v0.4.7] - 2020-08-30
 
 ### Changed
@@ -354,7 +385,8 @@ This initial prototype supports/provides:
 - GitHub Actions linting and build checks
 - Makefile for general use cases
 
-[Unreleased]: https://github.com/atc0005/send2teams/compare/v0.4.7...HEAD
+[Unreleased]: https://github.com/atc0005/send2teams/compare/v0.4.8...HEAD
+[v0.4.8]: https://github.com/atc0005/send2teams/releases/tag/v0.4.8
 [v0.4.7]: https://github.com/atc0005/send2teams/releases/tag/v0.4.7
 [v0.4.6]: https://github.com/atc0005/send2teams/releases/tag/v0.4.6
 [v0.4.5]: https://github.com/atc0005/send2teams/releases/tag/v0.4.5
