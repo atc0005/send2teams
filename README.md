@@ -46,7 +46,7 @@ This project provides:
 
 Prior to `v0.4.7`, this project also provided a `teams` subpackage. All of
 that functionality has since been migrated to the `atc0005/go-teams-notify`
-project. All know client code for that package has been updated to use
+project. All client code for that package has been updated to use
 `atc0005/go-teams-notify` in place of the previous `teams` subpackage of this
 project.
 
