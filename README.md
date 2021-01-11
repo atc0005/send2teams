@@ -18,6 +18,8 @@ Small CLI tool used to submit messages to Microsoft Teams.
   - [How to install it](#how-to-install-it)
   - [Configuration Options](#configuration-options)
     - [Webhook URLs](#webhook-urls)
+      - [Expected format](#expected-format)
+      - [How to create a webhook URL (Connector)](#how-to-create-a-webhook-url-connector)
     - [Command-line](#command-line)
   - [Examples](#examples)
     - [One-off](#one-off)
@@ -116,6 +118,8 @@ Tested using:
 
 ### Webhook URLs
 
+#### Expected format
+
 Valid webhook URLs for Microsoft Teams use one of two (confirmed) FQDNs:
 
 - `outlook.office.com`
@@ -129,6 +133,28 @@ both FQDNs:
 - <https://outlook.office.com/webhook/a1269812-6d10-44b1-abc5-b84f93580ba0@9e7b80c7-d1eb-4b52-8582-76f921e416d9/IncomingWebhook/3fdd6767bae44ac58e5995547d66a4e4/f332c8d9-3397-4ac5-957b-b8e3fc465a8c>
 
 - <https://outlook.office365.com/webhook/a1269812-6d10-44b1-abc5-b84f93580ba0@9e7b80c7-d1eb-4b52-8582-76f921e416d9/IncomingWebhook/3fdd6767bae44ac58e5995547d66a4e4/f332c8d9-3397-4ac5-957b-b8e3fc465a8c>
+
+#### How to create a webhook URL (Connector)
+
+1. Open Microsoft Teams
+1. Navigate to the channel where you wish to receive incoming messages from
+   this application
+1. Select `⋯` next to the channel name and then choose Connectors.
+1. Scroll through the list of Connectors to Incoming Webhook, and choose Add.
+1. Enter a name for the webhook, upload an image to associate with data from
+   the webhook, and choose Create.
+1. Copy the webhook URL to the clipboard and save it. You'll need the webhook
+   URL for sending information to Microsoft Teams.
+   - NOTE: While you can create another easily enough, you should treat this
+     webhook URL as sensitive information as anyone with this unique URL is
+     able to send messages (without authentication) into the associated
+     channel.
+1. Choose Done.
+
+Credit:
+[docs.microsoft.com](https://docs.microsoft.com/en-us/microsoftteams/platform/webhooks-and-connectors/how-to/connectors-using#setting-up-a-custom-incoming-webhook),
+[gist comment from
+shadabacc3934](https://gist.github.com/chusiang/895f6406fbf9285c58ad0a3ace13d025#gistcomment-3562501)
 
 ### Command-line
 
@@ -215,6 +241,8 @@ SOFTWARE.
   - <https://docs.microsoft.com/en-us/outlook/actionable-messages/message-card-reference>
   - <https://docs.microsoft.com/en-us/microsoftteams/platform/concepts/outgoingwebhook>
   - <https://docs.microsoft.com/en-us/outlook/actionable-messages/send-via-connectors>
+  - <https://docs.microsoft.com/en-us/microsoftteams/platform/webhooks-and-connectors/how-to/connectors-using>
+    - <https://gist.github.com/chusiang/895f6406fbf9285c58ad0a3ace13d025#gistcomment-3562510>
   - <https://messagecardplayground.azurewebsites.net/>
 
 - General Golang
