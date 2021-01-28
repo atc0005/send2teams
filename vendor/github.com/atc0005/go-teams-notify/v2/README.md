@@ -24,6 +24,9 @@ A package to send messages to Microsoft Teams (channels)
 - [Changelog](#changelog)
 - [Usage](#usage)
   - [Add this project as a dependency](#add-this-project-as-a-dependency)
+  - [Webhook URLs](#webhook-urls)
+    - [Expected format](#expected-format)
+    - [How to create a webhook URL (Connector)](#how-to-create-a-webhook-url-connector)
   - [Example: Basic](#example-basic)
   - [Example: Disable webhook URL prefix validation](#example-disable-webhook-url-prefix-validation)
 - [References](#references)
@@ -116,6 +119,55 @@ Your editor will likely resolve the import and update your `go.mod` and
 Modules](https://blog.golang.org/using-go-modules) blog post on the topic for
 further information.
 
+### Webhook URLs
+
+#### Expected format
+
+Valid webhook URLs for Microsoft Teams use one of several (confirmed) FQDNs
+patterns:
+
+- `outlook.office.com`
+- `outlook.office365.com`
+- `*.webhook.office.com`
+  - e.g., `example.webhook.office.com`
+
+Using a webhook URL with any of these FQDN patterns appears to give identical
+results.
+
+Here are complete, equivalent example webhook URLs from Microsoft's
+documentation using the FQDNs above:
+
+- <https://outlook.office.com/webhook/a1269812-6d10-44b1-abc5-b84f93580ba0@9e7b80c7-d1eb-4b52-8582-76f921e416d9/IncomingWebhook/3fdd6767bae44ac58e5995547d66a4e4/f332c8d9-3397-4ac5-957b-b8e3fc465a8c>
+- <https://outlook.office365.com/webhook/a1269812-6d10-44b1-abc5-b84f93580ba0@9e7b80c7-d1eb-4b52-8582-76f921e416d9/IncomingWebhook/3fdd6767bae44ac58e5995547d66a4e4/f332c8d9-3397-4ac5-957b-b8e3fc465a8c>
+- <https://example.webhook.office.com/webhookb2/a1269812-6d10-44b1-abc5-b84f93580ba0@9e7b80c7-d1eb-4b52-8582-76f921e416d9/IncomingWebhook/3fdd6767bae44ac58e5995547d66a4e4/f332c8d9-3397-4ac5-957b-b8e3fc465a8c>
+  - note the `webhookb2` sub-URI specific to this FQDN pattern
+
+All of these patterns when provided to this library should pass the default
+validation applied. See the example further down for the option of disabling
+webhook URL validation entirely.
+
+#### How to create a webhook URL (Connector)
+
+1. Open Microsoft Teams
+1. Navigate to the channel where you wish to receive incoming messages from
+   this application
+1. Select `⋯` next to the channel name and then choose Connectors.
+1. Scroll through the list of Connectors to Incoming Webhook, and choose Add.
+1. Enter a name for the webhook, upload an image to associate with data from
+   the webhook, and choose Create.
+1. Copy the webhook URL to the clipboard and save it. You'll need the webhook
+   URL for sending information to Microsoft Teams.
+   - NOTE: While you can create another easily enough, you should treat this
+     webhook URL as sensitive information as anyone with this unique URL is
+     able to send messages (without authentication) into the associated
+     channel.
+1. Choose Done.
+
+Credit:
+[docs.microsoft.com](https://docs.microsoft.com/en-us/microsoftteams/platform/webhooks-and-connectors/how-to/connectors-using#setting-up-a-custom-incoming-webhook),
+[gist comment from
+shadabacc3934](https://gist.github.com/chusiang/895f6406fbf9285c58ad0a3ace13d025#gistcomment-3562501)
+
 ### Example: Basic
 
 Here is an example of a simple client application which uses this library:
@@ -152,14 +204,15 @@ Of note:
 
 - default timeout
 - package-level logging is disabled by default
-- known webhook URL prefix validation is *enabled*
+- validation of known webhook URL prefixes is *enabled*
 - simple message submitted to Microsoft Teams consisting of formatted body and
   title
 
 ### Example: Disable webhook URL prefix validation
 
-This example disables the validation of known webhook URL prefixes so that
-custom/private webhook URL endpoints can be used.
+This example disables the validation webhook URLs, including the validation of
+known prefixes so that custom/private webhook URL endpoints can be used (e.g.,
+testing purposes).
 
 ```golang
 import (
@@ -177,7 +230,7 @@ func sendTheMessage() error {
   // setup webhook url
   webhookUrl := "https://example.webhook.office.com/webhook/YOUR_WEBHOOK_URL_OF_TEAMS_CHANNEL"
 
-  // Disable webhook URL prefix validation
+  // Disable webhook URL validation
   mstClient.SkipWebhookURLValidationOnSend(true)
 
   // setup message card
@@ -194,7 +247,7 @@ func sendTheMessage() error {
 
 Of note:
 
-- known webhook URL prefix validation is **disabled**
+- webhook URL validation is **disabled**
   - allows use of custom/private webhook URL endpoints
 - other settings are the same as the basic example previously listed
 

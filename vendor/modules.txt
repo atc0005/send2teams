@@ -1,4 +1,4 @@
-# github.com/atc0005/go-teams-notify/v2 v2.4.1
+# github.com/atc0005/go-teams-notify/v2 v2.4.2
 ## explicit
 github.com/atc0005/go-teams-notify/v2
 # github.com/davecgh/go-spew v1.1.1

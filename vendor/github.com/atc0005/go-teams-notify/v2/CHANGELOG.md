@@ -26,6 +26,22 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
+## [v2.4.2] - 2021-01-28
+
+### Changed
+
+- Apply regex pattern match for webhook URL validation instead of fixed
+  strings in order to support matching private org webhook URL subdomains
+
+### Fixed
+
+- Updating an exiting webhook connector in Microsoft Teams switches the URL to
+  unsupported `https://*.webhook.office.com/webhookb2/` format
+- `SendWithRetry` method does not honor setting to disable webhook URL prefix
+  validation
+- Support for disabling webhook URL validation limited to just disabling
+  validation of prefixes
+
 ## [v2.4.1] - 2021-01-28
 
 ### Changed
@@ -301,7 +317,8 @@ The following types of changes will be recorded in this file:
 
 - add initial functionality of sending messages to MS Teams channel
 
-[Unreleased]: https://github.com/atc0005/go-teams-notify/compare/v2.4.1...HEAD
+[Unreleased]: https://github.com/atc0005/go-teams-notify/compare/v2.4.2...HEAD
+[v2.4.2]: https://github.com/atc0005/go-teams-notify/releases/tag/v2.4.2
 [v2.4.1]: https://github.com/atc0005/go-teams-notify/releases/tag/v2.4.1
 [v2.4.0]: https://github.com/atc0005/go-teams-notify/releases/tag/v2.4.0
 [v2.3.0]: https://github.com/atc0005/go-teams-notify/releases/tag/v2.3.0
