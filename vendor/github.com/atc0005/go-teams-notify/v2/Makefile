@@ -69,7 +69,7 @@ linting:
 ## gotests: runs go test recursively, verbosely
 gotests:
 	@echo "Running go tests ..."
-	@go test -mod=vendor ./...
+	@go test -v -mod=vendor ./...
 	@echo "Finished running go tests"
 
 .PHONY: goclean
