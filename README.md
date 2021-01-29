@@ -214,7 +214,7 @@ From the [LICENSE](LICENSE) file:
 ```license
 MIT License
 
-Copyright (c) 2019 Adam Chalkley
+Copyright 2021 Adam Chalkley
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
