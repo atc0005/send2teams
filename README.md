@@ -120,19 +120,27 @@ Tested using:
 
 #### Expected format
 
-Valid webhook URLs for Microsoft Teams use one of two (confirmed) FQDNs:
+Valid webhook URLs for Microsoft Teams use one of several (confirmed) FQDNs
+patterns:
 
 - `outlook.office.com`
 - `outlook.office365.com`
+- `*.webhook.office.com`
+  - e.g., `example.webhook.office.com`
 
-Using a webhook URL with either FQDN appears to give identical results.
+Using a webhook URL with any of these FQDN patterns appears to give identical
+results.
 
-Here is a complete example webhook URL from Microsoft's documentation using
-both FQDNs:
+Here are complete, equivalent example webhook URLs from Microsoft's
+documentation using the FQDNs above:
 
 - <https://outlook.office.com/webhook/a1269812-6d10-44b1-abc5-b84f93580ba0@9e7b80c7-d1eb-4b52-8582-76f921e416d9/IncomingWebhook/3fdd6767bae44ac58e5995547d66a4e4/f332c8d9-3397-4ac5-957b-b8e3fc465a8c>
-
 - <https://outlook.office365.com/webhook/a1269812-6d10-44b1-abc5-b84f93580ba0@9e7b80c7-d1eb-4b52-8582-76f921e416d9/IncomingWebhook/3fdd6767bae44ac58e5995547d66a4e4/f332c8d9-3397-4ac5-957b-b8e3fc465a8c>
+- <https://example.webhook.office.com/webhookb2/a1269812-6d10-44b1-abc5-b84f93580ba0@9e7b80c7-d1eb-4b52-8582-76f921e416d9/IncomingWebhook/3fdd6767bae44ac58e5995547d66a4e4/f332c8d9-3397-4ac5-957b-b8e3fc465a8c>
+  - note the `webhookb2` sub-URI specific to this FQDN pattern
+
+All of these patterns should pass the default validation applied to
+user-specified webhook URLs.
 
 #### How to create a webhook URL (Connector)
 
