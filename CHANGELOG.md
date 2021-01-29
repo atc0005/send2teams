@@ -26,6 +26,23 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
+## [v0.4.11] - 2021-01-29
+
+### Overview
+
+- Misc fixes
+- built using Go 1.15.7
+
+### Changed
+
+- Application timeout changed from `5s` (hard-coded ceiling) to `8s` (default,
+  configurable via `retries` and `retries-delay` flags)
+
+### Fixed
+
+- Context cancellation (timeout) does not respect retries and retries-delay
+  flag values
+
 ## [v0.4.10] - 2021-01-29
 
 ### Changed
@@ -424,7 +441,8 @@ This initial prototype supports/provides:
 - GitHub Actions linting and build checks
 - Makefile for general use cases
 
-[Unreleased]: https://github.com/atc0005/send2teams/compare/v0.4.10...HEAD
+[Unreleased]: https://github.com/atc0005/send2teams/compare/v0.4.11...HEAD
+[v0.4.11]: https://github.com/atc0005/send2teams/releases/tag/v0.4.11
 [v0.4.10]: https://github.com/atc0005/send2teams/releases/tag/v0.4.10
 [v0.4.9]: https://github.com/atc0005/send2teams/releases/tag/v0.4.9
 [v0.4.8]: https://github.com/atc0005/send2teams/releases/tag/v0.4.8
