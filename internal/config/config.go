@@ -12,6 +12,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strconv"
 	"time"
 
 	goteamsnotify "github.com/atc0005/go-teams-notify/v2"
@@ -55,10 +56,15 @@ var version string = "dev build"
 const myAppName string = "send2teams"
 const myAppURL string = "https://github.com/atc0005/" + myAppName
 
-// TeamsSubmissionTimeout is the timeout value for sending messages to
-// Microsoft Teams. This value is used to build a context with the desired
-// timeout value.
-const TeamsSubmissionTimeout time.Duration = 5 * time.Second
+// teamsSubmissionTimeoutMultiplier is the timeout value for sending messages
+// to Microsoft Teams. This value is used along with user specified (or
+// default) retries and retries delay values to calculate a context with the
+// desired timeout value.
+const teamsSubmissionTimeoutMultiplier time.Duration = 2 * time.Second
+
+// DefaultNagiosNotificationTimeout is the default timeout value for Nagios 3
+// and 4 installations. This is our *default* timeout ceiling.
+const DefaultNagiosNotificationTimeout time.Duration = 30 * time.Second
 
 // Config is a unified set of configuration values for this application. This
 // struct is configured via command-line flags provided by the user.
@@ -154,13 +160,25 @@ func flagsUsage() func() {
 }
 
 func (c Config) String() string {
-	return fmt.Sprintf("Team=%q, Channel=%q, WebhookURL=%q, ThemeColor=%q, MessageTitle=%q, MessageText=%q",
+	return fmt.Sprintf(
+		"Team=%q, "+
+			"Channel=%q, "+
+			"WebhookURL=%q, "+
+			"ThemeColor=%q, "+
+			"MessageTitle=%q, "+
+			"MessageText=%q, "+
+			"Retries=%q, "+
+			"RetriesDelay=%q, "+
+			"AppTimeout=%q",
 		c.Team,
 		c.Channel,
 		c.WebhookURL,
 		c.ThemeColor,
 		c.MessageTitle,
 		c.MessageText,
+		strconv.Itoa(c.Retries),
+		strconv.Itoa(c.RetriesDelay),
+		c.TeamsSubmissionTimeout(),
 	)
 }
 

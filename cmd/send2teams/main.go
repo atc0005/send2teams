@@ -91,7 +91,15 @@ func main() {
 		return
 	}
 
-	ctxSubmissionTimeout, cancel := context.WithTimeout(context.Background(), config.TeamsSubmissionTimeout)
+	// This should only trigger if user specifies large retry values.
+	if cfg.TeamsSubmissionTimeout() > config.DefaultNagiosNotificationTimeout {
+		log.Printf(
+			"WARNING: app cancellation timeout value of %v greater than default Nagios command timeout value!",
+			cfg.TeamsSubmissionTimeout(),
+		)
+	}
+
+	ctxSubmissionTimeout, cancel := context.WithTimeout(context.Background(), cfg.TeamsSubmissionTimeout())
 	defer cancel()
 
 	// Create Microsoft Teams client
