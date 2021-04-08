@@ -26,6 +26,39 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
+## [v2.5.0] - 2021-04-08
+
+### Added
+
+- Features
+  - Validation of webhook URLs using custom validation patterns
+    - credit: [@nmaupu](https://github.com/nmaupu)
+  - Validation of `MessageCard` type using a custom validation function (to
+      override default validation behavior)
+    - credit: [@nmaupu](https://github.com/nmaupu)
+
+- Documentation
+  - Add list of projects using this library
+  - Update features list to include functionality added to this fork
+    - Configurable validation of webhook URLs
+    - Configurable validation of `MessageCard` type
+    - Configurable timeouts
+    - Configurable retry support
+
+### Changed
+
+- Dependencies
+  - `actions/setup-node`
+    - `v2.1.4` to `v2.1.5`
+
+### Fixed
+
+- Documentation
+  - Misc typos
+  - Grammatical tweaks
+  - Attempt to clarify project status
+    - i.e., not mothballed, just slow cadence
+
 ## [v2.4.2] - 2021-01-28
 
 ### Changed
@@ -317,7 +350,8 @@ The following types of changes will be recorded in this file:
 
 - add initial functionality of sending messages to MS Teams channel
 
-[Unreleased]: https://github.com/atc0005/go-teams-notify/compare/v2.4.2...HEAD
+[Unreleased]: https://github.com/atc0005/go-teams-notify/compare/v2.5.0...HEAD
+[v2.5.0]: https://github.com/atc0005/go-teams-notify/releases/tag/v2.5.0
 [v2.4.2]: https://github.com/atc0005/go-teams-notify/releases/tag/v2.4.2
 [v2.4.1]: https://github.com/atc0005/go-teams-notify/releases/tag/v2.4.1
 [v2.4.0]: https://github.com/atc0005/go-teams-notify/releases/tag/v2.4.0
