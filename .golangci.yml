@@ -24,10 +24,17 @@ linters:
     - depguard
     - prealloc
     - misspell
-    - maligned
     - dupl
     - unconvert
     - gofmt
     - golint
     - gocritic
-    - scopelint
+    - exportloopref
+
+  disable:
+    - maligned
+
+linters-settings:
+  govet:
+    enable:
+      - fieldalignment
