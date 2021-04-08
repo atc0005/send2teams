@@ -252,8 +252,11 @@ func (c Config) Validate() error {
 		return fmt.Errorf("retries delay too short")
 	}
 
-	if ok, err := goteamsnotify.IsValidWebhookURL(c.WebhookURL); !ok {
-		return err
+	// Create Microsoft Teams client
+	mstClient := goteamsnotify.NewClient()
+
+	if err := mstClient.ValidateWebhook(c.WebhookURL); err != nil {
+		return fmt.Errorf("webhook URL validation failed: %w", err)
 	}
 
 	// Indicate that we didn't spot any problems
