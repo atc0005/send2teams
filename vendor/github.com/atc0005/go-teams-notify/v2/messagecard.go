@@ -40,7 +40,6 @@ type MessageCardSectionImage struct {
 
 // MessageCardSection represents a section to include in a message card.
 type MessageCardSection struct {
-
 	// Title is the title property of a section. This property is displayed
 	// in a font that stands out, while not as prominent as the card's title.
 	// It is meant to introduce the section and summarize its content,
@@ -74,17 +73,6 @@ type MessageCardSection struct {
 	// for the update notification.
 	ActivityText string `json:"activityText,omitempty"`
 
-	// Markdown represents a toggle to enable or disable Markdown formatting.
-	// By default, all text fields in a card and its sections can be formatted
-	// using basic Markdown.
-	Markdown bool `json:"markdown,omitempty"`
-
-	// StartGroup is the section's startGroup property. This property marks
-	// the start of a logical group of information. Typically, sections with
-	// startGroup set to true will be visually separated from previous card
-	// elements.
-	StartGroup bool `json:"startGroup,omitempty"`
-
 	// HeroImage is a property that allows for setting an image as the
 	// centerpiece of a message card. This property can also be used to add a
 	// banner to the message card.
@@ -109,6 +97,17 @@ type MessageCardSection struct {
 	// https://stackoverflow.com/questions/18088294/how-to-not-marshal-an-empty-struct-into-json-with-go
 	// https://stackoverflow.com/questions/33447334/golang-json-marshal-how-to-omit-empty-nested-struct
 	Images []*MessageCardSectionImage `json:"images,omitempty"`
+
+	// Markdown represents a toggle to enable or disable Markdown formatting.
+	// By default, all text fields in a card and its sections can be formatted
+	// using basic Markdown.
+	Markdown bool `json:"markdown,omitempty"`
+
+	// StartGroup is the section's startGroup property. This property marks
+	// the start of a logical group of information. Typically, sections with
+	// startGroup set to true will be visually separated from previous card
+	// elements.
+	StartGroup bool `json:"startGroup,omitempty"`
 }
 
 // MessageCard represents a legacy actionable message card used via Office 365
@@ -142,6 +141,9 @@ type MessageCard struct {
 	// Specifies a custom brand color for the card. The color will be
 	// displayed in a non-obtrusive manner.
 	ThemeColor string `json:"themeColor,omitempty"`
+
+	// ValidateFunc is a validation function that validates a MessageCard
+	ValidateFunc func() error `json:"-"`
 
 	// Sections is a collection of sections to include in the card.
 	Sections []*MessageCardSection `json:"sections,omitempty"`
@@ -189,6 +191,24 @@ func (mc *MessageCard) AddSection(section ...*MessageCardSection) error {
 
 		logger.Println("AddSection: section contains at least one non-zero value, adding section")
 		mc.Sections = append(mc.Sections, s)
+	}
+
+	return nil
+}
+
+// Validate validates a MessageCard calling ValidateFunc if defined,
+// otherwise, a default validation occurs
+func (mc *MessageCard) Validate() error {
+	if mc.ValidateFunc != nil {
+		return mc.ValidateFunc()
+	}
+
+	// Falling back to a default implementation
+	if (mc.Text == "") && (mc.Summary == "") {
+		// This scenario results in:
+		// 400 Bad Request
+		// Summary or Text is required.
+		return fmt.Errorf("invalid message card: summary or text field is required")
 	}
 
 	return nil

@@ -19,7 +19,7 @@ A package to send messages to Microsoft Teams (channels)
 - [Features](#features)
 - [Project Status](#project-status)
   - [Now](#now)
-  - [Past](#past)
+  - [History](#history)
   - [Future](#future)
 - [Changelog](#changelog)
 - [Usage](#usage)
@@ -29,6 +29,8 @@ A package to send messages to Microsoft Teams (channels)
     - [How to create a webhook URL (Connector)](#how-to-create-a-webhook-url-connector)
   - [Example: Basic](#example-basic)
   - [Example: Disable webhook URL prefix validation](#example-disable-webhook-url-prefix-validation)
+  - [Example: Enable custom patterns' validation](#example-enable-custom-patterns-validation)
+- [Used by](#used-by)
 - [References](#references)
 
 ## Project home
@@ -42,9 +44,9 @@ inclusion into the project.
 The `goteamsnotify` package (aka, `go-teams-notify`) allows sending simple or
 complex messages to a Microsoft Teams channel.
 
-Simple messages can be composed of only a title and a text body with complex
-messages supporting multiple sections, key/value pairs (aka, `Facts`) and/or
-externally hosted images.
+Simple messages can be composed of only a title and a text body. More complex
+messages can be composed of multiple sections, key/value pairs (aka, `Facts`)
+and/or externally hosted images.
 
 ## Features
 
@@ -53,6 +55,17 @@ externally hosted images.
     strings)
   - complex messages consist of one or more sections, key/value pairs (aka,
     `Facts`) and/or externally hosted images. or images (hosted externally)
+- Configurable validation of webhook URLs
+  - enabled by default, attempts to match most common known webhook URL
+    patterns
+  - option to disable validation entirely
+  - option to use custom validation patterns
+- Configurable validation of `MessageCard` type
+  - default assertion that bare-minimum required fields are present
+  - support for providing a custom validation function to override default
+    validation behavior
+- Configurable timeouts
+- Configurable retry support
 - Submit messages to Microsoft Teams
 
 ## Project Status
@@ -61,10 +74,10 @@ externally hosted images.
 
 This fork is now a standalone project.
 
-This project should be considered to be in "maintenance" mode. Further
-contributions and but fixes are welcome, but the overall cadence and priority
-is likely to be lower in comparison to other projects that I maintain. I plan
-to apply bugfixes, maintain dependencies and make improvements as warranted to
+This project should be considered in "maintenance" mode. Further contributions
+and bug fixes are welcome, but the overall cadence and priority is likely to
+be lower in comparison to other projects that I maintain. That said, I plan to
+apply bugfixes, maintain dependencies and make improvements as warranted to
 meet the needs of dependent projects.
 
 With work having stalled on the upstream project, others have also taken an
@@ -73,7 +86,7 @@ forks](https://github.com/atc0005/go-teams-notify/network/members) of the
 parent project codebase. See those forks for other ideas/changes that you may
 find useful.
 
-### Past
+### History
 
 1. Initial release up to and including `v2.1.0`
    - The last [upstream project
@@ -83,16 +96,20 @@ find useful.
    - I promoted my PR-only fork into a standalone project.
    - The first release from this project since diverging from upstream.
 1. [v2.2.0](https://github.com/atc0005/go-teams-notify/releases/tag/v2.2.0)
-   onward
    - I merged vendored local changes from another project that I maintain,
      [atc0005/send2teams](https://github.com/atc0005/send2teams).
+
+For more recent changes, see the
+[Releases](https://github.com/atc0005/go-teams-notify/releases) section or our
+[Changelog](https://github.com/atc0005/go-teams-notify/blob/master/CHANGELOG.md).
 
 ### Future
 
 I hope to eventually collapse this project and merge all changes back into the
 upstream project. As of early 2021 however, I've still not heard back from the
 upstream project maintainer, so this does not look to be the case any time
-soon.
+soon. In the meantime, I plan to continue maintaining this fork and making
+changes as needed to support dependent projects.
 
 ## Changelog
 
@@ -251,6 +268,72 @@ Of note:
   - allows use of custom/private webhook URL endpoints
 - other settings are the same as the basic example previously listed
 
+### Example: Enable custom patterns' validation
+
+This example demonstrates how to enable custom validation patterns for webhook URLs.
+
+```golang
+import (
+  "github.com/atc0005/go-teams-notify/v2"
+)
+
+func main() {
+  _ = sendTheMessage()
+}
+
+func sendTheMessage() error {
+  // init the client
+  mstClient := goteamsnotify.NewClient()
+
+  // setup webhook url
+  webhookUrl := "https://my.domain.com/webhook/YOUR_WEBHOOK_URL_OF_TEAMS_CHANNEL"
+
+  // Add a custom pattern for webhook URL validation
+  mstClient.AddWebhookURLValidationPatterns(`^https://.*\.domain\.com/.*$`)
+  // It's also possible to use multiple patterns with one call
+  // mstClient.AddWebhookURLValidationPatterns(`^https://arbitrary\.example\.com/webhook/.*$`, `^https://.*\.domain\.com/.*$`)
+  // To keep the default behavior and add a custom one, use something like the following:
+  // mstClient.AddWebhookURLValidationPatterns(DefaultWebhookURLValidationPattern, `^https://.*\.domain\.com/.*$`)
+
+  // setup message card
+  msgCard := goteamsnotify.NewMessageCard()
+  msgCard.Title = "Hello world"
+  msgCard.Text = "Here are some examples of formatted stuff like "+
+      "<br> * this list itself  <br> * **bold** <br> * *italic* <br> * ***bolditalic***"
+  msgCard.ThemeColor = "#DF813D"
+
+  // send
+  return mstClient.Send(webhookUrl, msgCard)
+}
+```
+
+Of note:
+
+- webhook URL validation uses custom pattern
+  - allows use of custom/private webhook URL endpoints
+- other settings are the same as the basic example previously listed
+
+## Used by
+
+This library is used by the following projects.
+
+- <https://github.com/tilmorproducts/gohelpers>
+- <https://github.com/nikoksr/notify/service/msteams>
+- <https://github.com/tomekwlod/go-teams>
+- <https://github.com/atc0005/bounce>
+- <https://github.com/atc0005/brick>
+- <https://github.com/atc0005/send2teams>
+
+See the Known importers lists below for a dynamically updated list of projects
+using either this library or the original project.
+
+- original project
+  - [v1](https://pkg.go.dev/github.com/dasrick/go-teams-notify?tab=importedby)
+  - [v2](https://pkg.go.dev/github.com/dasrick/go-teams-notify/v2?tab=importedby)
+- this fork
+  - [v1](https://pkg.go.dev/github.com/atc0005/go-teams-notify?tab=importedby)
+  - [v2](https://pkg.go.dev/github.com/atc0005/go-teams-notify/v2?tab=importedby)
+
 ## References
 
 - [Original project](https://github.com/dasrick/go-teams-notify)
@@ -264,11 +347,6 @@ Of note:
   ([de-de](https://docs.microsoft.com/de-de/outlook/actionable-messages/send-via-connectors),
   [en-us](https://docs.microsoft.com/en-us/outlook/actionable-messages/send-via-connectors))
   - [adaptivecards.io](https://adaptivecards.io/designer)
-
-- Related projects
-  - <https://github.com/atc0005/send2teams>
-  - <https://github.com/atc0005/bounce>
-  - <https://github.com/atc0005/brick>
 
 [githubtag-image]: https://img.shields.io/github/release/atc0005/go-teams-notify.svg?style=flat
 [githubtag-url]: https://github.com/atc0005/go-teams-notify

@@ -37,15 +37,17 @@ const (
 
 // DisableWebhookURLValidation is a special keyword used to indicate to
 // validation function(s) that webhook URL validation should be disabled.
+//
+// Deprecated: prefer using API.SkipWebhookURLValidationOnSend(bool) method instead
 const DisableWebhookURLValidation string = "DISABLE_WEBHOOK_URL_VALIDATION"
 
 // Regular Expression related constants that we can use to validate incoming
 // webhook URLs provided by the user.
 const (
 
-	// webhookURLRegexPrefixOnly is a minimal regex for matching known valid
+	// DefaultWebhookURLValidationPattern is a minimal regex for matching known valid
 	// webhook URL prefix patterns.
-	webhookURLRegexPrefixOnly = `^https:\/\/(?:.*\.webhook|outlook)\.office(?:365)?\.com`
+	DefaultWebhookURLValidationPattern = `^https:\/\/(?:.*\.webhook|outlook)\.office(?:365)?\.com`
 
 	// Note: The regex allows for capital letters in the GUID patterns. This is
 	// allowed based on light testing which shows that mixed case works and the
@@ -67,9 +69,15 @@ const ExpectedWebhookURLResponseText string = "1"
 // before it times out and is cancelled.
 const DefaultWebhookSendTimeout = 5 * time.Second
 
+// ErrWebhookURLUnexpected is returned when a provided webhook URL does
+// not match a set of confirmed webhook URL patterns.
+var ErrWebhookURLUnexpected = errors.New("webhook URL does not match one of expected patterns")
+
 // ErrWebhookURLUnexpectedPrefix is returned when a provided webhook URL does
 // not match a set of confirmed webhook URL prefixes.
-var ErrWebhookURLUnexpectedPrefix = errors.New("webhook URL does not contain expected prefix")
+//
+// Deprecated: Use ErrWebhookURLUnexpected instead.
+var ErrWebhookURLUnexpectedPrefix = ErrWebhookURLUnexpected
 
 // ErrInvalidWebhookURLResponseText is returned when the remote webhook
 // endpoint indicates via response text that a message submission was
@@ -81,12 +89,15 @@ type API interface {
 	Send(webhookURL string, webhookMessage MessageCard) error
 	SendWithContext(ctx context.Context, webhookURL string, webhookMessage MessageCard) error
 	SendWithRetry(ctx context.Context, webhookURL string, webhookMessage MessageCard, retries int, retriesDelay int) error
-	SkipWebhookURLValidationOnSend(skip bool)
+	SkipWebhookURLValidationOnSend(skip bool) API
+	AddWebhookURLValidationPatterns(patterns ...string) API
+	ValidateWebhook(webhookURL string) error
 }
 
 type teamsClient struct {
-	httpClient               *http.Client
-	skipWebhookURLValidation bool
+	httpClient                   *http.Client
+	webhookURLValidationPatterns []string
+	skipWebhookURLValidation     bool
 }
 
 func init() {
@@ -122,6 +133,11 @@ func NewClient() API {
 	return &client
 }
 
+func (c *teamsClient) AddWebhookURLValidationPatterns(patterns ...string) API {
+	c.webhookURLValidationPatterns = append(c.webhookURLValidationPatterns, patterns...)
+	return c
+}
+
 // Send is a wrapper function around the SendWithContext method in order to
 // provide backwards compatibility.
 func (c teamsClient) Send(webhookURL string, webhookMessage MessageCard) error {
@@ -139,14 +155,12 @@ func (c teamsClient) SendWithContext(ctx context.Context, webhookURL string, web
 	logger.Printf("SendWithContext: Webhook message received: %#v\n", webhookMessage)
 
 	// optionally skip webhook validation
-	webhookURLToValidate := webhookURL
 	if c.skipWebhookURLValidation {
 		logger.Printf("SendWithContext: Webhook URL will not be validated: %#v\n", webhookURL)
-		webhookURLToValidate = DisableWebhookURLValidation
 	}
 
 	// Validate input data
-	if valid, err := IsValidInput(webhookMessage, webhookURLToValidate); !valid {
+	if err := c.validateInput(webhookMessage, webhookURL); err != nil {
 		return err
 	}
 
@@ -307,15 +321,59 @@ func (c teamsClient) SendWithRetry(ctx context.Context, webhookURL string, webho
 
 // SkipWebhookURLValidationOnSend allows the caller to optionally disable
 // webhook URL validation.
-func (c *teamsClient) SkipWebhookURLValidationOnSend(skip bool) {
+func (c *teamsClient) SkipWebhookURLValidationOnSend(skip bool) API {
 	c.skipWebhookURLValidation = skip
+	return c
 }
 
-// helper --------------------------------------------------------------------------------------------------------------
+// validateInput verifies if the input parameters are valid
+func (c teamsClient) validateInput(webhookMessage MessageCard, webhookURL string) error {
+	// validate url
+	if err := c.ValidateWebhook(webhookURL); err != nil {
+		return err
+	}
+
+	// validate message
+	return webhookMessage.Validate()
+}
+
+func (c teamsClient) ValidateWebhook(webhookURL string) error {
+	if c.skipWebhookURLValidation || webhookURL == DisableWebhookURLValidation {
+		return nil
+	}
+
+	u, err := url.Parse(webhookURL)
+	if err != nil {
+		return fmt.Errorf("unable to parse webhook URL %q: %w", webhookURL, err)
+	}
+
+	patterns := c.webhookURLValidationPatterns
+	if len(patterns) == 0 {
+		patterns = []string{DefaultWebhookURLValidationPattern}
+	}
+
+	// Return true if at least one pattern matches
+	for _, pat := range patterns {
+		matched, err := regexp.MatchString(pat, webhookURL)
+		if err != nil {
+			return err
+		}
+		if matched {
+			return nil
+		}
+	}
+
+	return fmt.Errorf("%w; got: %q, patterns: %s", ErrWebhookURLUnexpected, u.String(), strings.Join(patterns, ","))
+}
+
+// old deprecated helper functions --------------------------------------------------------------------------------------------------------------
 
 // IsValidInput is a validation "wrapper" function. This function is intended
 // to run current validation checks and offer easy extensibility for future
 // validation requirements.
+//
+// Deprecated: use API.ValidateWebhook() and MessageCard.Validate()
+// methods instead.
 func IsValidInput(webhookMessage MessageCard, webhookURL string) (bool, error) {
 	// validate url
 	if valid, err := IsValidWebhookURL(webhookURL); !valid {
@@ -332,50 +390,19 @@ func IsValidInput(webhookMessage MessageCard, webhookURL string) (bool, error) {
 
 // IsValidWebhookURL performs validation checks on the webhook URL used to
 // submit messages to Microsoft Teams.
+//
+// Deprecated: use API.ValidateWebhook() method instead.
 func IsValidWebhookURL(webhookURL string) (bool, error) {
-	// Skip validation if requested
-	if webhookURL == DisableWebhookURLValidation {
-		return true, nil
-	}
-
-	u, err := url.Parse(webhookURL)
-	if err != nil {
-		return false, fmt.Errorf(
-			"unable to parse webhook URL %q: %w",
-			webhookURL,
-			err,
-		)
-	}
-
-	matched, err := regexp.MatchString(webhookURLRegexPrefixOnly, webhookURL)
-	if !matched {
-		userProvidedWebhookURLPrefix := u.Scheme + "://" + u.Host
-
-		errMsg := "validation failed"
-		if err != nil {
-			errMsg = err.Error()
-		}
-
-		return false, fmt.Errorf(
-			"webhook URL %q received; %v: %w",
-			userProvidedWebhookURLPrefix,
-			errMsg,
-			ErrWebhookURLUnexpectedPrefix,
-		)
-	}
-
-	return true, nil
+	c := teamsClient{}
+	err := c.ValidateWebhook(webhookURL)
+	return err == nil, err
 }
 
 // IsValidMessageCard performs validation/checks for known issues with
 // MessardCard values.
+//
+// Deprecated: use MessageCard.Validate() instead.
 func IsValidMessageCard(webhookMessage MessageCard) (bool, error) {
-	if (webhookMessage.Text == "") && (webhookMessage.Summary == "") {
-		// This scenario results in:
-		// 400 Bad Request
-		// Summary or Text is required.
-		return false, fmt.Errorf("invalid message card: summary or text field is required")
-	}
-
-	return true, nil
+	err := webhookMessage.Validate()
+	return err == nil, err
 }
