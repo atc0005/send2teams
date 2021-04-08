@@ -26,6 +26,33 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
+## [v0.4.12] - 2021-04-08
+
+### Overview
+
+- Misc fixes
+- built using Go 1.16.3
+
+### Changed
+
+- Dependencies
+  - Built using Go 1.16.3
+    - **Statically linked**
+    - Windows (x86, x64)
+    - Linux (x86, x64)
+  - `actions/setup-node`
+    - updated from `v2.1.4` to `v2.1.5`
+  - `atc0005/go-teams-notify`
+    - updated from `v2.4.2` to `v2.5.0`
+
+### Fixed
+
+- Linting
+  - fieldalignment: struct with X pointer bytes could be Y (govet)
+  - Replace deprecated linters: maligned, scopelint
+  - SA1019: goteamsnotify.IsValidWebhookURL is deprecated: use
+    API.ValidateWebhook() method instead. (staticcheck)
+
 ## [v0.4.11] - 2021-01-29
 
 ### Overview
@@ -441,7 +468,8 @@ This initial prototype supports/provides:
 - GitHub Actions linting and build checks
 - Makefile for general use cases
 
-[Unreleased]: https://github.com/atc0005/send2teams/compare/v0.4.11...HEAD
+[Unreleased]: https://github.com/atc0005/send2teams/compare/v0.4.12...HEAD
+[v0.4.12]: https://github.com/atc0005/send2teams/releases/tag/v0.4.12
 [v0.4.11]: https://github.com/atc0005/send2teams/releases/tag/v0.4.11
 [v0.4.10]: https://github.com/atc0005/send2teams/releases/tag/v0.4.10
 [v0.4.9]: https://github.com/atc0005/send2teams/releases/tag/v0.4.9
