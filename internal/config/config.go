@@ -70,13 +70,6 @@ const DefaultNagiosNotificationTimeout time.Duration = 30 * time.Second
 // struct is configured via command-line flags provided by the user.
 type Config struct {
 
-	// Retries is the number of attempts that this application will make
-	// to deliver messages before giving up.
-	Retries int
-
-	// RetriesDelay is the number of seconds to wait between retry attempts.
-	RetriesDelay int
-
 	// Team is the human-readable name of the Microsoft Teams "team" that
 	// contains the channel we wish to post a message to. This is used in
 	// informational output produced by this application only; the remote API
@@ -107,6 +100,13 @@ type Config struct {
 	// MessageText is an (optionally) Markdown-formatted string representing
 	// the message that we will submit.
 	MessageText string
+
+	// Retries is the number of attempts that this application will make
+	// to deliver messages before giving up.
+	Retries int
+
+	// RetriesDelay is the number of seconds to wait between retry attempts.
+	RetriesDelay int
 
 	// Whether detailed output should be shown after message submission
 	// success or failure.
