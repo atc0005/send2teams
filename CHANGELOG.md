@@ -35,6 +35,12 @@ The following types of changes will be recorded in this file:
   - Windows (x86, x64)
   - Linux (x86, x64)
 
+### Changed
+
+- Dependencies
+  - `Go`
+    - `1.16.3` to `1.16.5`
+
 ## [v0.4.12] - 2021-04-08
 
 ### Overview
