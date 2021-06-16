@@ -26,6 +26,15 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
+## [v0.4.13] - 2021-06-16
+
+### Overview
+
+- built using Go 1.16.5
+  - Statically linked
+  - Windows (x86, x64)
+  - Linux (x86, x64)
+
 ## [v0.4.12] - 2021-04-08
 
 ### Overview
@@ -468,7 +477,8 @@ This initial prototype supports/provides:
 - GitHub Actions linting and build checks
 - Makefile for general use cases
 
-[Unreleased]: https://github.com/atc0005/send2teams/compare/v0.4.12...HEAD
+[Unreleased]: https://github.com/atc0005/send2teams/compare/v0.4.13...HEAD
+[v0.4.13]: https://github.com/atc0005/send2teams/releases/tag/v0.4.13
 [v0.4.12]: https://github.com/atc0005/send2teams/releases/tag/v0.4.12
 [v0.4.11]: https://github.com/atc0005/send2teams/releases/tag/v0.4.11
 [v0.4.10]: https://github.com/atc0005/send2teams/releases/tag/v0.4.10
