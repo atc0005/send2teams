@@ -81,7 +81,7 @@ func main() {
 
 	// Create branding trailer section
 	trailerSection := goteamsnotify.NewMessageCardSection()
-	trailerSection.Text = config.MessageTrailer()
+	trailerSection.Text = config.MessageTrailer(cfg.Sender)
 	trailerSection.StartGroup = true
 
 	// Add branding trailer section, bail if unexpected error occurs
