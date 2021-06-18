@@ -23,8 +23,8 @@ const (
 	verboseOutputFlagHelp = "Whether detailed output should be shown after message submission success or failure."
 	silentOutputFlagHelp  = "Whether ANY output should be shown after message submission success or failure."
 	convertEOLFlagHelp    = "Whether messages with Windows, Mac and Linux newlines are updated to use break statements before message submission."
-	teamNameFlagHelp      = "The name of the Team containing our target channel."
-	channelNameFlagHelp   = "The target channel where we will send a message."
+	teamNameFlagHelp      = "The name of the Team containing our target channel. Used in log messages. If not specified, defaults to \"unspecified\"."
+	channelNameFlagHelp   = "The target channel where we will send a message. Used in log messages. If not specified, defaults to \"unspecified\"."
 	webhookURLFlagHelp    = "The Webhook URL provided by a preconfigured Connector."
 	themeColorFlagHelp    = "The hex color code used to set the desired trim color on submitted messages."
 	titleFlagHelp         = "The title for the message to submit."
@@ -39,8 +39,8 @@ const (
 	defaultSilentOutput          bool   = false
 	defaultVerboseOutput         bool   = false
 	defaultConvertEOL            bool   = false
-	defaultTeamName              string = ""
-	defaultChannelName           string = ""
+	defaultTeamName              string = "unspecified"
+	defaultChannelName           string = "unspecified"
 	defaultWebhookURL            string = ""
 	defaultMessageTitle          string = ""
 	defaultMessageText           string = ""
@@ -236,13 +236,7 @@ func (c Config) Validate() error {
 		return fmt.Errorf("message content too short")
 	}
 
-	if c.Team == "" {
-		return fmt.Errorf("team name too short")
-	}
-
-	if c.Channel == "" {
-		return fmt.Errorf("channel name too short")
-	}
+	// Team and Channel names are optional. If provided, use as-is.
 
 	if c.Retries < 0 {
 		return fmt.Errorf("retries too short")
