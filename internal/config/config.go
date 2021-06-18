@@ -10,6 +10,7 @@ package config
 import (
 	"flag"
 	"fmt"
+	"net/url"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -27,6 +28,7 @@ const (
 	teamNameFlagHelp      = "The name of the Team containing our target channel. Used in log messages. If not specified, defaults to \"unspecified\"."
 	channelNameFlagHelp   = "The target channel where we will send a message. Used in log messages. If not specified, defaults to \"unspecified\"."
 	webhookURLFlagHelp    = "The Webhook URL provided by a preconfigured Connector."
+	targetURLFlagHelp     = "The target URL and label (specified as comma separated pair) usually visible as a button towards the bottom of the Microsoft Teams message."
 	themeColorFlagHelp    = "The hex color code used to set the desired trim color on submitted messages."
 	titleFlagHelp         = "The title for the message to submit."
 	messageFlagHelp       = "The message to submit. This message may be provided in Markdown format."
@@ -79,6 +81,20 @@ const brandingTextPrefix string = "Message delivered by"
 // one will attempt to deliver to a Microsoft Teams channel.
 const brandingTextSuffix string = "on behalf of"
 
+// TargetURL is a URL and description provided by the user for use with
+// generating potentialAction entries for display as "buttons" in the
+// generated Microsoft Teams message.
+type TargetURL struct {
+
+	// URL to be used as the target for labelled "buttons" within a Microsoft
+	// Teams message.
+	URL url.URL
+
+	// Description is the text used as the label for link "buttons" within a
+	// Microsoft Teams message.
+	Description string
+}
+
 // Config is a unified set of configuration values for this application. This
 // struct is configured via command-line flags provided by the user.
 type Config struct {
@@ -119,6 +135,11 @@ type Config struct {
 	// deliver.
 	Sender string
 
+	// TargetURLs is the collection of user-specified URLs and descriptions
+	// that should be displayed as actionable links or "buttons" within the
+	// generated Microsoft Teams message.
+	TargetURLs targetURLsStringFlag
+
 	// Retries is the number of attempts that this application will make
 	// to deliver messages before giving up.
 	Retries int
@@ -141,6 +162,87 @@ type Config struct {
 	// ShowVersion is a flag indicating whether the user opted to display only
 	// the version string and then immediately exit the application
 	ShowVersion bool
+}
+
+type targetURLsStringFlag []TargetURL
+
+// String returns a list of all user-specified target URLs.
+func (tus *targetURLsStringFlag) String() string {
+
+	// From the `flag` package docs:
+	// "The flag package may call the String method with a zero-valued
+	// receiver, such as a nil pointer."
+	if tus == nil {
+		return ""
+	}
+
+	var output strings.Builder
+
+	for i := range *tus {
+
+		fmt.Fprintf(
+			&output,
+			"[URL: %s, Desc: %s]",
+			(*tus)[i].URL.String(),
+			(*tus)[i].Description,
+		)
+
+		// separate the current entry from the next if more to process
+		if i+1 != len(*tus) {
+			fmt.Fprintf(&output, ", ")
+		}
+
+	}
+
+	return output.String()
+
+}
+
+// Set is called once by the flag package, in command line order, for each
+// flag present. At most, two comma-separated values are allowed per flag
+// invocation in order to specify the target URL and the target URL
+// description. An error is returned if more comma-separated values are
+// specified than expected or if the provided URL is in an invalid format.
+func (tus *targetURLsStringFlag) Set(value string) error {
+
+	// split comma-separated string into multiple values
+	items := strings.Split(value, ",")
+
+	// We should only have two items after splitting on the comma, the target
+	// URL and its description. Abort if more or less are supplied.
+	if len(items) != 2 {
+		return fmt.Errorf(
+			"received %d arguments for target URL flag, expected 2",
+			len(items),
+		)
+	}
+
+	// prune any leading and trailing whitespace, drop any quotes which might
+	// cause issues later.
+	for index, item := range items {
+		items[index] = strings.TrimSpace(item)
+		items[index] = strings.ReplaceAll(items[index], "'", "")
+		items[index] = strings.ReplaceAll(items[index], "\"", "")
+	}
+
+	u, err := url.Parse(items[0])
+	if err != nil {
+		return fmt.Errorf(
+			"provided URL %s failed to parse: %v",
+			items[0],
+			err,
+		)
+	}
+
+	desc := items[1]
+
+	// add them to the collection
+	*tus = append(*tus, TargetURL{
+		URL:         *u,
+		Description: desc,
+	})
+
+	return nil
 }
 
 // Branding is responsible for emitting application name, version and origin
@@ -195,6 +297,7 @@ func (c Config) String() string {
 			"MessageTitle=%q, "+
 			"MessageText=%q, "+
 			"Sender=%q, "+
+			"TargetURLs=%q, "+
 			"Retries=%q, "+
 			"RetriesDelay=%q, "+
 			"AppTimeout=%q",
@@ -205,6 +308,7 @@ func (c Config) String() string {
 		c.MessageTitle,
 		c.MessageText,
 		c.Sender,
+		c.TargetURLs.String(),
 		strconv.Itoa(c.Retries),
 		strconv.Itoa(c.RetriesDelay),
 		c.TeamsSubmissionTimeout(),
@@ -268,6 +372,23 @@ func (c Config) Validate() error {
 	// Team and Channel names are optional. If provided, use as-is.
 
 	// Sender is optional. If provided, use as-is.
+
+	// We reply on the Set() method for the flag.Value interface to ensure that
+	// the required URL and description values are provided for each target
+	// URL. We verify here that we don't exceed the maximum supported
+	// potentialActions for the `section` that we will generate.
+	//
+	// https://docs.microsoft.com/en-us/outlook/actionable-messages/message-card-reference#actions
+	//
+	// TODO: Review this after atc0005/go-teams-notify#103 and any follow-up
+	// PRs are merged.
+	if len(c.TargetURLs) > goteamsnotify.PotentialActionMaxSupported {
+		return fmt.Errorf(
+			"%d target URLs specified, a maximum of %d are supported",
+			len(c.TargetURLs),
+			goteamsnotify.PotentialActionMaxSupported,
+		)
+	}
 
 	if c.Retries < 0 {
 		return fmt.Errorf("retries too short")

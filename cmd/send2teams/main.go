@@ -79,6 +79,44 @@ func main() {
 	msgCard.Text = cfg.MessageText
 	msgCard.ThemeColor = cfg.ThemeColor
 
+	// If provided, use target URLs and their descriptions to add labelled URL
+	// "buttons" to Microsoft Teams message.
+	if cfg.TargetURLs != nil {
+
+		// Create dedicated section for all potentialAction items
+		actionSection := goteamsnotify.NewMessageCardSection()
+		actionSection.StartGroup = true
+
+		for i := range cfg.TargetURLs {
+
+			pa := goteamsnotify.NewMessageCardPotentialAction(
+				goteamsnotify.PotentialActionOpenURIType,
+				cfg.TargetURLs[i].Description,
+			)
+
+			pa.MessageCardPotentialActionOpenURI.Targets =
+				[]goteamsnotify.MessageCardPotentialActionOpenUriTarget{
+					{
+						OS:  "default",
+						URI: cfg.TargetURLs[i].URL.String(),
+					},
+				}
+
+			if err := actionSection.AddPotentialAction(pa); err != nil {
+				log.Println("error encountered when adding target URL to message:", err)
+				appExitCode = 1
+
+				return
+			}
+		}
+
+		if err := msgCard.AddSection(actionSection); err != nil {
+			log.Println("error encountered when adding section value:", err)
+			appExitCode = 1
+			return
+		}
+	}
+
 	// Create branding trailer section
 	trailerSection := goteamsnotify.NewMessageCardSection()
 	trailerSection.Text = config.MessageTrailer(cfg.Sender)

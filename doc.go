@@ -32,40 +32,11 @@ FEATURES
 
 • message delivery retry support with retry and retry delay values configurable via flag
 
+• optional support for specifying url/description pairs for display in Microsoft Teams messages
 
 USAGE
 
-Help output is below. See the README for examples.
-
-	send2teams dev build
-	https://github.com/atc0005/send2teams
-
-	Usage of "send2teams.exe":
-	-channel string
-			The target channel where we will send a message.
-	-color string
-			The hex color code used to set the desired trim color on submitted messages. (default "#832561")
-	-convert-eol
-			Whether messages with Windows, Mac and Linux newlines are updated to use break statements before message submission.
-	-message string
-			The message to submit. This message may be provided in Markdown format.
-	-retries int
-			The number of attempts that this application will make to deliver messages before giving up. (default 2)
-	-retries-delay int
-			The number of seconds that this application will wait before making another delivery attempt. (default 2)
-	-silent
-			Whether ANY output should be shown after message submission success or failure.
-	-team string
-			The name of the Team containing our target channel.
-	-title string
-			The title for the message to submit.
-	-url string
-			The Webhook URL provided by a preconfigured Connector.
-	-v    Whether to display application version and then immediately exit application. (shorthand)
-	-verbose
-			Whether detailed output should be shown after message submission success or failure.
-	-version
-			Whether to display application version and then immediately exit application.
+See our main README for supported settings and examples.
 
 */
 package main
