@@ -17,6 +17,7 @@ func (c *Config) handleFlagsConfig() {
 	flag.BoolVar(&c.SilentOutput, "silent", defaultSilentOutput, silentOutputFlagHelp)
 	flag.BoolVar(&c.ConvertEOL, "convert-eol", defaultConvertEOL, convertEOLFlagHelp)
 	flag.StringVar(&c.Team, "team", defaultTeamName, teamNameFlagHelp)
+	flag.Var(&c.TargetURLs, "target-url", targetURLFlagHelp)
 	flag.StringVar(&c.Channel, "channel", defaultChannelName, channelNameFlagHelp)
 	flag.StringVar(&c.WebhookURL, "url", defaultWebhookURL, webhookURLFlagHelp)
 	flag.StringVar(&c.ThemeColor, "color", defaultMessageThemeColor, themeColorFlagHelp)

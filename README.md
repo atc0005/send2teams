@@ -26,6 +26,8 @@ Small CLI tool used to submit messages to Microsoft Teams.
   - [Command-line](#command-line)
 - [Examples](#examples)
   - [One-off](#one-off)
+  - [Using an invalid flag](#using-an-invalid-flag)
+  - [Specifying url, description pairs](#specifying-url-description-pairs)
 - [License](#license)
 - [References](#references)
 
@@ -67,6 +69,8 @@ project.
 - optional branding of delivered messages
   - noting this application as the delivery agent
   - (also optional) noting a sending application as the source of the message
+- optional support for specifying target `url`, `description` comma-separated
+  pairs for use as labelled "buttons" within a Microsoft Teams message.
 
 ## Changelog
 
@@ -173,22 +177,23 @@ shadabacc3934](https://gist.github.com/chusiang/895f6406fbf9285c58ad0a3ace13d025
 Currently `send2teams` only supports command-line configuration flags.
 Requests for other configuration sources will be considered.
 
-| Flag            | Required | Default       | Possible                                                  | Description                                                                                                         |
-| --------------- | -------- | ------------- | --------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
-| `h`, `help`     | No       | N/A           | N/A                                                       | Display Help; show available flags.                                                                                 |
-| `v`, `version`  | No       | `false`       | `true`, `false`                                           | Whether to display application version and then immediately exit application.                                       |
-| `channel`       | No       | `unspecified` | *valid Microsoft Teams channel name*                      | The target channel where we will send a message. If not specified, defaults to `unspecified`.                       |
-| `color`         | No       | `#832561`     | *valid hex color code with leading `#`*                   | The hex color code used to set the desired trim color on submitted messages.                                        |
-| `message`       | Yes      |               | *valid message string*                                    | The (optionally) Markdown-formatted message to submit.                                                              |
-| `team`          | No       | `unspecified` | *valid Microsoft Teams team name*                         | The name of the Team containing our target channel. If not specified, defaults to `unspecified`.                    |
-| `title`         | Yes      |               | *valid title string*                                      | The title for the message to submit.                                                                                |
-| `sender`        | No       |               | *valid application or script name*                        | The (optional) sending application name or generator of the message this app will attempt to deliver.               |
-| `url`           | Yes      |               | [*valid Microsoft Office 365 Webhook URL*](#webhook-urls) | The Webhook URL provided by a pre-configured Connector.                                                             |
-| `verbose`       | No       | `false`       | `true`, `false`                                           | Whether detailed output should be shown after message submission success or failure                                 |
-| `silent`        | No       | `false`       | `true`, `false`                                           | Whether ANY output should be shown after message submission success or failure                                      |
-| `convert-eol`   | No       | `false`       | `true`, `false`                                           | Whether messages with Windows, Mac and Linux newlines are updated to use break statements before message submission |
-| `retries`       | No       | `2`           | *positive whole number*                                   | The number of attempts that this application will make to deliver messages before giving up.                        |
-| `retries-delay` | No       | `2`           | *positive whole number*                                   | The number of seconds that this application will wait before making another delivery attempt.                       |
+| Flag            | Required | Default       | Possible                                                    | Description                                                                                                                                 |
+| --------------- | -------- | ------------- | ----------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| `h`, `help`     | No       | N/A           | N/A                                                         | Display Help; show available flags.                                                                                                         |
+| `v`, `version`  | No       | `false`       | `true`, `false`                                             | Whether to display application version and then immediately exit application.                                                               |
+| `channel`       | No       | `unspecified` | *valid Microsoft Teams channel name*                        | The target channel where we will send a message. If not specified, defaults to `unspecified`.                                               |
+| `color`         | No       | `#832561`     | *valid hex color code with leading `#`*                     | The hex color code used to set the desired trim color on submitted messages.                                                                |
+| `message`       | Yes      |               | *valid message string*                                      | The (optionally) Markdown-formatted message to submit.                                                                                      |
+| `team`          | No       | `unspecified` | *valid Microsoft Teams team name*                           | The name of the Team containing our target channel. If not specified, defaults to `unspecified`.                                            |
+| `title`         | Yes      |               | *valid title string*                                        | The title for the message to submit.                                                                                                        |
+| `sender`        | No       |               | *valid application or script name*                          | The (optional) sending application name or generator of the message this app will attempt to deliver.                                       |
+| `url`           | Yes      |               | [*valid Microsoft Office 365 Webhook URL*](#webhook-urls)   | The Webhook URL provided by a pre-configured Connector.                                                                                     |
+| `target-url`    | No       |               | *valid comma-separated `url`, `description` pair* (limit 4) | The target URL and label (specified as comma separated pair) usually visible as a button towards the bottom of the Microsoft Teams message. |
+| `verbose`       | No       | `false`       | `true`, `false`                                             | Whether detailed output should be shown after message submission success or failure                                                         |
+| `silent`        | No       | `false`       | `true`, `false`                                             | Whether ANY output should be shown after message submission success or failure                                                              |
+| `convert-eol`   | No       | `false`       | `true`, `false`                                             | Whether messages with Windows, Mac and Linux newlines are updated to use break statements before message submission                         |
+| `retries`       | No       | `2`           | *positive whole number*                                     | The number of attempts that this application will make to deliver messages before giving up.                                                |
+| `retries-delay` | No       | `2`           | *positive whole number*                                     | The number of seconds that this application will wait before making another delivery attempt.                                               |
 
 ## Examples
 
@@ -223,10 +228,34 @@ and on a single line (e.g., one-off via terminal or batch file):
 Remove the `-silent` flag in order to see pass or failure output, otherwise
 look at the exit code (`$?`) or Microsoft Teams to determine results.
 
+### Using an invalid flag
+
 Accidentally typing the wrong flag results in a message like this one:
 
 ```ShellSession
 flag provided but not defined: -fake-flag
+```
+
+### Specifying url, description pairs
+
+```console
+./send2teams \
+  --silent \
+  --channel "Alerts" \
+  --team "Support" \
+  --message "Useful starting points" \
+  --title "Learn more about Go" \
+  --sender "Nagios" \
+  --color "#832561" \
+  --url "https://outlook.office.com/webhook/www@xxx/IncomingWebhook/yyy/zzz" \
+  --target-url "https://www.golang.org/, Go Homepage" \
+  --target-url "https://github.com/dariubs/GoBooks, Awesome Go Books"
+```
+
+and on a single line (e.g., one-off via terminal or batch file):
+
+```console
+./send2teams.exe --silent --channel "Alerts" --team "Support" --message "Useful starting points" --title "Learn more about Go" --sender "Nagios" --color "#832561" --url "https://outlook.office.com/webhook/www@xxx/IncomingWebhook/yyy/zzz" --target-url "https://www.golang.org/, Go Homepage" --target-url "https://github.com/dariubs/GoBooks, Awesome Go Books"
 ```
 
 ## License
