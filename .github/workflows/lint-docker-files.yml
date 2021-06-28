@@ -1,0 +1,31 @@
+# Copyright 2021 Adam Chalkley
+#
+# https://github.com/atc0005/send2teams
+#
+# Licensed under the MIT License. See LICENSE file in the project root for
+# full license information.
+
+name: Linting
+
+# Run builds for Pull Requests (new, updated)
+# `synchronized` seems to equate to pushing new commits to a linked branch
+# (whether force-pushed or not)
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  linting:
+    name: Lint Dockerfile files
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    container:
+      image: index.docker.io/hadolint/hadolint:latest-debian
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2.3.4
+
+      - name: Run hadolint against all Dockerfile files
+        run: |
+          hadolint dependabot/docker/go/Dockerfile

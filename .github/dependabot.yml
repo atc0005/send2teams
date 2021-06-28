@@ -9,7 +9,6 @@
 
 version: 2
 updates:
-
   # Enable version updates for Go modules
   - package-ecosystem: "gomod"
 
@@ -58,3 +57,22 @@ updates:
       - dependency-type: "all"
     commit-message:
       prefix: "ghaw"
+
+  # Monitor Go updates to serve as a reminder to generate fresh binaries
+  - package-ecosystem: docker
+    directory: "/dependabot/docker/go"
+    open-pull-requests-limit: 10
+    target-branch: "master"
+    schedule:
+      interval: "daily"
+      time: "02:00"
+      timezone: "America/Chicago"
+    assignees:
+      - "atc0005"
+    labels:
+      - "dependencies"
+      - "CI"
+    allow:
+      - dependency-type: "all"
+    commit-message:
+      prefix: "canary"
