@@ -10,7 +10,6 @@ package main
 import (
 	"context"
 	"errors"
-	"flag"
 	"log"
 	"os"
 
@@ -27,9 +26,20 @@ func main() {
 
 	// Toggle library debug logging output
 	// goteamsnotify.EnableLogging()
-	// teams.DisableLogging()
-
 	goteamsnotify.DisableLogging()
+
+	cfg, cfgErr := config.NewConfig()
+	switch {
+	case errors.Is(cfgErr, config.ErrVersionRequested):
+		config.Branding()
+		os.Exit(0)
+	case cfgErr != nil:
+		log.Fatalf("failed to initialize application: %s", cfgErr)
+	}
+
+	if cfg.VerboseOutput {
+		log.Printf("Configuration: %s\n", cfg)
+	}
 
 	// Emulate returning exit code from main function by "queuing up" a
 	// default exit code that matches expectations, but allow explicitly
@@ -43,30 +53,6 @@ func main() {
 		}
 		os.Exit(exitCode)
 	}(&appExitCode)
-
-	// log.Debug("Initializing application")
-
-	cfg, err := config.NewConfig()
-	switch {
-	// TODO: How else to guard against nil cfg object?
-	case cfg != nil && cfg.ShowVersion:
-		config.Branding()
-		appExitCode = 0
-		return
-	case err == nil:
-		// do nothing for this one
-	case errors.Is(err, flag.ErrHelp):
-		appExitCode = 0
-		return
-	default:
-		log.Printf("failed to initialize application: %s", err)
-		appExitCode = 1
-		return
-	}
-
-	if cfg.VerboseOutput {
-		log.Printf("Configuration: %s\n", cfg)
-	}
 
 	// Convert EOL if user requested it (useful for converting script output)
 	if cfg.ConvertEOL {
