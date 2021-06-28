@@ -8,6 +8,7 @@
 package config
 
 import (
+	"errors"
 	"flag"
 	"fmt"
 	"net/url"
@@ -56,6 +57,10 @@ const (
 
 // Overridden via Makefile for release builds
 var version string = "dev build"
+
+// ErrVersionRequested indicates that the user requested application version
+// information.
+var ErrVersionRequested = errors.New("version information requested")
 
 // Primarily used with branding
 const myAppName string = "send2teams"
