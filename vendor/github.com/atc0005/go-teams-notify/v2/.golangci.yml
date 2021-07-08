@@ -1,5 +1,5 @@
 # Copyright 2020 Enrico Hoffmann
-# Copyright 2020 Adam Chalkley
+# Copyright 2021 Adam Chalkley
 #
 # https://github.com/atc0005/go-teams-notify
 #
@@ -15,12 +15,15 @@ linters:
     - gocritic
     - gocyclo
     - gofmt
-    - golint
+    - revive
     - gosec
+
+    # Deprecated linter, but still functional as of golangci-lint v1.39.0.
+    # See https://github.com/atc0005/go-ci/issues/302 for more information.
     - maligned
     - nakedret
     - prealloc
-    - scopelint
+    - exportloopref
     - unconvert
     - unparam
     - whitespace
@@ -37,10 +40,6 @@ linters-settings:
   gocyclo:
     # minimal code complexity to report, 30 by default (but we recommend 10-20)
     min-complexity: 15
-
-  golint:
-    # minimal confidence for issues, default is 0.8
-    min-confidence: 0.3
 
   maligned:
     # print struct with more effective memory layout or not, false by default
@@ -89,7 +88,3 @@ run:
   # directory holds the correct copies of dependencies and ignores
   # the dependency descriptions in go.mod.
   modules-download-mode: vendor
-
-service:
-  # use the fixed version to not introduce new linters unexpectedly
-  golangci-lint-version: 1.20.x

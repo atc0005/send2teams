@@ -75,13 +75,20 @@ func main() {
 
 		for i := range cfg.TargetURLs {
 
-			pa := goteamsnotify.NewMessageCardPotentialAction(
+			pa, err := goteamsnotify.NewMessageCardPotentialAction(
 				goteamsnotify.PotentialActionOpenURIType,
 				cfg.TargetURLs[i].Description,
 			)
 
+			if err != nil {
+				log.Println("error encountered when processing target URL:", err)
+				appExitCode = 1
+
+				return
+			}
+
 			pa.MessageCardPotentialActionOpenURI.Targets =
-				[]goteamsnotify.MessageCardPotentialActionOpenUriTarget{
+				[]goteamsnotify.MessageCardPotentialActionOpenURITarget{
 					{
 						OS:  "default",
 						URI: cfg.TargetURLs[i].URL.String(),

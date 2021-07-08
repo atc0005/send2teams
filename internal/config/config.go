@@ -378,15 +378,12 @@ func (c Config) Validate() error {
 
 	// Sender is optional. If provided, use as-is.
 
-	// We reply on the Set() method for the flag.Value interface to ensure that
+	// We rely on the Set() method for the flag.Value interface to ensure that
 	// the required URL and description values are provided for each target
 	// URL. We verify here that we don't exceed the maximum supported
 	// potentialActions for the `section` that we will generate.
 	//
 	// https://docs.microsoft.com/en-us/outlook/actionable-messages/message-card-reference#actions
-	//
-	// TODO: Review this after atc0005/go-teams-notify#103 and any follow-up
-	// PRs are merged.
 	if len(c.TargetURLs) > goteamsnotify.PotentialActionMaxSupported {
 		return fmt.Errorf(
 			"%d target URLs specified, a maximum of %d are supported",
