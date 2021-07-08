@@ -15,20 +15,32 @@ import (
 )
 
 const (
-	// PotentialActionOpenURIType is the type that must be used for OpenUri potential action.
+	// PotentialActionOpenURIType is the type that must be used for OpenUri
+	// potential action.
 	PotentialActionOpenURIType = "OpenUri"
-	// PotentialActionHTTPPostType is the type that must be used for HttpPOST potential action.
+
+	// PotentialActionHTTPPostType is the type that must be used for HttpPOST
+	// potential action.
 	PotentialActionHTTPPostType = "HttpPOST"
-	// PotentialActionActionCardType is the type that must be used for ActionCard potential action.
+
+	// PotentialActionActionCardType is the type that must be used for
+	// ActionCard potential action.
 	PotentialActionActionCardType = "ActionCard"
-	// PotentialActionInvokeAddInCommandType is the type that must be used for InvokeAddInCommand potential action.
+
+	// PotentialActionInvokeAddInCommandType is the type that must be used for
+	// InvokeAddInCommand potential action.
 	PotentialActionInvokeAddInCommandType = "InvokeAddInCommand"
 
-	// PotentialActionActionCardInputTextInputType is the type that must be used for ActionCard TextInput type.
+	// PotentialActionActionCardInputTextInputType is the type that must be
+	// used for ActionCard TextInput type.
 	PotentialActionActionCardInputTextInputType = "TextInput"
-	// PotentialActionActionCardInputDateInputType is the type that must be used for ActionCard DateInput type.
+
+	// PotentialActionActionCardInputDateInputType is the type that must be
+	// used for ActionCard DateInput type.
 	PotentialActionActionCardInputDateInputType = "DateInput"
-	// PotentialActionActionCardInputMultichoiceInput is the type that must be used for ActionCard MultichoiceInput type.
+
+	// PotentialActionActionCardInputMultichoiceInput is the type that must be
+	// used for ActionCard MultichoiceInput type.
 	PotentialActionActionCardInputMultichoiceInput = "MultichoiceInput"
 )
 
@@ -37,101 +49,138 @@ const (
 // https://docs.microsoft.com/en-us/outlook/actionable-messages/message-card-reference#actions
 const PotentialActionMaxSupported = 4
 
-// MessageCardPotentialAction represents potential actions an user can do in a message card.
-// See https://docs.microsoft.com/en-us/outlook/actionable-messages/message-card-reference#actions for more information.
+// ErrPotentialActionsLimitReached indicates that the maximum supported number
+// of potentialAction collection values has been reached for either a
+// MessageCard or a MessageCardSection.
+var ErrPotentialActionsLimitReached = errors.New("potential actions collection limit reached")
+
+// MessageCardPotentialAction represents potential actions an user can do in a
+// message card. See
+// https://docs.microsoft.com/en-us/outlook/actionable-messages/message-card-reference#actions
+// for more information.
 type MessageCardPotentialAction struct {
-	// Type of the potential action.
-	// Can be OpenUri, HttpPOST, ActionCard or InvokeAddInCommand.
+	// Type of the potential action. Can be OpenUri, HttpPOST, ActionCard or
+	// InvokeAddInCommand.
 	Type string `json:"@type"`
-	// Name property defines the text that will be displayed on screen for the action.
+
+	// Name property defines the text that will be displayed on screen for the
+	// action.
 	Name string `json:"name"`
-	// MessageCardPotentialActionOpenURI is a set of options for openUri potential action.
+
+	// MessageCardPotentialActionOpenURI is a set of options for openUri
+	// potential action.
 	MessageCardPotentialActionOpenURI
-	// MessageCardPotentialActionHttpPOST is a set of options for httpPOST potential action.
-	MessageCardPotentialActionHttpPOST
-	// MessageCardPotentialActionActionCard is a set of options for actionCard potential action.
+
+	// MessageCardPotentialActionHTTPPOST is a set of options for httpPOST
+	// potential action.
+	MessageCardPotentialActionHTTPPOST
+
+	// MessageCardPotentialActionActionCard is a set of options for actionCard
+	// potential action.
 	MessageCardPotentialActionActionCard
-	// MessageCardPotentialActionInvokeAddInCommand is a set of options for invokeAddInCommand potential action.
+
+	// MessageCardPotentialActionInvokeAddInCommand is a set of options for
+	// invokeAddInCommand potential action.
 	MessageCardPotentialActionInvokeAddInCommand
 }
 
 // MessageCardPotentialActionOpenURI represents a OpenUri potential action.
 type MessageCardPotentialActionOpenURI struct {
-	// Targets is a collection of name/value pairs that defines one URI per target operating system.
-	// Only used for OpenUri action type.
-	Targets []MessageCardPotentialActionOpenUriTarget `json:"targets,omitempty"`
+	// Targets is a collection of name/value pairs that defines one URI per
+	// target operating system. Only used for OpenUri action type.
+	Targets []MessageCardPotentialActionOpenURITarget `json:"targets,omitempty"`
 }
 
-// MessageCardPotentialActionHttpPOST represents a HttpPOST potential action.
-type MessageCardPotentialActionHttpPOST struct {
-	// Target defines the URL endpoint of the service that implements the action.
-	// Only used for HttpPOST action type.
+// MessageCardPotentialActionHTTPPOST represents a HttpPOST potential action.
+type MessageCardPotentialActionHTTPPOST struct {
+	// Target defines the URL endpoint of the service that implements the
+	// action. Only used for HttpPOST action type.
 	Target string `json:"target,omitempty"`
-	// Headers is a collection of MessageCardPotentialActionHeader objects representing a set of HTTP headers that will be emitted when sending the POST request to the target URL.
-	// Only used for HttpPOST action type.
-	Headers []MessageCardPotentialActionHttpPOSTHeader `json:"headers,omitempty"`
-	// Body is the body of the POST request.
-	// Only used for HttpPOST action type.
+
+	// Headers is a collection of MessageCardPotentialActionHeader objects
+	// representing a set of HTTP headers that will be emitted when sending
+	// the POST request to the target URL. Only used for HttpPOST action type.
+	Headers []MessageCardPotentialActionHTTPPOSTHeader `json:"headers,omitempty"`
+
+	// Body is the body of the POST request. Only used for HttpPOST action
+	// type.
 	Body string `json:"body,omitempty"`
-	// BodyContentType is optional and specifies the MIME type of the body in the POST request.
-	// Only used for HttpPOST action type.
+
+	// BodyContentType is optional and specifies the MIME type of the body in
+	// the POST request. Only used for HttpPOST action type.
 	BodyContentType string `json:"bodyContentType,omitempty"`
 }
 
-// MessageCardPotentialActionActionCard represents an actionCard potential action.
+// MessageCardPotentialActionActionCard represents an actionCard potential
+// action.
 type MessageCardPotentialActionActionCard struct {
-	// Inputs is a collection of inputs an user can provide before processing the actions.
-	// Only used for ActionCard action type.
-	// Three types of inputs are available: TextInput, DateInput and MultichoiceInput
+	// Inputs is a collection of inputs an user can provide before processing
+	// the actions. Only used for ActionCard action type. Three types of
+	// inputs are available: TextInput, DateInput and MultichoiceInput
 	Inputs []MessageCardPotentialActionActionCardInput `json:"inputs,omitempty"`
-	// Actions are the available actions.
-	// Only used for ActionCard action type.
+
+	// Actions are the available actions. Only used for ActionCard action
+	// type.
 	Actions []MessageCardPotentialActionActionCardAction `json:"actions,omitempty"`
 }
 
 // MessageCardPotentialActionActionCardAction is used for configuring ActionCard actions
 type MessageCardPotentialActionActionCardAction struct {
-	// Type of the action.
-	// Can be OpenUri, HttpPOST, ActionCard or InvokeAddInCommand.
+	// Type of the action. Can be OpenUri, HttpPOST, ActionCard or
+	// InvokeAddInCommand.
 	Type string `json:"@type"`
-	// Name property defines the text that will be displayed on screen for the action.
+
+	// Name property defines the text that will be displayed on screen for the
+	// action.
 	Name string `json:"name"`
-	// MessageCardPotentialActionOpenURI is used to specify a openUri action card's action.
+
+	// MessageCardPotentialActionOpenURI is used to specify a openUri action
+	// card's action.
 	MessageCardPotentialActionOpenURI
-	// MessageCardPotentialActionHttpPOST is used to specify a httpPOST action card's action.
-	MessageCardPotentialActionHttpPOST
+
+	// MessageCardPotentialActionHTTPPOST is used to specify a httpPOST action
+	// card's action.
+	MessageCardPotentialActionHTTPPOST
 }
 
-// MessageCardPotentialActionInvokeAddInCommand represents an invokeAddInCommand potential action.
+// MessageCardPotentialActionInvokeAddInCommand represents an
+// invokeAddInCommand potential action.
 type MessageCardPotentialActionInvokeAddInCommand struct {
-	// AddInID specifies the add-in ID of the required add-in.
-	// Only used for InvokeAddInCommand action type.
+	// AddInID specifies the add-in ID of the required add-in. Only used for
+	// InvokeAddInCommand action type.
 	AddInID string `json:"addInId,omitempty"`
-	// DesktopCommandID specifies the ID of the add-in command button that opens the required task pane.
-	// Only used for InvokeAddInCommand action type.
+
+	// DesktopCommandID specifies the ID of the add-in command button that
+	// opens the required task pane. Only used for InvokeAddInCommand action
+	// type.
 	DesktopCommandID string `json:"desktopCommandId,omitempty"`
-	// InitializationContext is an optional field which provides developers a way to specify any valid JSON object.
-	// The value is serialized into a string and made available to the add-in when the action is executed.
-	// This allows the action to pass initialization data to the add-in.
-	// Only used for InvokeAddInCommand action type.
+
+	// InitializationContext is an optional field which provides developers a
+	// way to specify any valid JSON object. The value is serialized into a
+	// string and made available to the add-in when the action is executed.
+	// This allows the action to pass initialization data to the add-in. Only
+	// used for InvokeAddInCommand action type.
 	InitializationContext interface{} `json:"initializationContext,omitempty"`
 }
 
-// MessageCardPotentialActionOpenUriTarget is used for OpenUri action type.
+// MessageCardPotentialActionOpenURITarget is used for OpenUri action type.
 // It defines one URI per target operating system.
-type MessageCardPotentialActionOpenUriTarget struct {
-	// OS defines the operating system the target uri refers to.
-	// Supported operating system values are default, windows, iOS and android.
-	// The default operating system will in most cases simply open the URI in a web browser, regardless of the actual operating system.
+type MessageCardPotentialActionOpenURITarget struct {
+	// OS defines the operating system the target uri refers to. Supported
+	// operating system values are default, windows, iOS and android. The
+	// default operating system will in most cases simply open the URI in a
+	// web browser, regardless of the actual operating system.
 	OS string `json:"os,omitempty"`
+
 	// URI defines the URI being called.
 	URI string `json:"uri,omitempty"`
 }
 
-// MessageCardPotentialActionHttpPOSTHeader defines a HTTP header used for HttpPOST action type.
-type MessageCardPotentialActionHttpPOSTHeader struct {
+// MessageCardPotentialActionHTTPPOSTHeader defines a HTTP header used for HttpPOST action type.
+type MessageCardPotentialActionHTTPPOSTHeader struct {
 	// Name is the header name.
 	Name string `json:"name,omitempty"`
+
 	// Value is the header value.
 	Value string `json:"value,omitempty"`
 }
@@ -141,47 +190,76 @@ type MessageCardPotentialActionActionCardInput struct {
 	// Type of the ActionCard input.
 	// Must be either TextInput, DateInput or MultichoiceInput
 	Type string `json:"@type"`
-	// ID uniquely identifies the input so it is possible to reference it in the URL or body of an HttpPOST action.
+
+	// ID uniquely identifies the input so it is possible to reference it in
+	// the URL or body of an HttpPOST action.
 	ID string `json:"id,omitempty"`
-	// IsRequired indicates whether users are required to type a value before they are able to take an action that would take the value of the input as a parameter.
-	IsRequired bool `json:"isRequired,omitempty"`
+
 	// Title defines a title for the input.
 	Title string `json:"title,omitempty"`
-	// Value defines the initial value of the input. For multi-choice inputs, value must be equal to the value property of one of the input's choices.
+
+	// Value defines the initial value of the input. For multi-choice inputs,
+	// value must be equal to the value property of one of the input's
+	// choices.
 	Value string `json:"value,omitempty"`
 
-	// MessageCardPotentialActionInputTextInput must be defined for InputText input type.
-	MessageCardPotentialActionActionCardInputTextInput
-	// MessageCardPotentialActionInputDateInput must be defined for DateInput input type.
-	MessageCardPotentialActionActionCardInputDateInput
-	// MessageCardPotentialActionInputMultichoiceInput must be defined for MultichoiceInput input type.
+	// MessageCardPotentialActionInputMultichoiceInput must be defined for
+	// MultichoiceInput input type.
 	MessageCardPotentialActionActionCardInputMultichoiceInput
+
+	// MessageCardPotentialActionInputTextInput must be defined for InputText
+	// input type.
+	MessageCardPotentialActionActionCardInputTextInput
+
+	// MessageCardPotentialActionInputDateInput must be defined for DateInput
+	// input type.
+	MessageCardPotentialActionActionCardInputDateInput
+
+	// IsRequired indicates whether users are required to type a value before
+	// they are able to take an action that would take the value of the input
+	// as a parameter.
+	IsRequired bool `json:"isRequired,omitempty"`
 }
 
-// MessageCardPotentialActionActionCardInputTextInput represents a TextInput input used for potential action.
+// MessageCardPotentialActionActionCardInputTextInput represents a TextInput
+// input used for potential action.
 type MessageCardPotentialActionActionCardInputTextInput struct {
-	// IsMultiline indicates whether the text input should accept multiple lines of text.
-	IsMultiline bool `json:"isMultiline,omitempty"`
-	// MaxLength indicates the maximum number of characters that can be entered.
+	// MaxLength indicates the maximum number of characters that can be
+	// entered.
 	MaxLength int `json:"maxLength,omitempty"`
+
+	// IsMultiline indicates whether the text input should accept multiple
+	// lines of text.
+	IsMultiline bool `json:"isMultiline,omitempty"`
 }
 
-// MessageCardPotentialActionActionCardInputMultichoiceInput represents a MultichoiceInput input used for potential action.
+// MessageCardPotentialActionActionCardInputMultichoiceInput represents a
+// MultichoiceInput input used for potential action.
 type MessageCardPotentialActionActionCardInputMultichoiceInput struct {
-	// Choices defines the values that can be selected for the multichoice input.
+	// Choices defines the values that can be selected for the multichoice
+	// input.
 	Choices []struct {
 		Display string `json:"display,omitempty"`
 		Value   string `json:"value,omitempty"`
 	} `json:"choices,omitempty"`
-	// IsMultiSelect indicates whether or not the user can select more than one choice. The specified choices will be displayed as a list of checkboxes. Default value is false.
-	IsMultiSelect bool `json:"isMultiSelect,omitempty"`
-	// Style defines the style of the input. When IsMultiSelect is false, setting the style property to expanded will instruct the host application to try and display all choices on the screen, typically using a set of radio buttons.
+
+	// Style defines the style of the input. When IsMultiSelect is false,
+	// setting the style property to expanded will instruct the host
+	// application to try and display all choices on the screen, typically
+	// using a set of radio buttons.
 	Style string `json:"style,omitempty"`
+
+	// IsMultiSelect indicates whether or not the user can select more than
+	// one choice. The specified choices will be displayed as a list of
+	// checkboxes. Default value is false.
+	IsMultiSelect bool `json:"isMultiSelect,omitempty"`
 }
 
-// MessageCardPotentialActionActionCardInputDateInput represents a DateInput input used for potential action.
+// MessageCardPotentialActionActionCardInputDateInput represents a DateInput
+// input used for potential action.
 type MessageCardPotentialActionActionCardInputDateInput struct {
-	// IncludeTime indicates whether the date input should allow for the selection of a time in addition to the date.
+	// IncludeTime indicates whether the date input should allow for the
+	// selection of a time in addition to the date.
 	IncludeTime bool `json:"includeTime,omitempty"`
 }
 
@@ -269,7 +347,8 @@ type MessageCardSection struct {
 	// https://stackoverflow.com/questions/33447334/golang-json-marshal-how-to-omit-empty-nested-struct
 	Images []*MessageCardSectionImage `json:"images,omitempty"`
 
-	// TODO: Add this for original PR
+	// PotentialActions is a collection of actions for a MessageCardSection.
+	// This is separate from the actions collection for the MessageCard.
 	PotentialActions []*MessageCardPotentialAction `json:"potentialAction,omitempty"`
 
 	// Markdown represents a toggle to enable or disable Markdown formatting.
@@ -322,7 +401,56 @@ type MessageCard struct {
 	// Sections is a collection of sections to include in the card.
 	Sections []*MessageCardSection `json:"sections,omitempty"`
 
+	// PotentialActions is a collection of actions for a MessageCard.
 	PotentialActions []*MessageCardPotentialAction `json:"potentialAction,omitempty"`
+}
+
+// validatePotentialAction inspects the given *MessageCardPotentialAction
+// and returns an error if the value is not known.
+func validatePotentialAction(pa *MessageCardPotentialAction) error {
+	if pa == nil {
+		return fmt.Errorf("nil MessageCardPotentialAction received")
+	}
+
+	switch pa.Type {
+	case PotentialActionOpenURIType,
+		PotentialActionHTTPPostType,
+		PotentialActionActionCardType,
+		PotentialActionInvokeAddInCommandType:
+
+	default:
+		return fmt.Errorf("unknown type %s for potential action %s", pa.Type, pa.Name)
+	}
+
+	if pa.Name == "" {
+		return fmt.Errorf("missing name value for MessageCardPotentialAction")
+	}
+
+	return nil
+}
+
+// addPotentialAction adds one or many MessageCardPotentialAction values to a
+// PotentialActions collection.
+func addPotentialAction(collection *[]*MessageCardPotentialAction, actions ...*MessageCardPotentialAction) error {
+	for _, a := range actions {
+		logger.Printf("addPotentialAction: MessageCardPotentialAction received: %+v\n", a)
+
+		if err := validatePotentialAction(a); err != nil {
+			logger.Printf("addPotentialAction: validation failed: %v", err)
+
+			return err
+		}
+
+		if len(*collection) > PotentialActionMaxSupported {
+			logger.Printf("addPotentialAction: failed to add potential action: %v", ErrPotentialActionsLimitReached.Error())
+
+			return fmt.Errorf("func addPotentialAction: failed to add potential action: %w", ErrPotentialActionsLimitReached)
+		}
+
+		*collection = append(*collection, a)
+	}
+
+	return nil
 }
 
 // AddSection adds one or many additional MessageCardSection values to a
@@ -350,9 +478,6 @@ func (mc *MessageCard) AddSection(section ...*MessageCardSection) error {
 		// statement and add the section.
 		case s.Images != nil:
 		case s.Facts != nil:
-
-		// TODO: Does this make sense? Would this alone be enough to make the section "good enough" for use?
-		case s.PotentialActions != nil:
 		case s.HeroImage != nil:
 		case s.StartGroup:
 		case s.Markdown:
@@ -375,29 +500,10 @@ func (mc *MessageCard) AddSection(section ...*MessageCardSection) error {
 	return nil
 }
 
+// AddPotentialAction adds one or many MessageCardPotentialAction values to a
+// PotentialActions collection on a MessageCard.
 func (mc *MessageCard) AddPotentialAction(actions ...*MessageCardPotentialAction) error {
-	for _, a := range actions {
-		logger.Printf("AddPotentialAction: MessageCardPotentialAction received: %+v\n", a)
-
-		if a == nil {
-			return fmt.Errorf("func AddPotentialAction: nil MessageCardPotentialAction received")
-		}
-
-		switch a.Type {
-		case PotentialActionOpenURIType,
-			PotentialActionHTTPPostType,
-			PotentialActionActionCardType,
-			PotentialActionInvokeAddInCommandType:
-
-		default:
-			logger.Printf("AddPotentialAction: unknown type %s for action %s\n", a.Type, a.Name)
-			return fmt.Errorf("unknown type %s for potential action %s", a.Type, a.Name)
-		}
-
-		mc.PotentialActions = append(mc.PotentialActions, a)
-	}
-
-	return nil
+	return addPotentialAction(&mc.PotentialActions, actions...)
 }
 
 // Validate validates a MessageCard calling ValidateFunc if defined,
@@ -467,30 +573,11 @@ func (mcs *MessageCardSection) AddFactFromKeyValue(key string, values ...string)
 	return nil
 }
 
-// TODO: Need to determine whether to include this in original PR, or as a follow-up
+// AddPotentialAction adds one or many MessageCardPotentialAction values to a
+// PotentialActions collection on a MessageCardSection. This is separate from
+// the actions collection for the MessageCard.
 func (mcs *MessageCardSection) AddPotentialAction(actions ...*MessageCardPotentialAction) error {
-	for _, a := range actions {
-		logger.Printf("AddPotentialAction: MessageCardPotentialAction received: %+v\n", a)
-
-		if a == nil {
-			return fmt.Errorf("func AddPotentialAction: nil MessageCardPotentialAction received")
-		}
-
-		switch a.Type {
-		case PotentialActionOpenURIType,
-			PotentialActionHTTPPostType,
-			PotentialActionActionCardType,
-			PotentialActionInvokeAddInCommandType:
-
-		default:
-			logger.Printf("AddPotentialAction: unknown type %s for action %s\n", a.Type, a.Name)
-			return fmt.Errorf("unknown type %s for potential action %s", a.Type, a.Name)
-		}
-
-		mcs.PotentialActions = append(mcs.PotentialActions, a)
-	}
-
-	return nil
+	return addPotentialAction(&mcs.PotentialActions, actions...)
 }
 
 // AddImage adds an image to a MessageCard section. These images are used to
@@ -588,9 +675,19 @@ func NewMessageCardSectionImage() MessageCardSectionImage {
 	return msgCardSectionImage
 }
 
-func NewMessageCardPotentialAction(potentialActionType, name string) *MessageCardPotentialAction {
-	return &MessageCardPotentialAction{
+// NewMessageCardPotentialAction creates a new MessageCardPotentialAction
+// using the provided potential action type and name. The name values defines
+// the text that will be displayed on screen for the action. An error is
+// returned if invalid values are supplied.
+func NewMessageCardPotentialAction(potentialActionType string, name string) (*MessageCardPotentialAction, error) {
+	pa := MessageCardPotentialAction{
 		Type: potentialActionType,
 		Name: name,
 	}
+
+	if err := validatePotentialAction(&pa); err != nil {
+		return nil, err
+	}
+
+	return &pa, nil
 }
