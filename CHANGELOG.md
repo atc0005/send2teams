@@ -26,6 +26,32 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
+## [v0.6.1] - 2021-07-09
+
+### Overview
+
+- Dependency updates
+- Minor tweaks
+- built using Go 1.16.5
+  - Statically linked
+  - Windows (x86, x64)
+  - Linux (x86, x64)
+
+### Added
+
+- Add "canary" Dockerfile to track stable Go releases, serve as a reminder to
+  generate fresh binaries
+
+### Changed
+
+- Refactor config initialization
+
+- Dependencies
+  - `actions/setup-node`
+    - updated from `v2.1.5` to `v2.2.0`
+  - `atc0005/go-teams-notify`
+    - updated from `v2.5.0` to `v2.6.0`
+
 ## [v0.6.0] - 2021-06-24
 
 ### Overview
@@ -526,7 +552,8 @@ This initial prototype supports/provides:
 - GitHub Actions linting and build checks
 - Makefile for general use cases
 
-[Unreleased]: https://github.com/atc0005/send2teams/compare/v0.6.0...HEAD
+[Unreleased]: https://github.com/atc0005/send2teams/compare/v0.6.1...HEAD
+[v0.6.1]: https://github.com/atc0005/send2teams/releases/tag/v0.6.1
 [v0.6.0]: https://github.com/atc0005/send2teams/releases/tag/v0.6.0
 [v0.5.0]: https://github.com/atc0005/send2teams/releases/tag/v0.5.0
 [v0.4.13]: https://github.com/atc0005/send2teams/releases/tag/v0.4.13
