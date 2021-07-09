@@ -1,4 +1,4 @@
-// Copyright 2020 Adam Chalkley
+// Copyright 2021 Adam Chalkley
 //
 // https://github.com/atc0005/go-teams-notify
 //
@@ -23,38 +23,20 @@ Send messages to a Microsoft Teams channel.
 
 FEATURES
 
-• Generate messages with one or more sections, Facts (key/value pairs) or images (hosted externally)
+• Submit messages to Microsoft Teams consisting of one or more sections, Facts (key/value pairs), Actions or images (hosted externally)
 
-• Submit messages to Microsoft Teams
+• Support for Actions, allowing users to take quick actions within Microsoft Teams
+
+• Configurable validation
+
+• Configurable timeouts
+
+• Configurable retry support
 
 
-EXAMPLE
+USAGE
 
-	import (
-	"github.com/atc0005/go-teams-notify/v2"
-	)
-
-	func main() {
-		_ = sendTheMessage()
-	}
-
-	func sendTheMessage() error {
-		// init the client
-		mstClient := goteamsnotify.NewClient()
-
-		// setup webhook url
-		webhookUrl := "https://outlook.office.com/webhook/YOUR_WEBHOOK_URL_OF_TEAMS_CHANNEL"
-
-		// setup message card
-		msgCard := goteamsnotify.NewMessageCard()
-		msgCard.Title = "Hello world"
-		msgCard.Text = "Here are some examples of formatted stuff like "+
-			"<br> * this list itself  <br> * **bold** <br> * *italic* <br> * ***bolditalic***"
-		msgCard.ThemeColor = "#DF813D"
-
-		// send
-		return mstClient.Send(webhookUrl, msgCard)
-	}
+See our main README for supported settings and examples.
 
 */
 package goteamsnotify

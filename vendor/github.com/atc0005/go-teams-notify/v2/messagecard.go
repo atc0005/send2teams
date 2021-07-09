@@ -1,5 +1,5 @@
 // Copyright 2020 Enrico Hoffmann
-// Copyright 2020 Adam Chalkley
+// Copyright 2021 Adam Chalkley
 //
 // https://github.com/atc0005/go-teams-notify
 //
@@ -406,7 +406,7 @@ type MessageCard struct {
 }
 
 // validatePotentialAction inspects the given *MessageCardPotentialAction
-// and returns an error if the value is not known.
+// and returns an error if a value is missing or not known.
 func validatePotentialAction(pa *MessageCardPotentialAction) error {
 	if pa == nil {
 		return fmt.Errorf("nil MessageCardPotentialAction received")

@@ -1,5 +1,5 @@
 # Copyright 2020 Enrico Hoffmann
-# Copyright 2020 Adam Chalkley
+# Copyright 2021 Adam Chalkley
 #
 # https://github.com/atc0005/go-teams-notify
 #
