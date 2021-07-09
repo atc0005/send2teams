@@ -26,6 +26,44 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
+## [v2.6.0] - 2021-07-09
+
+### Added
+
+- Features
+  - Add support for PotentialActions (aka, "Actions")
+    - credit: [@nmaupu](https://github.com/nmaupu)
+
+- Documentation
+  - Add separate `examples` directory containing standalone example code for
+    most common use cases
+
+### Changed
+
+- Dependencies
+  - `actions/setup-node`
+    - `v2.1.5` to `v2.2.0`
+    - update `node-version` value to always use latest LTS version instead of
+      hard-coded version
+
+- Linting
+  - replace `golint`, `scopelint` linters, cleanup config
+    - note: this specifically applies to linting performed via Makefile
+      recipe, not (at present) the bulk of the CI linting checks
+
+- Documentation
+  - move examples from README to separate `examples` directory
+  - Remove example from doc.go file, direct reader to main README
+  - Update project status
+    - remove history as it is likely no longer relevant (original
+      project is discontinued at this point)
+    - remove future (for the same reason)
+  - Add explicit "Supported Releases" section to help make clear that
+    the v1 series is no longer maintained
+  - Remove explicit "used by" details, rely on dynamic listing provided
+    by pkg.go.dev instead
+  - Minor polish
+
 ## [v2.5.0] - 2021-04-08
 
 ### Added
@@ -350,7 +388,8 @@ The following types of changes will be recorded in this file:
 
 - add initial functionality of sending messages to MS Teams channel
 
-[Unreleased]: https://github.com/atc0005/go-teams-notify/compare/v2.5.0...HEAD
+[Unreleased]: https://github.com/atc0005/go-teams-notify/compare/v2.6.0...HEAD
+[v2.6.0]: https://github.com/atc0005/go-teams-notify/releases/tag/v2.6.0
 [v2.5.0]: https://github.com/atc0005/go-teams-notify/releases/tag/v2.5.0
 [v2.4.2]: https://github.com/atc0005/go-teams-notify/releases/tag/v2.4.2
 [v2.4.1]: https://github.com/atc0005/go-teams-notify/releases/tag/v2.4.1
