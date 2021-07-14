@@ -329,7 +329,7 @@ func NewConfig() (*Config, error) {
 
 	// Return immediately if user just wants version details
 	if cfg.ShowVersion {
-		return &cfg, nil // BUG: GH-165
+		return &cfg, ErrVersionRequested
 	}
 
 	// log.Debug("Validating configuration ...")
