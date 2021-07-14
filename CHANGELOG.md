@@ -26,6 +26,32 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
+## [v0.6.2] - 2021-07-14
+
+### Overview
+
+- Dependency update
+- Bugfix
+- CI / test changes
+- built using Go 1.16.6
+  - Statically linked
+  - Windows (x86, x64)
+  - Linux (x86, x64)
+
+### Added
+
+- Add test/CI coverage for `--version` flag
+
+### Changed
+
+- Dependencies
+  - `Go`
+    - `1.16.5` to `1.16.6`
+
+### Fixed
+
+- handling of `--version` flag broken in `v0.6.1` release
+
 ## [v0.6.1] - 2021-07-09
 
 ### Overview
@@ -552,7 +578,8 @@ This initial prototype supports/provides:
 - GitHub Actions linting and build checks
 - Makefile for general use cases
 
-[Unreleased]: https://github.com/atc0005/send2teams/compare/v0.6.1...HEAD
+[Unreleased]: https://github.com/atc0005/send2teams/compare/v0.6.2...HEAD
+[v0.6.2]: https://github.com/atc0005/send2teams/releases/tag/v0.6.2
 [v0.6.1]: https://github.com/atc0005/send2teams/releases/tag/v0.6.1
 [v0.6.0]: https://github.com/atc0005/send2teams/releases/tag/v0.6.0
 [v0.5.0]: https://github.com/atc0005/send2teams/releases/tag/v0.5.0
