@@ -83,3 +83,7 @@ jobs:
       - name: Build using vendored dependencies
         run: |
           go build -v -mod=vendor ./cmd/send2teams
+
+      - name: Use executable version CLI flag
+        run: |
+          ./send2teams --version
