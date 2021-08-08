@@ -26,6 +26,26 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
+## [v0.6.3] - 2021-08-08
+
+### Overview
+
+- Dependency updates
+- built using Go 1.16.7
+  - Statically linked
+  - Windows (x86, x64)
+  - Linux (x86, x64)
+
+### Changed
+
+- Dependencies
+  - `Go`
+    - `1.16.6` to `1.16.7`
+  - `actions/setup-node`
+    - updated from `v2.2.0` to `v2.4.0`
+    - update `node-version` value to always use latest LTS version instead of
+      hard-coded version
+
 ## [v0.6.2] - 2021-07-14
 
 ### Overview
@@ -578,7 +598,8 @@ This initial prototype supports/provides:
 - GitHub Actions linting and build checks
 - Makefile for general use cases
 
-[Unreleased]: https://github.com/atc0005/send2teams/compare/v0.6.2...HEAD
+[Unreleased]: https://github.com/atc0005/send2teams/compare/v0.6.3...HEAD
+[v0.6.3]: https://github.com/atc0005/send2teams/releases/tag/v0.6.3
 [v0.6.2]: https://github.com/atc0005/send2teams/releases/tag/v0.6.2
 [v0.6.1]: https://github.com/atc0005/send2teams/releases/tag/v0.6.1
 [v0.6.0]: https://github.com/atc0005/send2teams/releases/tag/v0.6.0
