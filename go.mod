@@ -7,9 +7,8 @@
 
 module github.com/atc0005/send2teams
 
-require (
-	github.com/atc0005/go-teams-notify/v2 v2.6.0
-	github.com/davecgh/go-spew v1.1.1 // indirect
-)
+require github.com/atc0005/go-teams-notify/v2 v2.6.0
 
-go 1.14
+require github.com/davecgh/go-spew v1.1.1 // indirect
+
+go 1.17

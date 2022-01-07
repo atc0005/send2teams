@@ -18,6 +18,8 @@ Small CLI tool used to submit messages to Microsoft Teams.
 - [Features](#features)
 - [Changelog](#changelog)
 - [Requirements](#requirements)
+  - [Building source code](#building-source-code)
+  - [Running](#running)
 - [How to install it](#how-to-install-it)
   - [From source](#from-source)
   - [Using release binaries](#using-release-binaries)
@@ -35,9 +37,8 @@ Small CLI tool used to submit messages to Microsoft Teams.
 
 ## Project home
 
-See [our GitHub repo](https://github.com/atc0005/send2teams) for the latest
-code, to file an issue or submit improvements for review and potential
-inclusion into the project.
+See [our GitHub repo][repo-url] for the latest code, to file an issue or
+submit improvements for review and potential inclusion into the project.
 
 ## Overview
 
@@ -84,24 +85,35 @@ official release is also provided for further review.
 
 ## Requirements
 
-- Go 1.12+ (for building)
+The following is a loose guideline. Other combinations of Go and operating
+systems for building and running tools from this repo may work, but have not
+been tested.
+
+### Building source code
+
+- Go
+  - see this project's `go.mod` file for *preferred* version
+  - this project tests against [officially supported Go
+    releases][go-supported-releases]
+    - the most recent stable release (aka, "stable")
+    - the prior, but still supported release (aka, "oldstable")
 - GCC
   - if building with custom options (as the provided `Makefile` does)
 - `make`
   - if using the provided `Makefile`
 
-Tested using:
+### Running
 
-- Go 1.13+
 - Windows 10
-- Ubuntu Linux 16.04+
+- Ubuntu Linux 18.04+
 
 ## How to install it
 
 ### From source
 
-1. [Download](https://golang.org/dl/) Go
-1. [Install](https://golang.org/doc/install) Go
+1. [Download][go-docs-download] Go
+1. [Install][go-docs-install] Go
+   - NOTE: Pay special attention to the remarks about `$HOME/.profile`
 1. Clone the repo
    1. `cd /tmp`
    1. `git clone https://github.com/atc0005/send2teams`
@@ -302,10 +314,7 @@ SOFTWARE.
 ## References
 
 - Related projects
-  - <https://github.com/dasrick/go-teams-notify/>
-    - <https://github.com/atc0005/go-teams-notify/>
-  - <https://github.com/atc0005/bounce/>
-  - <https://github.com/atc0005/brick/>
+  - <https://github.com/atc0005/go-teams-notify/>
 
 - Webhook / Office 365
   - <https://sankalpit.com/how-to-get-channel-webhook-url/>
@@ -320,3 +329,15 @@ SOFTWARE.
   - <https://stackoverflow.com/questions/38807903/how-do-i-handle-plain-text-http-get-response-in-golang>
   - <https://stackoverflow.com/questions/32042989/go-lang-differentiate-n-and-line-break>
     - <https://stackoverflow.com/a/42793954/903870>
+
+<!-- Footnotes here  -->
+
+[repo-url]: <https://github.com/atc0005/send2teams>  "This project's GitHub repo"
+
+[go-docs-download]: <https://golang.org/dl>  "Download Go"
+
+[go-docs-install]: <https://golang.org/doc/install>  "Install Go"
+
+[go-supported-releases]: <https://go.dev/doc/devel/release#policy> "Go Release Policy"
+
+<!-- []: PLACEHOLDER "DESCRIPTION_HERE" -->
