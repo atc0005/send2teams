@@ -30,7 +30,7 @@ func TestConfigInitialization(t *testing.T) {
 	// Note to self: Don't add/escape double-quotes here. The shell strips
 	// them away and the application never sees them.
 	os.Args = []string{
-		"/usr/local/bin/qm", "--version",
+		"/usr/local/bin/send2teams", "--version",
 	}
 
 	// based on given CLI args, we *should* have a sentinel error here.
