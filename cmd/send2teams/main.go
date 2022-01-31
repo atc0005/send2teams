@@ -136,17 +136,30 @@ func main() {
 	// Create Microsoft Teams client
 	mstClient := goteamsnotify.NewClient()
 
-	// Submit message card using Microsoft Teams client, retry submission
-	// if needed up to specified number of retry attempts.
-	if err := mstClient.SendWithRetry(ctxSubmissionTimeout, cfg.WebhookURL, msgCard, cfg.Retries, cfg.RetriesDelay); err != nil {
+	// Disable webhook URL validation if requested by user.
+	mstClient.SkipWebhookURLValidationOnSend(cfg.DisableWebhookURLValidation)
 
+	// Submit message card using Microsoft Teams client, retry submission if
+	// needed up to specified number of retry attempts.
+	sendErr := mstClient.SendWithRetry(ctxSubmissionTimeout, cfg.WebhookURL, msgCard, cfg.Retries, cfg.RetriesDelay)
+	switch {
+
+	case cfg.IgnoreInvalidResponse &&
+		errors.Is(sendErr, goteamsnotify.ErrInvalidWebhookURLResponseText):
+
+		log.Printf(
+			"WARNING: invalid response received from %q endpoint", cfg.WebhookURL)
+		log.Printf("ignoring error response as requested: \n%s", sendErr)
+
+	// If an error occurred and we were not expecting one.
+	case sendErr != nil:
 		// Display error output if silence is not requested
 		if !cfg.SilentOutput {
 			log.Printf("\n\nERROR: Failed to submit message to %q channel in the %q team: %v\n\n",
-				cfg.Channel, cfg.Team, err)
+				cfg.Channel, cfg.Team, sendErr)
 
 			if cfg.VerboseOutput {
-				log.Printf("[Config]: %+v\n[Error]: %v", cfg, err)
+				log.Printf("[Config]: %+v\n[Error]: %v", cfg, sendErr)
 			}
 
 		}
@@ -154,11 +167,13 @@ func main() {
 		// Regardless of silent flag, explicitly note unsuccessful results
 		appExitCode = 1
 		return
-	}
 
-	if !cfg.SilentOutput {
-		// Emit basic success message
-		log.Println("Message successfully sent!")
+	default:
+		if !cfg.SilentOutput {
+			// Emit basic success message
+			log.Println("Message successfully sent!")
+		}
+
 	}
 
 	if cfg.VerboseOutput {
