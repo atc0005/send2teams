@@ -20,8 +20,22 @@ jobs:
     name: Lint codebase
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    # Don't flag the whole workflow as failed if "experimental" matrix jobs
+    # fail. This allows the unstable image linting tasks to fail without
+    # marking the oldstable and stable image linting jobs as failed.
+    continue-on-error: ${{ matrix.experimental }}
+    strategy:
+      # Don't stop all workflow jobs if the unstable image linting tasks fail.
+      fail-fast: false
+      matrix:
+        container-image: ["go-ci-oldstable", "go-ci-stable"]
+        experimental: [false]
+        include:
+          - container-image: "go-ci-unstable"
+            experimental: true
+
     container:
-      image: index.docker.io/atc0005/go-ci:go-ci-lint-only
+      image: "index.docker.io/atc0005/go-ci:${{ matrix.container-image}}"
 
     steps:
       - name: Check out code
