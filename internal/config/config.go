@@ -22,37 +22,41 @@ import (
 )
 
 const (
-	versionFlagHelp       = "Whether to display application version and then immediately exit application."
-	verboseOutputFlagHelp = "Whether detailed output should be shown after message submission success or failure."
-	silentOutputFlagHelp  = "Whether ANY output should be shown after message submission success or failure."
-	convertEOLFlagHelp    = "Whether messages with Windows, Mac and Linux newlines are updated to use break statements before message submission."
-	teamNameFlagHelp      = "The name of the Team containing our target channel. Used in log messages. If not specified, defaults to \"unspecified\"."
-	channelNameFlagHelp   = "The target channel where we will send a message. Used in log messages. If not specified, defaults to \"unspecified\"."
-	webhookURLFlagHelp    = "The Webhook URL provided by a preconfigured Connector."
-	targetURLFlagHelp     = "The target URL and label (specified as comma separated pair) usually visible as a button towards the bottom of the Microsoft Teams message."
-	themeColorFlagHelp    = "The hex color code used to set the desired trim color on submitted messages."
-	titleFlagHelp         = "The title for the message to submit."
-	messageFlagHelp       = "The message to submit. This message may be provided in Markdown format."
-	senderFlagHelp        = "The (optional) sending application name or generator of the message this app will attempt to deliver."
-	retriesFlagHelp       = "The number of attempts that this application will make to deliver messages before giving up."
-	retriesDelayFlagHelp  = "The number of seconds that this application will wait before making another delivery attempt."
+	versionFlagHelp                     = "Whether to display application version and then immediately exit application."
+	verboseOutputFlagHelp               = "Whether detailed output should be shown after message submission success or failure."
+	silentOutputFlagHelp                = "Whether ANY output should be shown after message submission success or failure."
+	disableWebhookURLValidationFlagHelp = "Whether webhook URL validation should be disabled. Useful when submitting generated JSON payloads to a service like \"https://httpbin.org/\"."
+	ignoreInvalidResponseFlagHelp       = "Whether an invalid response from remote endpoint should be ignored. This is expected if submitting a message to a non-standard webhook URL."
+	convertEOLFlagHelp                  = "Whether messages with Windows, Mac and Linux newlines are updated to use break statements before message submission."
+	teamNameFlagHelp                    = "The name of the Team containing our target channel. Used in log messages. If not specified, defaults to \"unspecified\"."
+	channelNameFlagHelp                 = "The target channel where we will send a message. Used in log messages. If not specified, defaults to \"unspecified\"."
+	webhookURLFlagHelp                  = "The Webhook URL provided by a preconfigured Connector."
+	targetURLFlagHelp                   = "The target URL and label (specified as comma separated pair) usually visible as a button towards the bottom of the Microsoft Teams message."
+	themeColorFlagHelp                  = "The hex color code used to set the desired trim color on submitted messages."
+	titleFlagHelp                       = "The title for the message to submit."
+	messageFlagHelp                     = "The message to submit. This message may be provided in Markdown format."
+	senderFlagHelp                      = "The (optional) sending application name or generator of the message this app will attempt to deliver."
+	retriesFlagHelp                     = "The number of attempts that this application will make to deliver messages before giving up."
+	retriesDelayFlagHelp                = "The number of seconds that this application will wait before making another delivery attempt."
 )
 
 // Default flag settings if not overridden by user input
 const (
-	defaultMessageThemeColor     string = "#832561"
-	defaultSilentOutput          bool   = false
-	defaultVerboseOutput         bool   = false
-	defaultConvertEOL            bool   = false
-	defaultTeamName              string = "unspecified"
-	defaultChannelName           string = "unspecified"
-	defaultWebhookURL            string = ""
-	defaultMessageTitle          string = ""
-	defaultMessageText           string = ""
-	defaultSender                string = ""
-	defaultDisplayVersionAndExit bool   = false
-	defaultRetries               int    = 2
-	defaultRetriesDelay          int    = 2
+	defaultMessageThemeColor           string = "#832561"
+	defaultSilentOutput                bool   = false
+	defaultVerboseOutput               bool   = false
+	defaultConvertEOL                  bool   = false
+	defaultDisableWebhookURLValidation bool   = false
+	defaultIgnoreInvalidResponse       bool   = false
+	defaultTeamName                    string = "unspecified"
+	defaultChannelName                 string = "unspecified"
+	defaultWebhookURL                  string = ""
+	defaultMessageTitle                string = ""
+	defaultMessageText                 string = ""
+	defaultSender                      string = ""
+	defaultDisplayVersionAndExit       bool   = false
+	defaultRetries                     int    = 2
+	defaultRetriesDelay                int    = 2
 )
 
 // Overridden via Makefile for release builds
@@ -151,6 +155,15 @@ type Config struct {
 
 	// RetriesDelay is the number of seconds to wait between retry attempts.
 	RetriesDelay int
+
+	// DisableWebhookURLValidation indicates whether validation of the
+	// user-specified WebhookURL should be disabled. Useful for testing.
+	DisableWebhookURLValidation bool
+
+	// IgnoreInvalidResponse indicates whether an invalid response from remote
+	// endpoint should be ignored. This is expected if submitting a message to
+	// a non-standard webhook URL.
+	IgnoreInvalidResponse bool
 
 	// Whether detailed output should be shown after message submission
 	// success or failure.
@@ -333,7 +346,7 @@ func NewConfig() (*Config, error) {
 	}
 
 	// log.Debug("Validating configuration ...")
-	if err := cfg.Validate(); err != nil {
+	if err := cfg.Validate(cfg.DisableWebhookURLValidation); err != nil {
 		flag.Usage()
 		return nil, err
 	}
@@ -342,8 +355,8 @@ func NewConfig() (*Config, error) {
 	return &cfg, nil
 }
 
-// Validate verifies all struct fields have been provided acceptable values
-func (c Config) Validate() error {
+// Validate verifies all struct fields have been provided acceptable values.
+func (c Config) Validate(disableWebhookURLValidation bool) error {
 
 	if c.SilentOutput && c.VerboseOutput {
 		return fmt.Errorf("unsupported: You cannot have both silent and verbose output")
@@ -403,8 +416,11 @@ func (c Config) Validate() error {
 	// Create Microsoft Teams client
 	mstClient := goteamsnotify.NewClient()
 
-	if err := mstClient.ValidateWebhook(c.WebhookURL); err != nil {
-		return fmt.Errorf("webhook URL validation failed: %w", err)
+	// Allow selective toggling of webhook URL validation.
+	if !disableWebhookURLValidation {
+		if err := mstClient.ValidateWebhook(c.WebhookURL); err != nil {
+			return fmt.Errorf("webhook URL validation failed: %w", err)
+		}
 	}
 
 	// Indicate that we didn't spot any problems
