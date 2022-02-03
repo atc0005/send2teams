@@ -35,7 +35,7 @@ jobs:
             experimental: true
 
     container:
-      image: "index.docker.io/atc0005/go-ci:${{ matrix.container-image}}"
+      image: "ghcr.io/atc0005/go-ci:${{ matrix.container-image}}"
 
     steps:
       - name: Check out code
@@ -66,7 +66,7 @@ jobs:
         container-image: ["go-ci-oldstable", "go-ci-stable", "go-ci-unstable"]
 
     container:
-      image: "index.docker.io/atc0005/go-ci:${{ matrix.container-image}}"
+      image: "ghcr.io/atc0005/go-ci:${{ matrix.container-image}}"
 
     steps:
       - name: Check out code
@@ -85,7 +85,7 @@ jobs:
         container-image: ["go-ci-oldstable", "go-ci-stable", "go-ci-unstable"]
 
     container:
-      image: "index.docker.io/atc0005/go-ci:${{ matrix.container-image}}"
+      image: "ghcr.io/atc0005/go-ci:${{ matrix.container-image}}"
 
     steps:
       - name: Print go version

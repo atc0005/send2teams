@@ -22,7 +22,8 @@ jobs:
     # Default: 360 minutes
     timeout-minutes: 10
     container:
-      image: "index.docker.io/golang:latest"
+      # Use (lightly touched) mirror of current "vanilla" upstream golang image
+      image: "ghcr.io/atc0005/go-ci:go-ci-stable-mirror-build"
 
     steps:
       - name: Print go version
@@ -58,7 +59,8 @@ jobs:
     # Default: 360 minutes
     timeout-minutes: 10
     container:
-      image: "index.docker.io/golang:latest"
+      # Use (lightly touched) mirror of current "vanilla" upstream golang image
+      image: "ghcr.io/atc0005/go-ci:go-ci-stable-mirror-build"
 
     steps:
       - name: Print go version
