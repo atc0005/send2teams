@@ -318,7 +318,12 @@ func (c Config) String() string {
 			"TargetURLs=%q, "+
 			"Retries=%q, "+
 			"RetriesDelay=%q, "+
-			"AppTimeout=%q",
+			"AppTimeout=%q, "+
+			"DisableWebhookURLValidation=%t, "+
+			"IgnoreInvalidResponse=%t, "+
+			"VerboseOutput=%t, "+
+			"SilentOutput=%t, "+
+			"ConvertEOL=%t",
 		c.Team,
 		c.Channel,
 		c.WebhookURL,
@@ -330,6 +335,11 @@ func (c Config) String() string {
 		strconv.Itoa(c.Retries),
 		strconv.Itoa(c.RetriesDelay),
 		c.TeamsSubmissionTimeout(),
+		c.DisableWebhookURLValidation,
+		c.IgnoreInvalidResponse,
+		c.VerboseOutput,
+		c.SilentOutput,
+		c.ConvertEOL,
 	)
 }
 
