@@ -136,6 +136,9 @@ func main() {
 	// Create Microsoft Teams client
 	mstClient := goteamsnotify.NewClient()
 
+	// Override User Agent.
+	mstClient.SetUserAgent(cfg.UserAgent())
+
 	// Disable webhook URL validation if requested by user.
 	mstClient.SkipWebhookURLValidationOnSend(cfg.DisableWebhookURLValidation)
 

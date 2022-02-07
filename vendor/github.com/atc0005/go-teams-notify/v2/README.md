@@ -27,6 +27,7 @@ A package to send messages to Microsoft Teams (channels)
     - [How to create a webhook URL (Connector)](#how-to-create-a-webhook-url-connector)
   - [Examples](#examples)
     - [Basic](#basic)
+    - [Set custom user agent](#set-custom-user-agent)
     - [Add an Action](#add-an-action)
     - [Disable webhook URL prefix validation](#disable-webhook-url-prefix-validation)
     - [Enable custom patterns' validation](#enable-custom-patterns-validation)
@@ -69,6 +70,8 @@ information.
     validation behavior
 - Configurable timeouts
 - Configurable retry support
+- Support for overriding the default `http.Client`
+- Support for overriding default project-specific user agent
 
 ## Project Status
 
@@ -183,6 +186,12 @@ shadabacc3934](https://gist.github.com/chusiang/895f6406fbf9285c58ad0a3ace13d025
 This is an example of a simple client application which uses this library.
 
 File: [basic](./examples/basic/main.go)
+
+#### Set custom user agent
+
+This example illustrates setting a custom user agent.
+
+File: [custom-user-agent](./examples/custom-user-agent/main.go)
 
 #### Add an Action
 

@@ -7,7 +7,10 @@
 
 package config
 
-import "time"
+import (
+	"fmt"
+	"time"
+)
 
 // TeamsSubmissionTimeout is the timeout value for sending messages to
 // Microsoft Teams.
@@ -16,4 +19,18 @@ func (c Config) TeamsSubmissionTimeout() time.Duration {
 	return time.Duration(c.Retries) *
 		time.Duration(c.RetriesDelay) *
 		teamsSubmissionTimeoutMultiplier
+}
+
+// UserAgent returns a string usable as-is as a custom user agent for plugins
+// provided by this project.
+func (c Config) UserAgent() string {
+
+	// Default User Agent: (Go-http-client/1.1)
+	// https://datatracker.ietf.org/doc/html/draft-ietf-httpbis-p2-semantics-22#section-5.5.3
+	return fmt.Sprintf(
+		"%s/%s",
+		c.App.Name,
+		c.App.Version,
+	)
+
 }

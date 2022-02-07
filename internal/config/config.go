@@ -90,6 +90,20 @@ const brandingTextPrefix string = "Message delivered by"
 // one will attempt to deliver to a Microsoft Teams channel.
 const brandingTextSuffix string = "on behalf of"
 
+// AppInfo identifies common details about the tools provided by this project.
+type AppInfo struct {
+
+	// Name specifies the public name shared by all tools in this project.
+	Name string
+
+	// Version specifies the public version shared by all tool in this
+	// project.
+	Version string
+
+	// URL specifies the public repo URL shared by all tools in this project.
+	URL string
+}
+
 // TargetURL is a URL and description provided by the user for use with
 // generating potentialAction entries for display as "buttons" in the
 // generated Microsoft Teams message.
@@ -143,6 +157,9 @@ type Config struct {
 	// responsible for generating the message that this one will attempt to
 	// deliver.
 	Sender string
+
+	// App represents common details about the tools provided by this project.
+	App AppInfo
 
 	// TargetURLs is the collection of user-specified URLs and descriptions
 	// that should be displayed as actionable links or "buttons" within the
@@ -349,6 +366,12 @@ func NewConfig() (*Config, error) {
 	cfg := Config{}
 
 	cfg.handleFlagsConfig()
+
+	cfg.App = AppInfo{
+		Name:    myAppName,
+		Version: version,
+		URL:     myAppURL,
+	}
 
 	// Return immediately if user just wants version details
 	if cfg.ShowVersion {
