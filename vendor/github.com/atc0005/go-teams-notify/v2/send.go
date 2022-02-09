@@ -69,6 +69,14 @@ const ExpectedWebhookURLResponseText string = "1"
 // before it times out and is cancelled.
 const DefaultWebhookSendTimeout = 5 * time.Second
 
+// DefaultUserAgent is the project-specific user agent used when submitting
+// messages unless overridden by client code. This replaces the Go default
+// user agent value of "Go-http-client/1.1".
+//
+// The major.minor numbers reflect when this project first diverged from the
+// "upstream" or parent project.
+const DefaultUserAgent string = "go-teams-notify/2.2"
+
 // ErrWebhookURLUnexpected is returned when a provided webhook URL does
 // not match a set of confirmed webhook URL patterns.
 var ErrWebhookURLUnexpected = errors.New("webhook URL does not match one of expected patterns")
@@ -89,6 +97,8 @@ type API interface {
 	Send(webhookURL string, webhookMessage MessageCard) error
 	SendWithContext(ctx context.Context, webhookURL string, webhookMessage MessageCard) error
 	SendWithRetry(ctx context.Context, webhookURL string, webhookMessage MessageCard, retries int, retriesDelay int) error
+	SetHTTPClient(httpClient *http.Client) API
+	SetUserAgent(userAgent string) API
 	SkipWebhookURLValidationOnSend(skip bool) API
 	AddWebhookURLValidationPatterns(patterns ...string) API
 	ValidateWebhook(webhookURL string) error
@@ -96,6 +106,7 @@ type API interface {
 
 type teamsClient struct {
 	httpClient                   *http.Client
+	userAgent                    string
 	webhookURLValidationPatterns []string
 	skipWebhookURLValidation     bool
 }
@@ -131,6 +142,22 @@ func NewClient() API {
 		skipWebhookURLValidation: false,
 	}
 	return &client
+}
+
+// SetHTTPClient accepts a custom http.Client value which replaces the
+// existing default http.Client.
+func (c *teamsClient) SetHTTPClient(httpClient *http.Client) API {
+	c.httpClient = httpClient
+
+	return c
+}
+
+// SetUserAgent accepts a custom user agent string. This custom user agent is
+// used when submitting messages to Microsoft Teams.
+func (c *teamsClient) SetUserAgent(userAgent string) API {
+	c.userAgent = userAgent
+
+	return c
 }
 
 func (c *teamsClient) AddWebhookURLValidationPatterns(patterns ...string) API {
@@ -180,6 +207,14 @@ func (c teamsClient) SendWithContext(ctx context.Context, webhookURL string, web
 	// prepare request (error not possible)
 	req, _ := http.NewRequestWithContext(ctx, http.MethodPost, webhookURL, webhookMessageBuffer)
 	req.Header.Add("Content-Type", "application/json;charset=utf-8")
+
+	// If provided, override the project-specific user agent with custom value.
+	switch {
+	case c.userAgent != "":
+		req.Header.Set("User-Agent", c.userAgent)
+	default:
+		req.Header.Set("User-Agent", DefaultUserAgent)
+	}
 
 	// do the request
 	res, err := c.httpClient.Do(req)
@@ -294,7 +329,9 @@ func (c teamsClient) SendWithRetry(ctx context.Context, webhookURL string, webho
 			logger.Println(errMsg)
 			return errMsg
 
-		case result != nil:
+		// Last send attempt failed. Context hasn't expired yet and at least
+		// one retry attempt remains.
+		default:
 
 			ourRetryDelay := time.Duration(retriesDelay) * time.Second
 
