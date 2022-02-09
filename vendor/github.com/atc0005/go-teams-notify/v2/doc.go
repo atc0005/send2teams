@@ -7,7 +7,7 @@
 
 /*
 
-Package goteamsnotify is used to send messages to Microsoft Teams (channels)
+Package goteamsnotify is used to send messages to a Microsoft Teams channel.
 
 PROJECT HOME
 
@@ -27,6 +27,8 @@ FEATURES
 
 • Support for Actions, allowing users to take quick actions within Microsoft Teams
 
+• Support for user mentions (limited)
+
 • Configurable validation
 
 • Configurable timeouts
@@ -36,7 +38,6 @@ FEATURES
 • Support for overriding the default http.Client
 
 • Support for overriding the default project-specific user agent
-
 
 USAGE
 

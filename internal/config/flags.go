@@ -20,6 +20,7 @@ func (c *Config) handleFlagsConfig() {
 	flag.BoolVar(&c.IgnoreInvalidResponse, "ignore-invalid-response", defaultIgnoreInvalidResponse, ignoreInvalidResponseFlagHelp)
 	flag.StringVar(&c.Team, "team", defaultTeamName, teamNameFlagHelp)
 	flag.Var(&c.TargetURLs, "target-url", targetURLFlagHelp)
+	flag.Var(&c.UserMentions, "user-mention", userMentionFlagHelp)
 	flag.StringVar(&c.Channel, "channel", defaultChannelName, channelNameFlagHelp)
 	flag.StringVar(&c.WebhookURL, "url", defaultWebhookURL, webhookURLFlagHelp)
 	flag.StringVar(&c.ThemeColor, "color", defaultMessageThemeColor, themeColorFlagHelp)
