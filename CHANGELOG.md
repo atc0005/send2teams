@@ -26,6 +26,44 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
+## [v0.7.0] - 2022-02-09
+
+### Overview
+
+- Add flags to optionally disable validation
+- CI / linting improvements
+- Bugfixes
+- Dependency update
+- built using Go 1.17.6
+  - Statically linked
+  - Windows (x86, x64)
+  - Linux (x86, x64)
+
+### Added
+
+- (GH-201) Add flag for disabling webhook URL validation
+- (GH-204) Add flag for disabling validation of message submission response
+
+### Changed
+
+- Dependencies
+  - `Go`
+    - (GH-195) Update go.mod file, canary Dockerfile to reflect Go 1.17
+    - `1.16.12` to `1.17.6`
+
+- (GH-203) Override default user agent with project-specific value
+- (GH-206) Expand linting GitHub Actions Workflow to include `oldstable`,
+  `unstable` container images
+- (GH-210) Switch Docker image source from Docker Hub to GitHub Container
+  Registry (GHCR)
+
+### Fixed
+
+- (GH-198) Wrong binary name in `TestConfigInitialization()` func
+- (GH-202) Update `Config.String()` to expose current boolean config settings
+- (GH-208) var-declaration: should omit type string from declaration of var
+  version; it will be inferred from the right-hand side (revive)
+
 ## [v0.6.6] - 2021-12-28
 
 ### Overview
@@ -655,7 +693,8 @@ This initial prototype supports/provides:
 - GitHub Actions linting and build checks
 - Makefile for general use cases
 
-[Unreleased]: https://github.com/atc0005/send2teams/compare/v0.6.6...HEAD
+[Unreleased]: https://github.com/atc0005/send2teams/compare/v0.7.0...HEAD
+[v0.7.0]: https://github.com/atc0005/send2teams/releases/tag/v0.7.0
 [v0.6.6]: https://github.com/atc0005/send2teams/releases/tag/v0.6.6
 [v0.6.5]: https://github.com/atc0005/send2teams/releases/tag/v0.6.5
 [v0.6.4]: https://github.com/atc0005/send2teams/releases/tag/v0.6.4
