@@ -26,6 +26,32 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
+## [v0.8.0] - 2022-02-25
+
+### Overview
+
+- Add support for user mentions
+- Requirement changes
+- Dependency updates
+- built using Go 1.17.7
+  - Statically linked
+  - Windows (x86, x64)
+  - Linux (x86, x64)
+
+### Added
+
+- (GH-197) Add initial support for user mentions
+
+### Changed
+
+- Dependencies
+  - `Go`
+    - `1.17.6` to `1.17.7`
+  - `actions/setup-node`
+    - `v2.5.1` to `v3`
+
+- (GH-216) Remove message title requirement
+
 ## [v0.7.0] - 2022-02-09
 
 ### Overview
@@ -693,7 +719,8 @@ This initial prototype supports/provides:
 - GitHub Actions linting and build checks
 - Makefile for general use cases
 
-[Unreleased]: https://github.com/atc0005/send2teams/compare/v0.7.0...HEAD
+[Unreleased]: https://github.com/atc0005/send2teams/compare/v0.8.0...HEAD
+[v0.8.0]: https://github.com/atc0005/send2teams/releases/tag/v0.8.0
 [v0.7.0]: https://github.com/atc0005/send2teams/releases/tag/v0.7.0
 [v0.6.6]: https://github.com/atc0005/send2teams/releases/tag/v0.6.6
 [v0.6.5]: https://github.com/atc0005/send2teams/releases/tag/v0.6.5
