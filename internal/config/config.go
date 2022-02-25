@@ -19,6 +19,7 @@ import (
 	"time"
 
 	goteamsnotify "github.com/atc0005/go-teams-notify/v2"
+	"github.com/atc0005/go-teams-notify/v2/messagecard"
 )
 
 const (
@@ -32,6 +33,7 @@ const (
 	channelNameFlagHelp                 = "The target channel where we will send a message. Used in log messages. If not specified, defaults to \"unspecified\"."
 	webhookURLFlagHelp                  = "The Webhook URL provided by a preconfigured Connector."
 	targetURLFlagHelp                   = "The target URL and label (specified as comma separated pair) usually visible as a button towards the bottom of the Microsoft Teams message."
+	userMentionFlagHelp                 = "The DisplayName and ID of the recipient (specified as comma separated pair) for a user mention."
 	themeColorFlagHelp                  = "The hex color code used to set the desired trim color on submitted messages."
 	titleFlagHelp                       = "The title for the message to submit."
 	messageFlagHelp                     = "The message to submit. This message may be provided in Markdown format."
@@ -118,6 +120,18 @@ type TargetURL struct {
 	Description string
 }
 
+// UserMention is a pair of name and ID values separated by a comma used for
+// generating a user mention.
+type UserMention struct {
+	// ID is the unique identifier for a user that is mentioned. This value
+	// can be an object ID (e.g., 5e8b0f4d-2cd4-4e17-9467-b0f6a5c0c4d0) or a
+	// UserPrincipalName (e.g., NewUser@contoso.onmicrosoft.com).
+	ID string
+
+	// Name is the DisplayName of the user mentioned.
+	Name string
+}
+
 // Config is a unified set of configuration values for this application. This
 // struct is configured via command-line flags provided by the user.
 type Config struct {
@@ -166,6 +180,11 @@ type Config struct {
 	// generated Microsoft Teams message.
 	TargetURLs targetURLsStringFlag
 
+	// UserMention is the collection of user-specified name and ID values that
+	// should be used when generating user mentions within the generated
+	// Microsoft Teams message.
+	UserMentions userMentionsStringFlag
+
 	// Retries is the number of attempts that this application will make
 	// to deliver messages before giving up.
 	Retries int
@@ -201,6 +220,8 @@ type Config struct {
 
 type targetURLsStringFlag []TargetURL
 
+type userMentionsStringFlag []UserMention
+
 // String returns a list of all user-specified target URLs.
 func (tus *targetURLsStringFlag) String() string {
 
@@ -213,24 +234,21 @@ func (tus *targetURLsStringFlag) String() string {
 
 	var output strings.Builder
 
-	for i := range *tus {
-
+	for i, target := range *tus {
 		fmt.Fprintf(
 			&output,
 			"[URL: %s, Desc: %s]",
-			(*tus)[i].URL.String(),
-			(*tus)[i].Description,
+			target.URL.String(),
+			target.Description,
 		)
 
 		// separate the current entry from the next if more to process
 		if i+1 != len(*tus) {
 			fmt.Fprintf(&output, ", ")
 		}
-
 	}
 
 	return output.String()
-
 }
 
 // Set is called once by the flag package, in command line order, for each
@@ -275,6 +293,64 @@ func (tus *targetURLsStringFlag) Set(value string) error {
 	*tus = append(*tus, TargetURL{
 		URL:         *u,
 		Description: desc,
+	})
+
+	return nil
+}
+
+// String returns a list of all user-specified user mentions.
+func (ums *userMentionsStringFlag) String() string {
+
+	// From the `flag` package docs:
+	// "The flag package may call the String method with a zero-valued
+	// receiver, such as a nil pointer."
+	if ums == nil {
+		return ""
+	}
+
+	var output strings.Builder
+
+	for i, mention := range *ums {
+		fmt.Fprintf(&output, "[Name: %s, ID: %s]", mention.Name, mention.ID)
+
+		// separate the current entry from the next if more to process
+		if i+1 != len(*ums) {
+			fmt.Fprintf(&output, ", ")
+		}
+	}
+
+	return output.String()
+}
+
+// Set is called once by the flag package, in command line order, for each
+// flag present. At most, two comma-separated values are allowed per flag
+// invocation in order to specify the name and ID for a user mention. An error
+// is returned if more comma-separated values are specified than expected.
+func (ums *userMentionsStringFlag) Set(value string) error {
+
+	// split comma-separated string into multiple values
+	items := strings.Split(value, ",")
+
+	// Abort unless we have exactly two items after splitting on the comma.
+	if len(items) != 2 {
+		return fmt.Errorf(
+			"received %d arguments for user mention flag, expected 2",
+			len(items),
+		)
+	}
+
+	// prune any leading and trailing whitespace, drop any quotes which might
+	// cause issues later.
+	for index, item := range items {
+		items[index] = strings.TrimSpace(item)
+		items[index] = strings.ReplaceAll(items[index], "'", "")
+		items[index] = strings.ReplaceAll(items[index], "\"", "")
+	}
+
+	// add them to the collection
+	*ums = append(*ums, UserMention{
+		Name: items[0],
+		ID:   items[1],
 	})
 
 	return nil
@@ -391,31 +467,63 @@ func NewConfig() (*Config, error) {
 // Validate verifies all struct fields have been provided acceptable values.
 func (c Config) Validate(disableWebhookURLValidation bool) error {
 
+	// Current implementation of user mentions is incompatible with most
+	// MessageCard settings/values. Future implementation of Adaptive Card
+	// support in the atc0005/go-teams-notify library is expected to remove
+	// some/most of these incompatibilities.
+	switch {
+	case c.UserMentions != nil:
+
+		if len(c.TargetURLs) > 0 {
+			return fmt.Errorf("target urls flag is incompatible with user mentions flag")
+		}
+
+		if c.MessageTitle != "" {
+			return fmt.Errorf("message title flag is incompatible with user mentions flag")
+		}
+
+		if c.ThemeColor != defaultMessageThemeColor {
+			return fmt.Errorf("theme color flag is incompatible with user mentions flag")
+		}
+
+	default:
+		// Expected pattern: #832561
+		if len(c.ThemeColor) < len(defaultMessageThemeColor) {
+
+			expectedLength := len(defaultMessageThemeColor)
+			actualLength := len(c.ThemeColor)
+			return fmt.Errorf("provided message theme color too short; got message %q of length %d, expected length of %d",
+				c.ThemeColor, actualLength, expectedLength)
+		}
+
+		if c.MessageTitle == "" {
+			return fmt.Errorf("message title too short")
+		}
+
+		// We rely on the Set() method for the flag.Value interface to ensure that
+		// the required URL and description values are provided for each target
+		// URL. We verify here that we don't exceed the maximum supported
+		// potentialActions for the `section` that we will generate.
+		//
+		// https://docs.microsoft.com/en-us/outlook/actionable-messages/message-card-reference#actions
+		if len(c.TargetURLs) > messagecard.PotentialActionMaxSupported {
+			return fmt.Errorf(
+				"%d target URLs specified, a maximum of %d are supported",
+				len(c.TargetURLs),
+				messagecard.PotentialActionMaxSupported,
+			)
+		}
+
+	}
+
+	/*
+		Shared/common validation checks.
+	*/
+
 	if c.SilentOutput && c.VerboseOutput {
 		return fmt.Errorf("unsupported: You cannot have both silent and verbose output")
 	}
 
-	// Expected pattern: #832561
-	if len(c.ThemeColor) < len(defaultMessageThemeColor) {
-
-		expectedLength := len(defaultMessageThemeColor)
-		actualLength := len(c.ThemeColor)
-		return fmt.Errorf("provided message theme color too short; got message %q of length %d, expected length of %d",
-			c.ThemeColor, actualLength, expectedLength)
-	}
-
-	// Note: This is separate from goteamsnotify.IsValidMessageCard() That
-	// function specifically checks the results of creating and fleshing out a
-	// MessageCard value, this validation check is more concerned with the
-	// specific value supplied via flag input.
-	if c.MessageTitle == "" {
-		return fmt.Errorf("message title too short")
-	}
-
-	// Note: This is separate from goteamsnotify.IsValidMessageCard() That
-	// function specifically checks the results of creating and fleshing out a
-	// MessageCard value, this validation check is more concerned with the
-	// specific value supplied via flag input.
 	if c.MessageText == "" {
 		return fmt.Errorf("message content too short")
 	}
@@ -423,20 +531,6 @@ func (c Config) Validate(disableWebhookURLValidation bool) error {
 	// Team and Channel names are optional. If provided, use as-is.
 
 	// Sender is optional. If provided, use as-is.
-
-	// We rely on the Set() method for the flag.Value interface to ensure that
-	// the required URL and description values are provided for each target
-	// URL. We verify here that we don't exceed the maximum supported
-	// potentialActions for the `section` that we will generate.
-	//
-	// https://docs.microsoft.com/en-us/outlook/actionable-messages/message-card-reference#actions
-	if len(c.TargetURLs) > goteamsnotify.PotentialActionMaxSupported {
-		return fmt.Errorf(
-			"%d target URLs specified, a maximum of %d are supported",
-			len(c.TargetURLs),
-			goteamsnotify.PotentialActionMaxSupported,
-		)
-	}
 
 	if c.Retries < 0 {
 		return fmt.Errorf("retries too short")
@@ -447,7 +541,7 @@ func (c Config) Validate(disableWebhookURLValidation bool) error {
 	}
 
 	// Create Microsoft Teams client
-	mstClient := goteamsnotify.NewClient()
+	mstClient := goteamsnotify.NewTeamsClient()
 
 	// Allow selective toggling of webhook URL validation.
 	if !disableWebhookURLValidation {

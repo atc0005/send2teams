@@ -10,10 +10,13 @@ package main
 import (
 	"context"
 	"errors"
+	"fmt"
 	"log"
 	"os"
 
 	goteamsnotify "github.com/atc0005/go-teams-notify/v2"
+	"github.com/atc0005/go-teams-notify/v2/botapi"
+	"github.com/atc0005/go-teams-notify/v2/messagecard"
 	"github.com/atc0005/send2teams/internal/config"
 )
 
@@ -59,69 +62,6 @@ func main() {
 		cfg.MessageText = goteamsnotify.ConvertEOLToBreak(cfg.MessageText)
 	}
 
-	// Setup base message card
-	msgCard := goteamsnotify.NewMessageCard()
-	msgCard.Title = cfg.MessageTitle
-	msgCard.Text = cfg.MessageText
-	msgCard.ThemeColor = cfg.ThemeColor
-
-	// If provided, use target URLs and their descriptions to add labelled URL
-	// "buttons" to Microsoft Teams message.
-	if cfg.TargetURLs != nil {
-
-		// Create dedicated section for all potentialAction items
-		actionSection := goteamsnotify.NewMessageCardSection()
-		actionSection.StartGroup = true
-
-		for i := range cfg.TargetURLs {
-
-			pa, err := goteamsnotify.NewMessageCardPotentialAction(
-				goteamsnotify.PotentialActionOpenURIType,
-				cfg.TargetURLs[i].Description,
-			)
-
-			if err != nil {
-				log.Println("error encountered when processing target URL:", err)
-				appExitCode = 1
-
-				return
-			}
-
-			pa.MessageCardPotentialActionOpenURI.Targets =
-				[]goteamsnotify.MessageCardPotentialActionOpenURITarget{
-					{
-						OS:  "default",
-						URI: cfg.TargetURLs[i].URL.String(),
-					},
-				}
-
-			if err := actionSection.AddPotentialAction(pa); err != nil {
-				log.Println("error encountered when adding target URL to message:", err)
-				appExitCode = 1
-
-				return
-			}
-		}
-
-		if err := msgCard.AddSection(actionSection); err != nil {
-			log.Println("error encountered when adding section value:", err)
-			appExitCode = 1
-			return
-		}
-	}
-
-	// Create branding trailer section
-	trailerSection := goteamsnotify.NewMessageCardSection()
-	trailerSection.Text = config.MessageTrailer(cfg.Sender)
-	trailerSection.StartGroup = true
-
-	// Add branding trailer section, bail if unexpected error occurs
-	if err := msgCard.AddSection(trailerSection); err != nil {
-		log.Println("error encountered when adding section value:", err)
-		appExitCode = 1
-		return
-	}
-
 	// This should only trigger if user specifies large retry values.
 	if cfg.TeamsSubmissionTimeout() > config.DefaultNagiosNotificationTimeout {
 		log.Printf(
@@ -134,7 +74,7 @@ func main() {
 	defer cancel()
 
 	// Create Microsoft Teams client
-	mstClient := goteamsnotify.NewClient()
+	mstClient := goteamsnotify.NewTeamsClient()
 
 	// Override User Agent.
 	mstClient.SetUserAgent(cfg.UserAgent())
@@ -142,9 +82,147 @@ func main() {
 	// Disable webhook URL validation if requested by user.
 	mstClient.SkipWebhookURLValidationOnSend(cfg.DisableWebhookURLValidation)
 
-	// Submit message card using Microsoft Teams client, retry submission if
-	// needed up to specified number of retry attempts.
-	sendErr := mstClient.SendWithRetry(ctxSubmissionTimeout, cfg.WebhookURL, msgCard, cfg.Retries, cfg.RetriesDelay)
+	var sendErr error
+	var rawMsg string
+	switch {
+	case len(cfg.UserMentions) > 0:
+
+		botapiMsg := botapi.NewMessage().AddText(cfg.MessageText)
+
+		for _, mention := range cfg.UserMentions {
+			if err := botapiMsg.Mention(mention.Name, mention.ID, true); err != nil {
+				if !cfg.SilentOutput {
+					log.Printf("\n\nERROR: Failed to add user mention to message for %q channel in the %q team: %v\n\n",
+						cfg.Channel, cfg.Team, err)
+				}
+				// Regardless of silent flag, explicitly note unsuccessful results
+				appExitCode = 1
+				return
+			}
+		}
+
+		// Add branding trailer content
+		trailer := fmt.Sprintf(
+			"\n\n%s",
+			config.MessageTrailer(cfg.Sender),
+		)
+
+		// We don't check cfg.ConvertEOL here because we're processing a value
+		// we just created, not one passed in by the user (and potentially
+		// expected to remain untouched/unmodified).
+		trailer = goteamsnotify.ConvertEOLToBreak(trailer)
+
+		botapiMsg.AddText(trailer)
+
+		if cfg.VerboseOutput {
+			if err := botapiMsg.Prepare(false); err != nil {
+				if !cfg.SilentOutput {
+					log.Printf("\n\nERROR: Failed to prepare message for %q channel in the %q team: %v\n\n",
+						cfg.Channel, cfg.Team, err)
+				}
+				// Regardless of silent flag, explicitly note unsuccessful results
+				appExitCode = 1
+				return
+			}
+
+			// Emitted at app exit
+			rawMsg = fmt.Sprintf("botapi Message values sent: %#v\n", botapiMsg)
+
+			fmt.Println(botapiMsg.PrettyPrint())
+		}
+
+		// Submit message card using Microsoft Teams client, retry submission if
+		// needed up to specified number of retry attempts.
+		sendErr = mstClient.SendWithRetry(ctxSubmissionTimeout, cfg.WebhookURL, botapiMsg, cfg.Retries, cfg.RetriesDelay)
+
+	default:
+
+		// Setup base message card
+		msgCard := messagecard.NewMessageCard()
+		msgCard.Title = cfg.MessageTitle
+		msgCard.Text = cfg.MessageText
+		msgCard.ThemeColor = cfg.ThemeColor
+
+		// If provided, use target URLs and their descriptions to add labelled URL
+		// "buttons" to Microsoft Teams message.
+		if len(cfg.TargetURLs) > 0 {
+
+			// Create dedicated section for all potentialAction items
+			actionSection := messagecard.NewSection()
+			actionSection.StartGroup = true
+
+			for i := range cfg.TargetURLs {
+
+				pa, err := messagecard.NewPotentialAction(
+					messagecard.PotentialActionOpenURIType,
+					cfg.TargetURLs[i].Description,
+				)
+
+				if err != nil {
+					log.Println("error encountered when processing target URL:", err)
+					appExitCode = 1
+
+					return
+				}
+
+				pa.PotentialActionOpenURI.Targets =
+					[]messagecard.PotentialActionOpenURITarget{
+						{
+							OS:  "default",
+							URI: cfg.TargetURLs[i].URL.String(),
+						},
+					}
+
+				if err := actionSection.AddPotentialAction(pa); err != nil {
+					log.Println("error encountered when adding target URL to message:", err)
+					appExitCode = 1
+
+					return
+				}
+			}
+
+			if err := msgCard.AddSection(actionSection); err != nil {
+				log.Println("error encountered when adding section value:", err)
+				appExitCode = 1
+				return
+			}
+		}
+
+		// Create branding trailer section
+		trailerSection := messagecard.NewSection()
+		trailerSection.Text = config.MessageTrailer(cfg.Sender)
+		trailerSection.StartGroup = true
+
+		// Add branding trailer section, bail if unexpected error occurs
+		if err := msgCard.AddSection(trailerSection); err != nil {
+			log.Println("error encountered when adding section value:", err)
+			appExitCode = 1
+			return
+		}
+
+		if cfg.VerboseOutput {
+			if err := msgCard.Prepare(false); err != nil {
+				if !cfg.SilentOutput {
+					log.Printf("\n\nERROR: Failed to prepare message for %q channel in the %q team: %v\n\n",
+						cfg.Channel, cfg.Team, err)
+				}
+				// Regardless of silent flag, explicitly note unsuccessful results
+				appExitCode = 1
+				return
+			}
+
+			// Emitted at app exit
+			rawMsg = fmt.Sprintf("MessageCard values sent: %#v\n", msgCard)
+
+			fmt.Println(msgCard.PrettyPrint())
+		}
+
+		// Submit message card using Microsoft Teams client, retry submission if
+		// needed up to specified number of retry attempts.
+		sendErr = mstClient.SendWithRetry(ctxSubmissionTimeout, cfg.WebhookURL, msgCard, cfg.Retries, cfg.RetriesDelay)
+
+	}
+
 	switch {
 
 	case cfg.IgnoreInvalidResponse &&
@@ -182,7 +260,7 @@ func main() {
 	if cfg.VerboseOutput {
 		log.Printf("Configuration used: %#v\n", cfg)
 		log.Printf("Webhook URL: %s\n", cfg.WebhookURL)
-		log.Printf("MessageCard values sent: %#v\n", msgCard)
+		log.Println(rawMsg)
 	}
 
 }
