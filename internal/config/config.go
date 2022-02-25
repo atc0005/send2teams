@@ -496,10 +496,6 @@ func (c Config) Validate(disableWebhookURLValidation bool) error {
 				c.ThemeColor, actualLength, expectedLength)
 		}
 
-		if c.MessageTitle == "" {
-			return fmt.Errorf("message title too short")
-		}
-
 		// We rely on the Set() method for the flag.Value interface to ensure that
 		// the required URL and description values are provided for each target
 		// URL. We verify here that we don't exceed the maximum supported
@@ -527,6 +523,8 @@ func (c Config) Validate(disableWebhookURLValidation bool) error {
 	if c.MessageText == "" {
 		return fmt.Errorf("message content too short")
 	}
+
+	// Title is optional. If provided, use as-is.
 
 	// Team and Channel names are optional. If provided, use as-is.
 
