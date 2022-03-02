@@ -34,7 +34,7 @@ jobs:
           npm install -g markdownlint-cli
 
       - name: Check out code
-        uses: actions/checkout@v2.4.0
+        uses: actions/checkout@v3
 
       - name: Run Markdown linting tools
         # The `.markdownlint.yml` file specifies config settings for this

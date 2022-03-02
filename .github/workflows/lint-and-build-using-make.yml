@@ -30,7 +30,7 @@ jobs:
         run: go version
 
       - name: Check out code into the Go module directory
-        uses: actions/checkout@v2.4.0
+        uses: actions/checkout@v3
 
       # bsdmainutils provides "column" which is used by the Makefile
       - name: Install Ubuntu packages
@@ -67,7 +67,7 @@ jobs:
         run: go version
 
       - name: Check out code into the Go module directory
-        uses: actions/checkout@v2.4.0
+        uses: actions/checkout@v3
 
       # bsdmainutils provides "column" which is used by the Makefile
       - name: Install Ubuntu packages
