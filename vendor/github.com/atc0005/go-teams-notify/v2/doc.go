@@ -25,9 +25,11 @@ FEATURES
 
 • Submit messages to Microsoft Teams consisting of one or more sections, Facts (key/value pairs), Actions or images (hosted externally)
 
+• Support for MessageCard and Adaptive Card messages
+
 • Support for Actions, allowing users to take quick actions within Microsoft Teams
 
-• Support for user mentions (limited)
+• Support for user mentions
 
 • Configurable validation
 

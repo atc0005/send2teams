@@ -108,7 +108,6 @@ type API interface {
 // interface in order to support future changes (and not violate backwards
 // compatibility).
 type MessageSender interface {
-	// validateInput(message MessageValidator, webhookURL string) error
 	HTTPClient() *http.Client
 	UserAgent() string
 	ValidateWebhook(webhookURL string) error
@@ -122,7 +121,7 @@ type MessageSender interface {
 // messagePreparer is a message type that supports marshaling its fields
 // as preparation for delivery to an endpoint.
 type messagePreparer interface {
-	Prepare(recreate bool) error
+	Prepare() error
 }
 
 // messageValidator is a message type that provides validation of its format.
@@ -487,7 +486,7 @@ func sendWithContext(ctx context.Context, client MessageSender, webhookURL strin
 		)
 	}
 
-	if err := message.Prepare(false); err != nil {
+	if err := message.Prepare(); err != nil {
 		return fmt.Errorf(
 			"failed to prepare message: %w",
 			err,

@@ -15,8 +15,7 @@ import (
 	"os"
 
 	goteamsnotify "github.com/atc0005/go-teams-notify/v2"
-	"github.com/atc0005/go-teams-notify/v2/botapi"
-	"github.com/atc0005/go-teams-notify/v2/messagecard"
+	"github.com/atc0005/go-teams-notify/v2/adaptivecard"
 	"github.com/atc0005/send2teams/internal/config"
 )
 
@@ -57,17 +56,14 @@ func main() {
 		os.Exit(exitCode)
 	}(&appExitCode)
 
-	// Convert EOL if user requested it (useful for converting script output)
-	if cfg.ConvertEOL {
-		cfg.MessageText = goteamsnotify.ConvertEOLToBreak(cfg.MessageText)
-	}
-
 	// This should only trigger if user specifies large retry values.
 	if cfg.TeamsSubmissionTimeout() > config.DefaultNagiosNotificationTimeout {
-		log.Printf(
-			"WARNING: app cancellation timeout value of %v greater than default Nagios command timeout value!",
-			cfg.TeamsSubmissionTimeout(),
-		)
+		if !cfg.SilentOutput {
+			log.Printf(
+				"WARNING: app cancellation timeout value of %v greater than default Nagios command timeout value!",
+				cfg.TeamsSubmissionTimeout(),
+			)
+		}
 	}
 
 	ctxSubmissionTimeout, cancel := context.WithTimeout(context.Background(), cfg.TeamsSubmissionTimeout())
@@ -82,155 +78,206 @@ func main() {
 	// Disable webhook URL validation if requested by user.
 	mstClient.SkipWebhookURLValidationOnSend(cfg.DisableWebhookURLValidation)
 
-	var sendErr error
-	var rawMsg string
-	switch {
-	case len(cfg.UserMentions) > 0:
+	// Convert EOL (useful for output from scripts) in the incoming text if
+	// user requested it.
+	if cfg.ConvertEOL {
+		cfg.MessageText = adaptivecard.ConvertEOL(cfg.MessageText)
 
-		botapiMsg := botapi.NewMessage().AddText(cfg.MessageText)
+		// Not 100% safe to apply across the board.
+		//
+		// It is unlikely, but not impossible that someone would submit raw
+		// text with break statements. When you consider that the flag is
+		// named "convert-eol", it is entirely reasonable that the user would
+		// expect break statements to remain untouched.
+		//
+		// cfg.MessageText = adaptivecard.ConvertBreakToEOL(cfg.MessageText)
+	}
 
+	card, err := adaptivecard.NewTextBlockCard(cfg.MessageText, cfg.MessageTitle, true)
+	if err != nil {
+		if !cfg.SilentOutput {
+			log.Printf(
+				"\n\nERROR: Failed to create new card using specified text/title values for %q channel in the %q team: %v\n\n",
+				cfg.Channel,
+				cfg.Team,
+				err,
+			)
+		}
+		// Regardless of silent flag, explicitly note unsuccessful results
+		appExitCode = 1
+		return
+	}
+	card.SetFullWidth()
+
+	if len(cfg.UserMentions) > 0 {
+		// Process user mention details specified by user, create user mention
+		// values that we can attach to the card.
+		userMentions := make([]adaptivecard.Mention, 0, len(cfg.UserMentions))
 		for _, mention := range cfg.UserMentions {
-			if err := botapiMsg.Mention(mention.Name, mention.ID, true); err != nil {
+			userMention, err := adaptivecard.NewMention(mention.Name, mention.ID)
+			if err != nil {
 				if !cfg.SilentOutput {
-					log.Printf("\n\nERROR: Failed to add user mention to message for %q channel in the %q team: %v\n\n",
+					log.Printf("\n\nERROR: Failed to process user mention for %q channel in the %q team: %v\n\n",
 						cfg.Channel, cfg.Team, err)
 				}
 				// Regardless of silent flag, explicitly note unsuccessful results
 				appExitCode = 1
 				return
 			}
+			userMentions = append(userMentions, userMention)
 		}
 
-		// Add branding trailer content
-		trailer := fmt.Sprintf(
-			"\n\n%s",
-			config.MessageTrailer(cfg.Sender),
-		)
+		// Add user mention collection to card.
+		if err := card.AddMention(true, userMentions...); err != nil {
+			if !cfg.SilentOutput {
+				log.Printf("\n\nERROR: Failed to add user mentions to message for %q channel in the %q team: %v\n\n",
+					cfg.Channel, cfg.Team, err)
+			}
+			// Regardless of silent flag, explicitly note unsuccessful results
+			appExitCode = 1
+			return
+		}
+	}
 
-		// We don't check cfg.ConvertEOL here because we're processing a value
-		// we just created, not one passed in by the user (and potentially
-		// expected to remain untouched/unmodified).
-		trailer = goteamsnotify.ConvertEOLToBreak(trailer)
+	// If provided, use target URLs and their descriptions to add labelled
+	// URL "buttons" to Microsoft Teams message.
+	if len(cfg.TargetURLs) > 0 {
 
-		botapiMsg.AddText(trailer)
+		// Create dedicated container for all action items.
+		actionsContainer := adaptivecard.NewContainer()
+		actionsContainer.Separator = false
+		actionsContainer.Style = adaptivecard.ContainerStyleEmphasis
+		actionsContainer.Spacing = adaptivecard.SpacingExtraLarge
 
-		if cfg.VerboseOutput {
-			if err := botapiMsg.Prepare(false); err != nil {
+		actions := make([]adaptivecard.Action, 0, len(cfg.TargetURLs))
+
+		for i := range cfg.TargetURLs {
+
+			urlAction, err := adaptivecard.NewActionOpenURL(
+				cfg.TargetURLs[i].URL.String(),
+				cfg.TargetURLs[i].Description,
+			)
+			if err != nil {
 				if !cfg.SilentOutput {
-					log.Printf("\n\nERROR: Failed to prepare message for %q channel in the %q team: %v\n\n",
-						cfg.Channel, cfg.Team, err)
+					log.Printf(
+						"\n\nERROR: Failed to process openURL action for %q channel in the %q team: %v\n\n",
+						cfg.Channel,
+						cfg.Team,
+						err,
+					)
 				}
 				// Regardless of silent flag, explicitly note unsuccessful results
 				appExitCode = 1
 				return
 			}
-
-			// Emitted at app exit
-			rawMsg = fmt.Sprintf("botapi Message values sent: %#v\n", botapiMsg)
-
-			fmt.Println(botapiMsg.PrettyPrint())
+			actions = append(actions, urlAction)
 		}
 
-		// Submit message card using Microsoft Teams client, retry submission if
-		// needed up to specified number of retry attempts.
-		sendErr = mstClient.SendWithRetry(ctxSubmissionTimeout, cfg.WebhookURL, botapiMsg, cfg.Retries, cfg.RetriesDelay)
-
-	default:
-
-		// Setup base message card
-		msgCard := messagecard.NewMessageCard()
-		msgCard.Title = cfg.MessageTitle
-		msgCard.Text = cfg.MessageText
-		msgCard.ThemeColor = cfg.ThemeColor
-
-		// If provided, use target URLs and their descriptions to add labelled URL
-		// "buttons" to Microsoft Teams message.
-		if len(cfg.TargetURLs) > 0 {
-
-			// Create dedicated section for all potentialAction items
-			actionSection := messagecard.NewSection()
-			actionSection.StartGroup = true
-
-			for i := range cfg.TargetURLs {
-
-				pa, err := messagecard.NewPotentialAction(
-					messagecard.PotentialActionOpenURIType,
-					cfg.TargetURLs[i].Description,
+		if err := actionsContainer.AddAction(true, actions...); err != nil {
+			if !cfg.SilentOutput {
+				log.Printf(
+					"\n\nERROR: Failed to add openURL action to container for %q channel in the %q team: %v\n\n",
+					cfg.Channel,
+					cfg.Team,
+					err,
 				)
-
-				if err != nil {
-					log.Println("error encountered when processing target URL:", err)
-					appExitCode = 1
-
-					return
-				}
-
-				pa.PotentialActionOpenURI.Targets =
-					[]messagecard.PotentialActionOpenURITarget{
-						{
-							OS:  "default",
-							URI: cfg.TargetURLs[i].URL.String(),
-						},
-					}
-
-				if err := actionSection.AddPotentialAction(pa); err != nil {
-					log.Println("error encountered when adding target URL to message:", err)
-					appExitCode = 1
-
-					return
-				}
 			}
-
-			if err := msgCard.AddSection(actionSection); err != nil {
-				log.Println("error encountered when adding section value:", err)
-				appExitCode = 1
-				return
-			}
-		}
-
-		// Create branding trailer section
-		trailerSection := messagecard.NewSection()
-		trailerSection.Text = config.MessageTrailer(cfg.Sender)
-		trailerSection.StartGroup = true
-
-		// Add branding trailer section, bail if unexpected error occurs
-		if err := msgCard.AddSection(trailerSection); err != nil {
-			log.Println("error encountered when adding section value:", err)
+			// Regardless of silent flag, explicitly note unsuccessful results
 			appExitCode = 1
 			return
 		}
 
-		if cfg.VerboseOutput {
-			if err := msgCard.Prepare(false); err != nil {
-				if !cfg.SilentOutput {
-					log.Printf("\n\nERROR: Failed to prepare message for %q channel in the %q team: %v\n\n",
-						cfg.Channel, cfg.Team, err)
-				}
-				// Regardless of silent flag, explicitly note unsuccessful results
-				appExitCode = 1
-				return
+		if err := card.AddContainer(false, actionsContainer); err != nil {
+			if !cfg.SilentOutput {
+				log.Printf("\n\nERROR: Failed to add actions container to card for %q channel in the %q team: %v\n\n",
+					cfg.Channel, cfg.Team, err)
 			}
+			// Regardless of silent flag, explicitly note unsuccessful results
+			appExitCode = 1
+			return
+		}
+	}
 
-			// Emitted at app exit
-			rawMsg = fmt.Sprintf("MessageCard values sent: %#v\n", msgCard)
+	// Process branding trailer content.
+	//
+	// NOTE: Unlike MessageCard text which has benefited from \r\n
+	// (windows), \r (mac) and \n (unix) conversion to <br> statements in
+	// the past, <br> statements in Adaptive Card text remain as-is in the
+	// final rendered message. This is not useful.
+	trailerText := fmt.Sprintf(
+		"\n\n%s",
+		config.MessageTrailer(cfg.Sender),
+	)
 
-			fmt.Println(msgCard.PrettyPrint())
+	trailerContainer := adaptivecard.NewContainer()
+	trailerContainer.Separator = true
+	trailerContainer.Spacing = adaptivecard.SpacingExtraLarge
+
+	trailerTextBlock := adaptivecard.NewTextBlock(trailerText, true)
+	trailerTextBlock.Size = adaptivecard.SizeSmall
+	trailerTextBlock.Weight = adaptivecard.WeightLighter
+
+	if err := trailerContainer.AddElement(false, trailerTextBlock); err != nil {
+		if !cfg.SilentOutput {
+			log.Printf("\n\nERROR: Failed to add text block to trailer container for card for %q channel in the %q team: %v\n\n",
+				cfg.Channel, cfg.Team, err)
+		}
+		// Regardless of silent flag, explicitly note unsuccessful results
+		appExitCode = 1
+		return
+	}
+	if err := card.AddContainer(false, trailerContainer); err != nil {
+		if !cfg.SilentOutput {
+			log.Printf("\n\nERROR: Failed to add trailer container to card for %q channel in the %q team: %v\n\n",
+				cfg.Channel, cfg.Team, err)
+		}
+		// Regardless of silent flag, explicitly note unsuccessful results
+		appExitCode = 1
+		return
+	}
+	message, err := adaptivecard.NewMessageFromCard(card)
+	if err != nil {
+		if !cfg.SilentOutput {
+			log.Printf(
+				"\n\nERROR: Failed to create new message from card for %q channel in the %q team: %v\n\n",
+				cfg.Channel,
+				cfg.Team,
+				err,
+			)
+
+			// Regardless of silent flag, explicitly note unsuccessful results
+			appExitCode = 1
+			return
+		}
+	}
+
+	if cfg.VerboseOutput {
+		if err := message.Prepare(); err != nil {
+			log.Printf("\n\nERROR: Failed to prepare message for %q channel in the %q team: %v\n\n",
+				cfg.Channel, cfg.Team, err)
+
+			// Regardless of silent flag, explicitly note unsuccessful results
+			appExitCode = 1
+			return
 		}
 
-		// Submit message card using Microsoft Teams client, retry submission if
-		// needed up to specified number of retry attempts.
-		sendErr = mstClient.SendWithRetry(ctxSubmissionTimeout, cfg.WebhookURL, msgCard, cfg.Retries, cfg.RetriesDelay)
-
+		log.Println(message.PrettyPrint())
 	}
+
+	// Submit message card using Microsoft Teams client, retry submission if
+	// needed up to specified number of retry attempts.
+	sendErr := mstClient.SendWithRetry(ctxSubmissionTimeout, cfg.WebhookURL, message, cfg.Retries, cfg.RetriesDelay)
 
 	switch {
 
 	case cfg.IgnoreInvalidResponse &&
 		errors.Is(sendErr, goteamsnotify.ErrInvalidWebhookURLResponseText):
 
-		log.Printf(
-			"WARNING: invalid response received from %q endpoint", cfg.WebhookURL)
-		log.Printf("ignoring error response as requested: \n%s", sendErr)
+		if !cfg.SilentOutput {
+			log.Printf(
+				"WARNING: invalid response received from %q endpoint", cfg.WebhookURL)
+			log.Printf("ignoring error response as requested: \n%s", sendErr)
+		}
 
 	// If an error occurred and we were not expecting one.
 	case sendErr != nil:
@@ -260,7 +307,7 @@ func main() {
 	if cfg.VerboseOutput {
 		log.Printf("Configuration used: %#v\n", cfg)
 		log.Printf("Webhook URL: %s\n", cfg.WebhookURL)
-		log.Println(rawMsg)
+		log.Printf("Message values sent: %#v\n", message)
 	}
 
 }
