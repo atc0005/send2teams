@@ -26,6 +26,54 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
+## [v0.9.0] - 2022-04-11
+
+### Overview
+
+- Fixed support for user mentions
+- Dependency updates
+- Swap from legacy `MessageCard` format to `Adaptive Card`
+- Flag changes
+- built using Go 1.17.8
+  - Statically linked
+  - Windows (x86, x64)
+  - Linux (x86, x64)
+
+### Changed
+
+- Dependencies
+  - `Go`
+    - `1.17.7` to `1.17.8`
+  - `atc0005/go-teams-notify`
+    - `v2.7.0-alpha.1` to `v2.7.0-alpha.2`
+  - `actions/checkout`
+    - `v2.4.0` to `v3`
+
+- (GH-225) Microsoft Teams messages are now generated using the `Adaptive
+  Card` format instead of the legacy `MessageCard` format
+  - this produces some minor visual differences
+  - see
+    [atc0005/check-vmware#649](https://github.com/atc0005/check-vmware/pull/649/commits/37ef45cf98efdf0faa958578207ff3d0b826cea4)
+    for an example of changes made to a Nagios command definition to retain
+    comparable visual parity
+  - see
+    [atc0005/check-vmware#651](https://github.com/atc0005/check-vmware/pull/651/commits/e0f87d08c9e9db5f417e4d6104f94c039d87acea)
+    for an example of improvements to the command definition using syntax
+    compatible with `Adaptive Card` text formatting support
+- (GH-225) The `--target-url` flag no longer enforces a set limit of 4 URL
+  "buttons"
+- (GH-225) `--color` flag is now a NOOP
+  - produces no effect; see README for details
+
+### Fixed
+
+- (GH-224) README doesn't make clear that the `--user-mention` flag can be
+  repeated
+- (GH-225) Intermittent message submission failure when using `--user-mention`
+  flag
+- (GH-225) Add missing checks for use of `--silent` flag before emitting
+  warning/error output
+
 ## [v0.8.0] - 2022-02-25
 
 ### Overview
@@ -719,7 +767,8 @@ This initial prototype supports/provides:
 - GitHub Actions linting and build checks
 - Makefile for general use cases
 
-[Unreleased]: https://github.com/atc0005/send2teams/compare/v0.8.0...HEAD
+[Unreleased]: https://github.com/atc0005/send2teams/compare/v0.9.0...HEAD
+[v0.9.0]: https://github.com/atc0005/send2teams/releases/tag/v0.9.0
 [v0.8.0]: https://github.com/atc0005/send2teams/releases/tag/v0.8.0
 [v0.7.0]: https://github.com/atc0005/send2teams/releases/tag/v0.7.0
 [v0.6.6]: https://github.com/atc0005/send2teams/releases/tag/v0.6.6
