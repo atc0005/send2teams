@@ -34,7 +34,9 @@ Small CLI tool used to submit messages to Microsoft Teams.
   - [One-off](#one-off)
   - [Using an invalid flag](#using-an-invalid-flag)
   - [Specifying url, description pairs](#specifying-url-description-pairs)
-  - [User mention](#user-mention)
+  - [User mentions](#user-mentions)
+    - [One mention](#one-mention)
+    - [Multiple mentions](#multiple-mentions)
 - [License](#license)
 - [References](#references)
 
@@ -204,26 +206,26 @@ shadabacc3934](https://gist.github.com/chusiang/895f6406fbf9285c58ad0a3ace13d025
 Currently `send2teams` only supports command-line configuration flags.
 Requests for other configuration sources will be considered.
 
-| Flag                      | Required | Default       | Possible                                                  | Description                                                                                                                                 |
-| ------------------------- | -------- | ------------- | --------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| `h`, `help`               | No       | N/A           | N/A                                                       | Display Help; show available flags.                                                                                                         |
-| `v`, `version`            | No       | `false`       | `true`, `false`                                           | Whether to display application version and then immediately exit application.                                                               |
-| `channel`                 | No       | `unspecified` | *valid Microsoft Teams channel name*                      | The target channel where we will send a message. If not specified, defaults to `unspecified`.                                               |
-| `color`                   | No       | `NotUsed`     | N/A                                                       | NOOP; this setting is no longer used. Values specified for this flag are ignored.                                                           |
-| `message`                 | Yes      |               | *valid message string*                                    | The (optionally) Markdown-formatted message to submit.                                                                                      |
-| `team`                    | No       | `unspecified` | *valid Microsoft Teams team name*                         | The name of the Team containing our target channel. If not specified, defaults to `unspecified`.                                            |
-| `title`                   | No       |               | *valid title string*                                      | The (optional) title for the message to submit.                                                                                             |
-| `sender`                  | No       |               | *valid application or script name*                        | The (optional) sending application name or generator of the message this app will attempt to deliver.                                       |
-| `url`                     | Yes      |               | [*valid Microsoft Office 365 Webhook URL*](#webhook-urls) | The Webhook URL provided by a pre-configured Connector.                                                                                     |
-| `target-url`              | No       |               | *valid comma-separated `url`, `description` pair*         | The target URL and label (specified as comma separated pair) usually visible as a button towards the bottom of the Microsoft Teams message. |
-| `verbose`                 | No       | `false`       | `true`, `false`                                           | Whether detailed output should be shown after message submission success or failure                                                         |
-| `silent`                  | No       | `false`       | `true`, `false`                                           | Whether ANY output should be shown after message submission success or failure                                                              |
-| `convert-eol`             | No       | `false`       | `true`, `false`                                           | Whether messages with Windows, Mac and Linux newlines are updated to use break statements before message submission                         |
-| `disable-url-validation`  | No       | `false`       | `true`, `false`                                           | Whether webhook URL validation should be disabled. Useful when submitting generated JSON payloads to a service like <https://httpbin.org/>. |
-| `ignore-invalid-response` | No       | `false`       | `true`, `false`                                           | Whether an invalid response from remote endpoint should be ignored. This is expected if submitting a message to a non-standard webhook URL. |
-| `retries`                 | No       | `2`           | *positive whole number*                                   | The number of attempts that this application will make to deliver messages before giving up.                                                |
-| `retries-delay`           | No       | `2`           | *positive whole number*                                   | The number of seconds that this application will wait before making another delivery attempt.                                               |
-| `user-mention`            | No       |               | *valid comma-separated `name`, `id` pair*                 | The DisplayName and ID of the recipient (specified as comma separated pair) for a user mention.                                             |
+| Flag                      | Required | Default       | Possible                                                  | Description                                                                                                                                       |
+| ------------------------- | -------- | ------------- | --------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `h`, `help`               | No       | N/A           | N/A                                                       | Display Help; show available flags.                                                                                                               |
+| `v`, `version`            | No       | `false`       | `true`, `false`                                           | Whether to display application version and then immediately exit application.                                                                     |
+| `channel`                 | No       | `unspecified` | *valid Microsoft Teams channel name*                      | The target channel where we will send a message. If not specified, defaults to `unspecified`.                                                     |
+| `color`                   | No       | `NotUsed`     | N/A                                                       | NOOP; this setting is no longer used. Values specified for this flag are ignored.                                                                 |
+| `message`                 | Yes      |               | *valid message string*                                    | The (optionally) Markdown-formatted message to submit.                                                                                            |
+| `team`                    | No       | `unspecified` | *valid Microsoft Teams team name*                         | The name of the Team containing our target channel. If not specified, defaults to `unspecified`.                                                  |
+| `title`                   | No       |               | *valid title string*                                      | The (optional) title for the message to submit.                                                                                                   |
+| `sender`                  | No       |               | *valid application or script name*                        | The (optional) sending application name or generator of the message this app will attempt to deliver.                                             |
+| `url`                     | Yes      |               | [*valid Microsoft Office 365 Webhook URL*](#webhook-urls) | The Webhook URL provided by a pre-configured Connector.                                                                                           |
+| `target-url`              | No       |               | *valid comma-separated `url`, `description` pair*         | The target URL and label (specified as comma separated pair) usually visible as a button towards the bottom of the Microsoft Teams message.       |
+| `verbose`                 | No       | `false`       | `true`, `false`                                           | Whether detailed output should be shown after message submission success or failure                                                               |
+| `silent`                  | No       | `false`       | `true`, `false`                                           | Whether ANY output should be shown after message submission success or failure                                                                    |
+| `convert-eol`             | No       | `false`       | `true`, `false`                                           | Whether messages with Windows, Mac and Linux newlines are updated to use break statements before message submission                               |
+| `disable-url-validation`  | No       | `false`       | `true`, `false`                                           | Whether webhook URL validation should be disabled. Useful when submitting generated JSON payloads to a service like <https://httpbin.org/>.       |
+| `ignore-invalid-response` | No       | `false`       | `true`, `false`                                           | Whether an invalid response from remote endpoint should be ignored. This is expected if submitting a message to a non-standard webhook URL.       |
+| `retries`                 | No       | `2`           | *positive whole number*                                   | The number of attempts that this application will make to deliver messages before giving up.                                                      |
+| `retries-delay`           | No       | `2`           | *positive whole number*                                   | The number of seconds that this application will wait before making another delivery attempt.                                                     |
+| `user-mention`            | No       |               | *one or more valid comma-separated `name`, `id` pairs*    | The DisplayName and ID of the recipient (specified as comma separated pair) for a user mention. May be repeated to create multiple user mentions. |
 
 ## Limitations
 
@@ -297,7 +299,9 @@ and on a single line (e.g., one-off via terminal or batch file):
 ./send2teams.exe --silent --channel "Alerts" --team "Support" --message "Useful starting points" --title "Learn more about Go" --sender "Nagios" --url "https://outlook.office.com/webhook/www@xxx/IncomingWebhook/yyy/zzz" --target-url "https://go.dev/, Go Homepage" --target-url "https://github.com/dariubs/GoBooks, Awesome Go Books"
 ```
 
-### User mention
+### User mentions
+
+#### One mention
 
 This example illustrates mentioning a user along with providing a brief
 message.
@@ -311,7 +315,7 @@ script):
   --channel "Alerts" \
   --team "Support" \
   --message "System XYZ is down!" \
-  --user-mention "John Doe,jdoe@example.com"
+  --user-mention "John Doe,john.doe@example.com" \
   --sender "Nagios" \
   --url "https://outlook.office.com/webhook/www@xxx/IncomingWebhook/yyy/zzz"
 ```
@@ -319,7 +323,42 @@ script):
 and on a single line (e.g., one-off via terminal or batch file):
 
 ```console
-./send2teams --silent --channel "Alerts" --team "Support" --message "System XYZ is down!" --user-mention "John Doe,jdoe@example.com" --sender "Nagios" --url "https://outlook.office.com/webhook/www@xxx/IncomingWebhook/yyy/zzz"
+./send2teams --silent --channel "Alerts" --team "Support" --message "System XYZ is down!" --user-mention "John Doe,john.doe@example.com" --sender "Nagios" --url "https://outlook.office.com/webhook/www@xxx/IncomingWebhook/yyy/zzz"
+```
+
+Note:
+
+- remove the `-silent` flag in order to see pass or failure output
+- use the `-verbose` flag to see the JSON payload submitted to Microsoft Teams
+- check the exit code (`$?`) to determine overall success/failure result
+
+#### Multiple mentions
+
+This example illustrates mentioning multiple users along with providing a
+brief message. The `--user-mention` flag is repeated for each user mention.
+
+Though valid syntax, repeating the same user mention does not increase the
+number of times the same user is notified of a user mention.
+
+The example, shown split over multiple lines for readability (e.g., shell
+script):
+
+```console
+./send2teams \
+  --silent \
+  --channel "Alerts" \
+  --team "Support" \
+  --message "System XYZ is down!" \
+  --user-mention "John Doe,john.doe@example.com" \
+  --user-mention "Jane Doe,jane.doe@example.com" \
+  --sender "Nagios" \
+  --url "https://outlook.office.com/webhook/www@xxx/IncomingWebhook/yyy/zzz"
+```
+
+and on a single line (e.g., one-off via terminal or batch file):
+
+```console
+./send2teams --silent --channel "Alerts" --team "Support" --message "System XYZ is down!" --user-mention "John Doe,john.doe@example.com" --user-mention "Jane Doe,jane.doe@example.com" --sender "Nagios" --url "https://outlook.office.com/webhook/www@xxx/IncomingWebhook/yyy/zzz"
 ```
 
 Note:
