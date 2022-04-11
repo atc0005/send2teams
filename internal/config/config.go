@@ -19,7 +19,6 @@ import (
 	"time"
 
 	goteamsnotify "github.com/atc0005/go-teams-notify/v2"
-	"github.com/atc0005/go-teams-notify/v2/messagecard"
 )
 
 const (
@@ -34,7 +33,7 @@ const (
 	webhookURLFlagHelp                  = "The Webhook URL provided by a preconfigured Connector."
 	targetURLFlagHelp                   = "The target URL and label (specified as comma separated pair) usually visible as a button towards the bottom of the Microsoft Teams message."
 	userMentionFlagHelp                 = "The DisplayName and ID of the recipient (specified as comma separated pair) for a user mention."
-	themeColorFlagHelp                  = "The hex color code used to set the desired trim color on submitted messages."
+	themeColorFlagHelp                  = "NOOP; this setting is no longer used. Values specified for this flag are ignored."
 	titleFlagHelp                       = "The title for the message to submit."
 	messageFlagHelp                     = "The message to submit. This message may be provided in Markdown format."
 	senderFlagHelp                      = "The (optional) sending application name or generator of the message this app will attempt to deliver."
@@ -44,7 +43,7 @@ const (
 
 // Default flag settings if not overridden by user input
 const (
-	defaultMessageThemeColor           string = "#832561"
+	defaultMessageThemeColor           string = "NotUsed"
 	defaultSilentOutput                bool   = false
 	defaultVerboseOutput               bool   = false
 	defaultConvertEOL                  bool   = false
@@ -155,8 +154,9 @@ type Config struct {
 	// channel that you wish to submit messages to using this application.
 	WebhookURL string
 
-	// ThemeColor is a hex color code string representing the desired border
-	// trim color for our submitted messages.
+	// ThemeColor is no longer used. Values specified for this flag are
+	// ignored. If/when the Adaptive Card format adds support for message
+	// theming (or border color) we can re-enable this setting.
 	ThemeColor string
 
 	// MessageTitle is the text shown on the top portion of the message "card"
@@ -467,54 +467,9 @@ func NewConfig() (*Config, error) {
 // Validate verifies all struct fields have been provided acceptable values.
 func (c Config) Validate(disableWebhookURLValidation bool) error {
 
-	// Current implementation of user mentions is incompatible with most
-	// MessageCard settings/values. Future implementation of Adaptive Card
-	// support in the atc0005/go-teams-notify library is expected to remove
-	// some/most of these incompatibilities.
-	switch {
-	case c.UserMentions != nil:
-
-		if len(c.TargetURLs) > 0 {
-			return fmt.Errorf("target urls flag is incompatible with user mentions flag")
-		}
-
-		if c.MessageTitle != "" {
-			return fmt.Errorf("message title flag is incompatible with user mentions flag")
-		}
-
-		if c.ThemeColor != defaultMessageThemeColor {
-			return fmt.Errorf("theme color flag is incompatible with user mentions flag")
-		}
-
-	default:
-		// Expected pattern: #832561
-		if len(c.ThemeColor) < len(defaultMessageThemeColor) {
-
-			expectedLength := len(defaultMessageThemeColor)
-			actualLength := len(c.ThemeColor)
-			return fmt.Errorf("provided message theme color too short; got message %q of length %d, expected length of %d",
-				c.ThemeColor, actualLength, expectedLength)
-		}
-
-		// We rely on the Set() method for the flag.Value interface to ensure that
-		// the required URL and description values are provided for each target
-		// URL. We verify here that we don't exceed the maximum supported
-		// potentialActions for the `section` that we will generate.
-		//
-		// https://docs.microsoft.com/en-us/outlook/actionable-messages/message-card-reference#actions
-		if len(c.TargetURLs) > messagecard.PotentialActionMaxSupported {
-			return fmt.Errorf(
-				"%d target URLs specified, a maximum of %d are supported",
-				len(c.TargetURLs),
-				messagecard.PotentialActionMaxSupported,
-			)
-		}
-
-	}
-
-	/*
-		Shared/common validation checks.
-	*/
+	// We rely on the Set() method for the flag.Value interface to ensure that
+	// the required URL and description values are provided for each target
+	// URL.
 
 	if c.SilentOutput && c.VerboseOutput {
 		return fmt.Errorf("unsupported: You cannot have both silent and verbose output")

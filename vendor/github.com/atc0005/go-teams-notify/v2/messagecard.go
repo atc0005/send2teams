@@ -17,6 +17,14 @@ import (
 	"strings"
 )
 
+/////////////////////////////////////////////////////////////////////////
+// NOTE: The contents of this file are deprecated. See the Deprecated
+// indicators in this file for intended replacements.
+//
+// Please submit a bug report if you find exported code in this file which
+// does *not* already have a replacement elsewhere in this library.
+/////////////////////////////////////////////////////////////////////////
+
 const (
 	// PotentialActionOpenURIType is the type that must be used for OpenUri
 	// potential action.
@@ -601,23 +609,33 @@ func (mc *MessageCard) Validate() error {
 	return nil
 }
 
-// Prepare handles tasks needed to prepare a MessageCard for delivery to an
-// endpoint. If specified, tasks are repeated regardless of whether a previous
-// Prepare call was made. Validation should be performed by the caller prior
-// to calling this method.
+// Prepare handles tasks needed to construct a payload from a MessageCard for
+// delivery to an endpoint.
 //
 // Deprecated: use (messagecard.MessageCard).Prepare instead.
-func (mc *MessageCard) Prepare(recreate bool) error {
-	if mc.payload != nil && !recreate {
-		return nil
-	}
-
+func (mc *MessageCard) Prepare() error {
 	jsonMessage, err := json.Marshal(mc)
 	if err != nil {
-		return err
+		return fmt.Errorf(
+			"error marshalling MessageCard to JSON: %w",
+			err,
+		)
 	}
 
-	mc.payload = bytes.NewBuffer(jsonMessage)
+	switch {
+	case mc.payload == nil:
+		mc.payload = &bytes.Buffer{}
+	default:
+		mc.payload.Reset()
+	}
+
+	_, err = mc.payload.Write(jsonMessage)
+	if err != nil {
+		return fmt.Errorf(
+			"error updating JSON payload for MessageCard: %w",
+			err,
+		)
+	}
 
 	return nil
 }
@@ -637,8 +655,6 @@ func (mc *MessageCard) Payload() io.Reader {
 func (mc *MessageCard) PrettyPrint() string {
 	if mc.payload != nil {
 		var prettyJSON bytes.Buffer
-
-		// Validation is handled by the MessageCard.Prepare() method.
 		_ = json.Indent(&prettyJSON, mc.payload.Bytes(), "", "\t")
 
 		return prettyJSON.String()
@@ -821,7 +837,7 @@ func NewMessageCardSectionImage() MessageCardSectionImage {
 }
 
 // NewMessageCardPotentialAction creates a new MessageCardPotentialAction
-// using the provided potential action type and name. The name values defines
+// using the provided potential action type and name. The name value defines
 // the text that will be displayed on screen for the action. An error is
 // returned if invalid values are supplied.
 //

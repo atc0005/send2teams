@@ -9,6 +9,10 @@ module github.com/atc0005/send2teams
 
 go 1.17
 
-require github.com/atc0005/go-teams-notify/v2 v2.7.0-alpha.1
+// Allow for testing local changes before they're published.
+//
+// replace github.com/atc0005/go-teams-notify/v2 => ../go-teams-notify
+
+require github.com/atc0005/go-teams-notify/v2 v2.7.0-alpha.2
 
 require github.com/davecgh/go-spew v1.1.1 // indirect
