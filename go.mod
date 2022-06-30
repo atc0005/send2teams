@@ -13,6 +13,4 @@ go 1.17
 //
 // replace github.com/atc0005/go-teams-notify/v2 => ../go-teams-notify
 
-require github.com/atc0005/go-teams-notify/v2 v2.7.0-alpha.2
-
-require github.com/davecgh/go-spew v1.1.1 // indirect
+require github.com/atc0005/go-teams-notify/v2 v2.7.0-alpha.3
