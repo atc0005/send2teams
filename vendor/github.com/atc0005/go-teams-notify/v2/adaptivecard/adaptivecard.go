@@ -19,7 +19,7 @@ import (
 	"strings"
 
 	goteamsnotify "github.com/atc0005/go-teams-notify/v2"
-	"github.com/atc0005/go-teams-notify/v2/internal/validation"
+	"github.com/atc0005/go-teams-notify/v2/internal/validator"
 )
 
 // General constants.
@@ -541,6 +541,10 @@ type FactSet Element
 // Columns is a collection of Column values.
 type Columns []Column
 
+// ColumnItems is a collection of card elements that should be rendered inside
+// of the column.
+type ColumnItems []*Element
+
 // Column is a container used by a ColumnSet element type. Each container
 // may contain one or more elements.
 //
@@ -890,9 +894,9 @@ func (m Message) Validate() error {
 		return m.ValidateFunc()
 	}
 
-	v := validation.Validator{}
+	v := validator.Validator{}
 
-	v.MustBeFieldHasSpecificValue(
+	v.FieldHasSpecificValue(
 		m.Type,
 		"type",
 		TypeMessage,
@@ -902,12 +906,12 @@ func (m Message) Validate() error {
 
 	// We need an attachment (containing one or more Adaptive Cards) in order
 	// to generate a valid Message for Microsoft Teams delivery.
-	v.MustBeNotEmptyCollection("Attachments", m.Type, ErrMissingValue, m.Attachments)
+	v.NotEmptyCollection("Attachments", m.Type, ErrMissingValue, m.Attachments)
 
-	v.MustSelfValidate(Attachments(m.Attachments))
+	v.SelfValidate(Attachments(m.Attachments))
 
 	// Optional field, but only specific values permitted if set.
-	v.MustBeInListIfFieldValNotEmpty(
+	v.InListIfFieldValNotEmpty(
 		m.AttachmentLayout,
 		"AttachmentLayout",
 		"message",
@@ -920,9 +924,9 @@ func (m Message) Validate() error {
 
 // Validate asserts that fields have valid values.
 func (a Attachment) Validate() error {
-	v := validation.Validator{}
+	v := validator.Validator{}
 
-	v.MustBeFieldHasSpecificValue(
+	v.FieldHasSpecificValue(
 		a.ContentType,
 		"attachment type",
 		AttachmentContentType,
@@ -946,7 +950,7 @@ func (a Attachments) Validate() error {
 
 // Validate asserts that fields have valid values.
 func (c Card) Validate() error {
-	v := validation.Validator{}
+	v := validator.Validator{}
 
 	// TODO: Version field validation
 	//
@@ -955,7 +959,7 @@ func (c Card) Validate() error {
 	// to assert that relationship, we skip applying validation for that value
 	// for now.
 
-	v.MustBeFieldHasSpecificValue(
+	v.FieldHasSpecificValue(
 		c.Type,
 		"type",
 		TypeAdaptiveCard,
@@ -965,7 +969,7 @@ func (c Card) Validate() error {
 
 	// While the schema value should be set it is not strictly required. If it
 	// is set, we assert that it is the correct value.
-	v.MustBeFieldHasSpecificValueIfFieldNotEmpty(
+	v.FieldHasSpecificValueIfFieldNotEmpty(
 		c.Schema,
 		"Schema",
 		AdaptiveCardSchema,
@@ -975,7 +979,7 @@ func (c Card) Validate() error {
 
 	// Both are optional fields, unless MinHeight is set in which case
 	// VerticalContentAlignment is required.
-	v.MustBeSuccessfulFuncCall(
+	v.SuccessfulFuncCall(
 		func() error {
 			return assertHeightAlignmentFieldsSetWhenRequired(
 				c.MinHeight, c.VerticalContentAlignment,
@@ -983,14 +987,14 @@ func (c Card) Validate() error {
 		},
 	)
 
-	v.MustBeSuccessfulFuncCall(
+	v.SuccessfulFuncCall(
 		func() error {
 			return assertCardBodyHasMention(c.Body, c.MSTeams.Entities)
 		},
 	)
 
-	v.MustSelfValidate(Elements(c.Body))
-	v.MustSelfValidate(Actions(c.Actions))
+	v.SelfValidate(Elements(c.Body))
+	v.SelfValidate(Actions(c.Actions))
 
 	return v.Err()
 }
@@ -1067,7 +1071,7 @@ func (e Elements) Validate() error {
 
 // Validate asserts that fields have valid values.
 func (e Element) Validate() error {
-	v := validation.Validator{}
+	v := validator.Validator{}
 
 	supportedElementTypes := supportedElementTypes()
 	supportedSizeValues := supportedSizeValues()
@@ -1085,14 +1089,14 @@ func (e Element) Validate() error {
 		General requirements for all Element types.
 	******************************************************************/
 
-	v.MustBeInListIfFieldValNotEmpty(e.Type, "Type", "element", supportedElementTypes, ErrInvalidType)
-	v.MustBeInListIfFieldValNotEmpty(e.Size, "Size", "element", supportedSizeValues, ErrInvalidFieldValue)
-	v.MustBeInListIfFieldValNotEmpty(e.Weight, "Weight", "element", supportedWeightValues, ErrInvalidFieldValue)
-	v.MustBeInListIfFieldValNotEmpty(e.Color, "Color", "element", supportedColorValues, ErrInvalidFieldValue)
-	v.MustBeInListIfFieldValNotEmpty(e.Spacing, "Spacing", "element", supportedSpacingValues, ErrInvalidFieldValue)
-	v.MustBeInListIfFieldValNotEmpty(e.Style, "Style", "element", supportedStyleValues, ErrInvalidFieldValue)
+	v.InListIfFieldValNotEmpty(e.Type, "Type", "element", supportedElementTypes, ErrInvalidType)
+	v.InListIfFieldValNotEmpty(e.Size, "Size", "element", supportedSizeValues, ErrInvalidFieldValue)
+	v.InListIfFieldValNotEmpty(e.Weight, "Weight", "element", supportedWeightValues, ErrInvalidFieldValue)
+	v.InListIfFieldValNotEmpty(e.Color, "Color", "element", supportedColorValues, ErrInvalidFieldValue)
+	v.InListIfFieldValNotEmpty(e.Spacing, "Spacing", "element", supportedSpacingValues, ErrInvalidFieldValue)
+	v.InListIfFieldValNotEmpty(e.Style, "Style", "element", supportedStyleValues, ErrInvalidFieldValue)
 
-	v.MustBeSuccessfulFuncCall(
+	v.SuccessfulFuncCall(
 		func() error {
 			return assertElementSupportsStyleValue(e, supportedStyleValues)
 		},
@@ -1112,30 +1116,30 @@ func (e Element) Validate() error {
 	// Columns collection is used by the ColumnSet type. While not required,
 	// the collection should be checked.
 	case e.Type == TypeElementColumnSet:
-		v.MustSelfValidate(Columns(e.Columns))
+		v.SelfValidate(Columns(e.Columns))
 
 	// Actions collection is required for ActionSet element type.
 	// https://adaptivecards.io/explorer/ActionSet.html
 	case e.Type == TypeElementActionSet:
-		v.MustBeNotEmptyCollection("Actions", e.Type, ErrMissingValue, e.Actions)
-		v.MustSelfValidate(Actions(e.Actions))
+		v.NotEmptyCollection("Actions", e.Type, ErrMissingValue, e.Actions)
+		v.SelfValidate(Actions(e.Actions))
 
 	// Items collection is required for Container element type.
 	// https://adaptivecards.io/explorer/Container.html
 	case e.Type == TypeElementContainer:
-		v.MustBeNotEmptyCollection("Items", e.Type, ErrMissingValue, e.Items)
-		v.MustSelfValidate(Elements(e.Items))
+		v.NotEmptyCollection("Items", e.Type, ErrMissingValue, e.Items)
+		v.SelfValidate(Elements(e.Items))
 
 	// URL is required for Image element type.
 	// https://adaptivecards.io/explorer/Image.html
 	case e.Type == TypeElementImage:
-		v.MustBeNotEmptyValue(e.URL, "URL", e.Type, ErrMissingValue)
+		v.NotEmptyValue(e.URL, "URL", e.Type, ErrMissingValue)
 
 	// Facts collection is required for FactSet element type.
 	// https://adaptivecards.io/explorer/FactSet.html
 	case e.Type == TypeElementFactSet:
-		v.MustBeNotEmptyCollection("Facts", e.Type, ErrMissingValue, e.Facts)
-		v.MustSelfValidate(Facts(e.Facts))
+		v.NotEmptyCollection("Facts", e.Type, ErrMissingValue, e.Facts)
+		v.SelfValidate(Facts(e.Facts))
 	}
 
 	// Return the last recorded validation error, or nil if no validation
@@ -1154,70 +1158,55 @@ func (c Columns) Validate() error {
 	return nil
 }
 
-// Validate asserts that fields have valid values.
-func (c Column) Validate() error {
-	if c.Type != TypeColumn {
-		return fmt.Errorf(
-			"invalid column type %q; expected %q: %w",
-			c.Type,
-			TypeColumn,
-			ErrInvalidType,
-		)
-	}
-
-	switch v := c.Width.(type) {
-	// Nothing to see here.
-	case nil:
-
-	// Assert specific fixed keyword values or valid pixel width; all other
-	// values are invalid.
-	case string:
-		v = strings.TrimSpace(v)
-		matched, _ := regexp.MatchString(ColumnWidthPixelRegex, v)
-
-		switch {
-		case v == ColumnWidthAuto:
-		case v == ColumnWidthStretch:
-		case !matched:
+// Validate asserts that the Items collection field for a column contains
+// valid values. Special handling is applied since the collection could
+// contain nil values.
+func (ci ColumnItems) Validate() error {
+	for _, item := range ci {
+		if item == nil {
 			return fmt.Errorf(
-				"invalid pixel width %q; expected value in format %s: %w",
-				v,
-				ColumnWidthPixelWidthExample,
-				ErrInvalidFieldValue,
+				"card element in Column is nil: %w",
+				ErrMissingValue,
 			)
 		}
 
-	// Number representing relative width of the column.
-	case int:
-
-	// Unsupported value.
-	default:
-		return fmt.Errorf(
-			"invalid pixel width %q; "+
-				"expected one of keywords %q, int value (e.g., %d) "+
-				"or specific pixel width (e.g., %s): %w",
-			v,
-			strings.Join([]string{
-				ColumnWidthAuto,
-				ColumnWidthStretch,
-			}, ","),
-			1,
-			ColumnWidthPixelWidthExample,
-			ErrInvalidFieldValue,
-		)
-	}
-
-	for _, element := range c.Items {
-		if err := element.Validate(); err != nil {
+		if err := item.Validate(); err != nil {
 			return err
 		}
 	}
 
+	return nil
+}
+
+// Validate asserts that fields have valid values.
+func (c Column) Validate() error {
+	v := validator.Validator{}
+
+	v.FieldHasSpecificValue(
+		c.Type,
+		"type",
+		TypeColumn,
+		"column",
+		ErrInvalidType,
+	)
+
+	v.SuccessfulFuncCall(
+		func() error { return assertColumnWidthValidValues(c) },
+	)
+
+	// Assert that the collection does not contain nil items.
+	v.NoNilValuesInCollection("Items", c.Type, ErrMissingValue, c.Items)
+
+	// Convert []*Element to ColumnItems so that we can use its Validate()
+	// method to handle cases where nil values could be present in the
+	// collection.
+	v.SelfValidate(ColumnItems(c.Items))
+
 	if c.SelectAction != nil {
-		return c.SelectAction.Validate()
+		v.SelfValidate(c.SelectAction)
 	}
 
-	return nil
+	return v.Err()
 }
 
 // Validate asserts that the collection of Fact values are all valid.
@@ -1233,20 +1222,20 @@ func (f Facts) Validate() error {
 
 // Validate asserts that fields have valid values.
 func (f Fact) Validate() error {
-	v := validation.Validator{}
+	v := validator.Validator{}
 
-	v.MustBeNotEmptyValue(f.Title, "Title", "Fact", ErrMissingValue)
-	v.MustBeNotEmptyValue(f.Value, "Value", "Fact", ErrMissingValue)
+	v.NotEmptyValue(f.Title, "Title", "Fact", ErrMissingValue)
+	v.NotEmptyValue(f.Value, "Value", "Fact", ErrMissingValue)
 
 	return v.Err()
 }
 
 // Validate asserts that fields have valid values.
 func (m MSTeams) Validate() error {
-	v := validation.Validator{}
+	v := validator.Validator{}
 
 	// If an optional width value is set, assert that it is a valid value.
-	v.MustBeInListIfFieldValNotEmpty(
+	v.InListIfFieldValNotEmpty(
 		m.Width,
 		"Width",
 		"MSTeams",
@@ -1254,18 +1243,18 @@ func (m MSTeams) Validate() error {
 		ErrInvalidFieldValue,
 	)
 
-	v.MustSelfValidate(Mentions(m.Entities))
+	v.SelfValidate(Mentions(m.Entities))
 
 	return v.Err()
 }
 
 // Validate asserts that fields have valid values.
 func (i ISelectAction) Validate() error {
-	v := validation.Validator{}
+	v := validator.Validator{}
 
 	// Some supportedISelectActionValues are restricted to later Adaptive Card
 	// schema versions.
-	v.MustBeInList(
+	v.InList(
 		i.Type,
 		"Type",
 		"ISelectAction",
@@ -1273,7 +1262,7 @@ func (i ISelectAction) Validate() error {
 		ErrInvalidType,
 	)
 
-	v.MustBeInListIfFieldValNotEmpty(
+	v.InListIfFieldValNotEmpty(
 		i.Fallback,
 		"Fallback",
 		"ISelectAction",
@@ -1282,7 +1271,7 @@ func (i ISelectAction) Validate() error {
 	)
 
 	if i.Type == TypeActionOpenURL {
-		v.MustBeNotEmptyValue(i.URL, "URL", i.Type, ErrMissingValue)
+		v.NotEmptyValue(i.URL, "URL", i.Type, ErrMissingValue)
 	}
 
 	return v.Err()
@@ -2203,6 +2192,52 @@ func assertCardBodyHasMention(elements []Element, mentions []Mention) error {
 		return fmt.Errorf(
 			"user mention text not found in elements of Card Body: %w",
 			ErrMissingValue,
+		)
+	}
+
+	return nil
+}
+
+func assertColumnWidthValidValues(c Column) error {
+	switch v := c.Width.(type) {
+	// Nothing to see here.
+	case nil:
+
+	// Assert specific fixed keyword values or valid pixel width; all other
+	// values are invalid.
+	case string:
+		v = strings.TrimSpace(v)
+		matched, _ := regexp.MatchString(ColumnWidthPixelRegex, v)
+
+		switch {
+		case v == ColumnWidthAuto:
+		case v == ColumnWidthStretch:
+		case !matched:
+			return fmt.Errorf(
+				"invalid pixel width %q; expected value in format %s: %w",
+				v,
+				ColumnWidthPixelWidthExample,
+				ErrInvalidFieldValue,
+			)
+		}
+
+	// Number representing relative width of the column.
+	case int:
+
+	// Unsupported value.
+	default:
+		return fmt.Errorf(
+			"invalid pixel width %q; "+
+				"expected one of keywords %q, int value (e.g., %d) "+
+				"or specific pixel width (e.g., %s): %w",
+			v,
+			strings.Join([]string{
+				ColumnWidthAuto,
+				ColumnWidthStretch,
+			}, ","),
+			1,
+			ColumnWidthPixelWidthExample,
+			ErrInvalidFieldValue,
 		)
 	}
 
