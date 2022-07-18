@@ -5,7 +5,7 @@
 // Licensed under the MIT License. See LICENSE file in the project root for
 // full license information.
 
-package validation
+package validator
 
 import (
 	"fmt"
@@ -32,11 +32,22 @@ type Validator struct {
 	err error
 }
 
-// MustSelfValidate asserts that each given item can self-validate.
+// hasNilValues is a helper function used to determine whether any items in
+// the given collection are nil.
+func hasNilValues(items []interface{}) bool {
+	for _, item := range items {
+		if item == nil {
+			return true
+		}
+	}
+	return false
+}
+
+// SelfValidate asserts that each given item can self-validate.
 //
 // A true value is returned if the validation step passed. A false value is
-// returned false if this or a prior validation step failed.
-func (v *Validator) MustSelfValidate(items ...Validater) bool {
+// returned if this or a prior validation step failed.
+func (v *Validator) SelfValidate(items ...Validater) bool {
 	if v.err != nil {
 		return false
 	}
@@ -49,31 +60,31 @@ func (v *Validator) MustSelfValidate(items ...Validater) bool {
 	return true
 }
 
-// MustSelfValidateIfXEqualsY asserts that each given item can self-validate
-// if value x is equal to y.
+// SelfValidateIfXEqualsY asserts that each given item can self-validate if
+// value x is equal to y.
 //
 // A true value is returned if the validation step passed. A false value is
 // returned false if this or a prior validation step failed.
-func (v *Validator) MustSelfValidateIfXEqualsY(x string, y string, items ...Validater) bool {
+func (v *Validator) SelfValidateIfXEqualsY(x string, y string, items ...Validater) bool {
 	if v.err != nil {
 		return false
 	}
 
 	if x == y {
-		v.MustSelfValidate(items...)
+		v.SelfValidate(items...)
 	}
 
 	return true
 }
 
-// MustBeFieldHasSpecificValue asserts that fieldVal is reqVal. fieldValDesc
+// FieldHasSpecificValue asserts that fieldVal is reqVal. fieldValDesc
 // describes the field value being validated (e.g., "Type") and typeDesc
 // describes the specific struct or value type whose field we are validating
 // (e.g., "Element").
 //
 // A true value is returned if the validation step passed. A false value is
 // returned if this or a prior validation step failed.
-func (v *Validator) MustBeFieldHasSpecificValue(
+func (v *Validator) FieldHasSpecificValue(
 	fieldVal string,
 	fieldValDesc string,
 	reqVal string,
@@ -103,14 +114,14 @@ func (v *Validator) MustBeFieldHasSpecificValue(
 	}
 }
 
-// MustBeFieldHasSpecificValueIfFieldNotEmpty asserts that fieldVal is reqVal
-// unless fieldVal is empty. fieldValDesc describes the field value being
-// validated (e.g., "Type") and typeDesc describes the specific struct or
-// value type whose field we are validating (e.g., "Element").
+// FieldHasSpecificValueIfFieldNotEmpty asserts that fieldVal is reqVal unless
+// fieldVal is empty. fieldValDesc describes the field value being validated
+// (e.g., "Type") and typeDesc describes the specific struct or value type
+// whose field we are validating (e.g., "Element").
 //
 // A true value is returned if the validation step passed. A false value is
 // returned if this or a prior validation step failed.
-func (v *Validator) MustBeFieldHasSpecificValueIfFieldNotEmpty(
+func (v *Validator) FieldHasSpecificValueIfFieldNotEmpty(
 	fieldVal string,
 	fieldValDesc string,
 	reqVal string,
@@ -123,7 +134,7 @@ func (v *Validator) MustBeFieldHasSpecificValueIfFieldNotEmpty(
 		return false
 
 	case fieldVal != "":
-		return v.MustBeFieldHasSpecificValue(
+		return v.FieldHasSpecificValue(
 			fieldVal,
 			fieldValDesc,
 			reqVal,
@@ -136,14 +147,14 @@ func (v *Validator) MustBeFieldHasSpecificValueIfFieldNotEmpty(
 	}
 }
 
-// MustBeNotEmptyValue asserts that fieldVal is not empty. fieldValDesc
-// describes the field value being validated (e.g., "Type") and typeDesc
-// describes the specific struct or value type whose field we are validating
-// (e.g., "Element").
+// NotEmptyValue asserts that fieldVal is not empty. fieldValDesc describes
+// the field value being validated (e.g., "Type") and typeDesc describes the
+// specific struct or value type whose field we are validating (e.g.,
+// "Element").
 //
 // A true value is returned if the validation step passed. A false value is
 // returned if this or a prior validation step failed.
-func (v *Validator) MustBeNotEmptyValue(fieldVal string, fieldValDesc string, typeDesc string, baseErr error) bool {
+func (v *Validator) NotEmptyValue(fieldVal string, fieldValDesc string, typeDesc string, baseErr error) bool {
 	if v.err != nil {
 		return false
 	}
@@ -159,15 +170,15 @@ func (v *Validator) MustBeNotEmptyValue(fieldVal string, fieldValDesc string, ty
 	return true
 }
 
-// MustBeInList reports whether fieldVal is in validVals. fieldValDesc
-// describes the field value being validated (e.g., "Type") and typeDesc
-// describes the specific struct or value type whose field we are validating
-// (e.g., "Element").
+// InList reports whether fieldVal is in validVals. fieldValDesc describes the
+// field value being validated (e.g., "Type") and typeDesc describes the
+// specific struct or value type whose field we are validating (e.g.,
+// "Element").
 //
 // A true value is returned if fieldVal is is in validVals. A false value is
 // returned if a prior validation step failed or if fieldVal is empty or is
 // not in validVals.
-func (v *Validator) MustBeInList(fieldVal string, fieldValDesc string, typeDesc string, validVals []string, baseErr error) bool {
+func (v *Validator) InList(fieldVal string, fieldValDesc string, typeDesc string, validVals []string, baseErr error) bool {
 	switch {
 	case v.err != nil:
 		return false
@@ -204,7 +215,7 @@ func (v *Validator) MustBeInList(fieldVal string, fieldValDesc string, typeDesc 
 	}
 }
 
-// MustBeInListIfFieldValNotEmpty reports whether fieldVal is in validVals if
+// InListIfFieldValNotEmpty reports whether fieldVal is in validVals if
 // fieldVal is not empty. fieldValDesc describes the field value being
 // validated (e.g., "Type") and typeDesc describes the specific struct or
 // value type whose field we are validating (e.g., "Element").
@@ -212,7 +223,7 @@ func (v *Validator) MustBeInList(fieldVal string, fieldValDesc string, typeDesc 
 // A true value is returned if fieldVal is empty or is in validVals. A false
 // value is returned if a prior validation step failed or if fieldVal is not
 // empty and is not in validVals.
-func (v *Validator) MustBeInListIfFieldValNotEmpty(fieldVal string, fieldValDesc string, typeDesc string, validVals []string, baseErr error) bool {
+func (v *Validator) InListIfFieldValNotEmpty(fieldVal string, fieldValDesc string, typeDesc string, validVals []string, baseErr error) bool {
 	switch {
 	case v.err != nil:
 		return false
@@ -246,15 +257,15 @@ func (v *Validator) MustBeInListIfFieldValNotEmpty(fieldVal string, fieldValDesc
 	}
 }
 
-// MustBeFieldInListIfTypeValIs reports whether fieldVal is in validVals if
-// fieldVal is not empty. fieldValDesc describes the field value being
-// validated (e.g., "Type") and typeDesc describes the specific struct or
-// value type whose field we are validating (e.g., "Element").
+// FieldInListIfTypeValIs reports whether fieldVal is in validVals if fieldVal
+// is not empty. fieldValDesc describes the field value being validated (e.g.,
+// "Type") and typeDesc describes the specific struct or value type whose
+// field we are validating (e.g., "Element").
 //
 // A true value is returned if fieldVal is empty or is in validVals. A false
 // value is returned if a prior validation step failed or if fieldVal is not
 // empty and is not in validVals.
-// func (v *Validator) MustBeFieldInListIfTypeValIs(
+// func (v *Validator) FieldInListIfTypeValIs(
 // 	fieldVal string,
 // 	fieldDesc string,
 // 	typeVal string,
@@ -294,7 +305,7 @@ func (v *Validator) MustBeInListIfFieldValNotEmpty(fieldVal string, fieldValDesc
 // 	}
 // }
 
-// MustBeNotEmptyCollection asserts that the specified items collection is not
+// NotEmptyCollection asserts that the specified items collection is not
 // empty. fieldValueDesc describes the field for this collection being
 // validated (e.g., "Facts") and typeDesc describes the specific struct or
 // value type whose field we are validating (e.g., "Element").
@@ -302,7 +313,7 @@ func (v *Validator) MustBeInListIfFieldValNotEmpty(fieldVal string, fieldValDesc
 // A true value is returned if the collection is not empty. A false value is
 // returned if a prior validation step failed or if the items collection is
 // empty.
-func (v *Validator) MustBeNotEmptyCollection(fieldValueDesc string, typeDesc string, baseErr error, items ...interface{}) bool {
+func (v *Validator) NotEmptyCollection(fieldValueDesc string, typeDesc string, baseErr error, items ...interface{}) bool {
 	if v.err != nil {
 		return false
 	}
@@ -328,7 +339,46 @@ func (v *Validator) MustBeNotEmptyCollection(fieldValueDesc string, typeDesc str
 	return true
 }
 
-// MustBeNotEmptyCollectionIfFieldValNotEmpty asserts that the specified items
+// NoNilValuesInCollection asserts that the specified items collection does
+// not contain any nil values. fieldValueDesc describes the field for this
+// collection being validated (e.g., "Facts") and typeDesc describes the
+// specific struct or value type whose field we are validating (e.g.,
+// "Element").
+//
+// A true value is returned if the collection does not contain any nil values
+// (even if the collection itself has no values). A false value is returned if
+// a prior validation step failed or if any items in the collection are nil.
+func (v *Validator) NoNilValuesInCollection(fieldValueDesc string, typeDesc string, baseErr error, items ...interface{}) bool {
+	if v.err != nil {
+		return false
+	}
+
+	switch {
+	case hasNilValues(items):
+		switch {
+		case baseErr != nil:
+			v.err = fmt.Errorf(
+				"required %s collection contains nil values for %s: %w",
+				fieldValueDesc,
+				typeDesc,
+				baseErr,
+			)
+		default:
+			v.err = fmt.Errorf(
+				"required %s collection contains nil values for for %s",
+				fieldValueDesc,
+				typeDesc,
+			)
+		}
+
+		return false
+
+	default:
+		return true
+	}
+}
+
+// NotEmptyCollectionIfFieldValNotEmpty asserts that the specified items
 // collection is not empty if fieldVal is not empty. fieldValueDesc describes
 // the field for this collection being validated (e.g., "Facts") and typeDesc
 // describes the specific struct or value type whose field we are validating
@@ -337,7 +387,7 @@ func (v *Validator) MustBeNotEmptyCollection(fieldValueDesc string, typeDesc str
 // A true value is returned if the collection is not empty. A false value is
 // returned if a prior validation step failed or if the items collection is
 // empty.
-func (v *Validator) MustBeNotEmptyCollectionIfFieldValNotEmpty(
+func (v *Validator) NotEmptyCollectionIfFieldValNotEmpty(
 	fieldVal string,
 	fieldValueDesc string,
 	typeDesc string,
@@ -373,12 +423,12 @@ func (v *Validator) MustBeNotEmptyCollectionIfFieldValNotEmpty(
 	}
 }
 
-// MustBeSuccessfulFuncCall accepts fn, a function that returns an error. fn
-// is called in order to determine validation results.
+// SuccessfulFuncCall accepts fn, a function that returns an error. fn is
+// called in order to determine validation results.
 //
 // A true value is returned if fn was successful. A false value is returned if
 // a prior validation step failed or if fn returned an error.
-func (v *Validator) MustBeSuccessfulFuncCall(fn func() error) bool {
+func (v *Validator) SuccessfulFuncCall(fn func() error) bool {
 	if v.err != nil {
 		return false
 	}

@@ -1,5 +1,5 @@
-# github.com/atc0005/go-teams-notify/v2 v2.7.0-alpha.4
+# github.com/atc0005/go-teams-notify/v2 v2.7.0-alpha.5
 ## explicit; go 1.14
 github.com/atc0005/go-teams-notify/v2
 github.com/atc0005/go-teams-notify/v2/adaptivecard
-github.com/atc0005/go-teams-notify/v2/internal/validation
+github.com/atc0005/go-teams-notify/v2/internal/validator
