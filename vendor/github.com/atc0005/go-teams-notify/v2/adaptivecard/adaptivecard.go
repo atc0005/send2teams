@@ -478,7 +478,7 @@ type Element struct {
 	//
 	// https://adaptivecards.io/explorer/Image.html
 	// https://adaptivecards.io/explorer/ImageSet.html
-	URL string `json:"uri,omitempty"`
+	URL string `json:"url,omitempty"`
 
 	// Size controls the size of text within a TextBlock element.
 	Size string `json:"size,omitempty"`
