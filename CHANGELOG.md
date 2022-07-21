@@ -26,6 +26,29 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
+## [v0.9.3] - 2022-07-21
+
+### Overview
+
+- Bugfixes
+- Dependency updates
+- built using Go 1.17.12
+  - Statically linked
+  - Windows (x86, x64)
+  - Linux (x86, x64)
+
+### Changed
+
+- Dependencies
+  - `Go`
+    - `1.17.10` to `1.17.12`
+  - `atc0005/go-teams-notify`
+    - `v2.7.0-alpha.2` to `v2.7.0-alpha.6`
+
+### Fixed
+
+- (GH-238) Update lintinstall Makefile recipe
+
 ## [v0.9.2] - 2022-05-13
 
 ### Overview
@@ -799,7 +822,8 @@ This initial prototype supports/provides:
 - GitHub Actions linting and build checks
 - Makefile for general use cases
 
-[Unreleased]: https://github.com/atc0005/send2teams/compare/v0.9.2...HEAD
+[Unreleased]: https://github.com/atc0005/send2teams/compare/v0.9.3...HEAD
+[v0.9.3]: https://github.com/atc0005/send2teams/releases/tag/v0.9.3
 [v0.9.2]: https://github.com/atc0005/send2teams/releases/tag/v0.9.2
 [v0.9.1]: https://github.com/atc0005/send2teams/releases/tag/v0.9.1
 [v0.9.0]: https://github.com/atc0005/send2teams/releases/tag/v0.9.0
