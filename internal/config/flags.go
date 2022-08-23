@@ -17,6 +17,7 @@ func (c *Config) handleFlagsConfig() {
 	flag.BoolVar(&c.SilentOutput, "silent", defaultSilentOutput, silentOutputFlagHelp)
 	flag.BoolVar(&c.ConvertEOL, "convert-eol", defaultConvertEOL, convertEOLFlagHelp)
 	flag.BoolVar(&c.DisableWebhookURLValidation, "disable-url-validation", defaultDisableWebhookURLValidation, disableWebhookURLValidationFlagHelp)
+	flag.BoolVar(&c.DisableBrandingTrailer, "disable-branding-trailer", defaultDisableBrandingTrailer, disableBrandingTrailerFlagHelp)
 	flag.BoolVar(&c.IgnoreInvalidResponse, "ignore-invalid-response", defaultIgnoreInvalidResponse, ignoreInvalidResponseFlagHelp)
 	flag.StringVar(&c.Team, "team", defaultTeamName, teamNameFlagHelp)
 	flag.Var(&c.TargetURLs, "target-url", targetURLFlagHelp)
