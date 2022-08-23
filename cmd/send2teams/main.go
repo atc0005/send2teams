@@ -198,43 +198,48 @@ func main() {
 		}
 	}
 
-	// Process branding trailer content.
-	//
-	// NOTE: Unlike MessageCard text which has benefited from \r\n
-	// (windows), \r (mac) and \n (unix) conversion to <br> statements in
-	// the past, <br> statements in Adaptive Card text remain as-is in the
-	// final rendered message. This is not useful.
-	trailerText := fmt.Sprintf(
-		"\n\n%s",
-		config.MessageTrailer(cfg.Sender),
-	)
+	// If requested, skip appending the branding trailer to messages.
+	if !cfg.DisableBrandingTrailer {
 
-	trailerContainer := adaptivecard.NewContainer()
-	trailerContainer.Separator = true
-	trailerContainer.Spacing = adaptivecard.SpacingExtraLarge
+		// Process branding trailer content.
+		//
+		// NOTE: Unlike MessageCard text which has benefited from \r\n
+		// (windows), \r (mac) and \n (unix) conversion to <br> statements in
+		// the past, <br> statements in Adaptive Card text remain as-is in the
+		// final rendered message. This is not useful.
+		trailerText := fmt.Sprintf(
+			"\n\n%s",
+			config.MessageTrailer(cfg.Sender),
+		)
 
-	trailerTextBlock := adaptivecard.NewTextBlock(trailerText, true)
-	trailerTextBlock.Size = adaptivecard.SizeSmall
-	trailerTextBlock.Weight = adaptivecard.WeightLighter
+		trailerContainer := adaptivecard.NewContainer()
+		trailerContainer.Separator = true
+		trailerContainer.Spacing = adaptivecard.SpacingExtraLarge
 
-	if err := trailerContainer.AddElement(false, trailerTextBlock); err != nil {
-		if !cfg.SilentOutput {
-			log.Printf("\n\nERROR: Failed to add text block to trailer container for card for %q channel in the %q team: %v\n\n",
-				cfg.Channel, cfg.Team, err)
+		trailerTextBlock := adaptivecard.NewTextBlock(trailerText, true)
+		trailerTextBlock.Size = adaptivecard.SizeSmall
+		trailerTextBlock.Weight = adaptivecard.WeightLighter
+
+		if err := trailerContainer.AddElement(false, trailerTextBlock); err != nil {
+			if !cfg.SilentOutput {
+				log.Printf("\n\nERROR: Failed to add text block to trailer container for card for %q channel in the %q team: %v\n\n",
+					cfg.Channel, cfg.Team, err)
+			}
+			// Regardless of silent flag, explicitly note unsuccessful results
+			appExitCode = 1
+			return
 		}
-		// Regardless of silent flag, explicitly note unsuccessful results
-		appExitCode = 1
-		return
-	}
-	if err := card.AddContainer(false, trailerContainer); err != nil {
-		if !cfg.SilentOutput {
-			log.Printf("\n\nERROR: Failed to add trailer container to card for %q channel in the %q team: %v\n\n",
-				cfg.Channel, cfg.Team, err)
+		if err := card.AddContainer(false, trailerContainer); err != nil {
+			if !cfg.SilentOutput {
+				log.Printf("\n\nERROR: Failed to add trailer container to card for %q channel in the %q team: %v\n\n",
+					cfg.Channel, cfg.Team, err)
+			}
+			// Regardless of silent flag, explicitly note unsuccessful results
+			appExitCode = 1
+			return
 		}
-		// Regardless of silent flag, explicitly note unsuccessful results
-		appExitCode = 1
-		return
 	}
+
 	message, err := adaptivecard.NewMessageFromCard(card)
 	if err != nil {
 		if !cfg.SilentOutput {
