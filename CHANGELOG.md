@@ -26,6 +26,32 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
+## [v0.10.0] - 2022-08-23
+
+### Overview
+
+- Add support for disabling branding trailer
+- Dependency updates
+- built using Go 1.17.13
+  - Statically linked
+  - Windows (x86, x64)
+  - Linux (x86, x64)
+
+### Added
+
+- (GH-227) Add optional flag to disable branding "trailer" on submitted
+  messages
+
+### Changed
+
+- Dependencies
+  - `Go`
+    - `1.17.12` to `1.17.13`
+
+### Fixed
+
+- (GH-245) Apply Go 1.19 specific doc comments linting fixes
+
 ## [v0.9.3] - 2022-07-21
 
 ### Overview
@@ -822,7 +848,8 @@ This initial prototype supports/provides:
 - GitHub Actions linting and build checks
 - Makefile for general use cases
 
-[Unreleased]: https://github.com/atc0005/send2teams/compare/v0.9.3...HEAD
+[Unreleased]: https://github.com/atc0005/send2teams/compare/v0.10.0...HEAD
+[v0.10.0]: https://github.com/atc0005/send2teams/releases/tag/v0.10.0
 [v0.9.3]: https://github.com/atc0005/send2teams/releases/tag/v0.9.3
 [v0.9.2]: https://github.com/atc0005/send2teams/releases/tag/v0.9.2
 [v0.9.1]: https://github.com/atc0005/send2teams/releases/tag/v0.9.1
