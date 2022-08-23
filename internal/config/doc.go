@@ -6,9 +6,7 @@
 // full license information.
 
 /*
-
 Package config provides types and functions to collect, validate and apply
 user-provided settings.
-
 */
 package config
