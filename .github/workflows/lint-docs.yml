@@ -32,6 +32,7 @@ jobs:
         run: |
           npm install markdownlint --save-dev
           npm install -g markdownlint-cli
+          echo "markdownlint version: $(markdownlint --version)"
 
       - name: Check out code
         uses: actions/checkout@v3
@@ -44,4 +45,5 @@ jobs:
         # potential linting issues in bundled documentation to fail linting CI
         # runs for *our* documentation
         run: |
+          echo "markdownlint version: $(markdownlint --version)"
           markdownlint '**/*.md' --ignore node_modules --ignore vendor

@@ -28,4 +28,5 @@ jobs:
 
       - name: Run hadolint against all Dockerfile files
         run: |
+          hadolint --version
           hadolint dependabot/docker/go/Dockerfile
