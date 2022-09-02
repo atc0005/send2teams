@@ -33,7 +33,30 @@ jobs:
           rm -vf .golangci.yml
 
       - name: Run golangci-lint using container-provided config file settings
-        run: golangci-lint run -v
+        run: |
+          golangci-lint --version
+          golangci-lint run
 
       - name: Run all tests
         run: go test -mod=vendor -v ./...
+
+  go_mod_changes:
+    name: Look for uncommitted Go module changes
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    container:
+      image: ghcr.io/atc0005/go-ci:go-ci-lint-only
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: go mod tidy
+        run: |
+          go mod tidy
+          git diff --exit-code go.mod
+
+      - name: go mod vendor
+        run: |
+          go mod vendor
+          git diff --exit-code vendor/

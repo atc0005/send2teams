@@ -49,13 +49,17 @@ jobs:
           rm -vf .golangci.yml
 
       - name: Run golangci-lint using container-provided config file settings
-        run: golangci-lint run -v
+        run: |
+          golangci-lint --version
+          golangci-lint run
 
       # This is the very latest stable version of staticcheck provided by the
       # atc0005/go-ci container. The version included with golangci-lint often
       # lags behind the official stable releases.
       - name: Run staticcheck
-        run: staticcheck $(go list -mod=vendor ./... | grep -v /vendor/)
+        run: |
+          staticcheck --version
+          staticcheck $(go list -mod=vendor ./... | grep -v /vendor/)
 
   test_code:
     name: Run tests
