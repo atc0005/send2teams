@@ -14,6 +14,5 @@ Credit to Fabrizio Milo for sharing the original implementation:
 
 - https://stackoverflow.com/a/23960293/903870
 - https://github.com/Mistobaan
-
 */
 package validator
