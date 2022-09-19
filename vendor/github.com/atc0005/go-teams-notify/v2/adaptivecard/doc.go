@@ -27,6 +27,5 @@ https://docs.microsoft.com/en-us/microsoftteams/platform/task-modules-and-cards/
 https://docs.microsoft.com/en-us/microsoftteams/platform/webhooks-and-connectors/how-to/connectors-using
 https://docs.microsoft.com/en-us/microsoftteams/platform/webhooks-and-connectors/how-to/connectors-using#send-adaptive-cards-using-an-incoming-webhook
 https://stackoverflow.com/questions/50753072/microsoft-teams-webhook-generating-400-for-adaptive-card
-
 */
 package adaptivecard

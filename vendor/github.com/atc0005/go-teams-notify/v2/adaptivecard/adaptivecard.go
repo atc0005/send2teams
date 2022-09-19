@@ -535,7 +535,6 @@ type Container Element
 
 // FactSet is an Element type that groups and displays a series of facts (i.e.
 // name/value pairs) in a tabular form.
-//
 type FactSet Element
 
 // Columns is a collection of Column values.
