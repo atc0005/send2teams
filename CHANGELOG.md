@@ -26,6 +26,35 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
+## [v0.10.1] - 2022-09-20
+
+### Overview
+
+- Bug fixes
+- Dependency updates
+- GitHub Actions Workflows updates
+- built using Go 1.19.1
+  - Statically linked
+  - Windows (x86, x64)
+  - Linux (x86, x64)
+
+### Changed
+
+- Dependencies
+  - `Go`
+    - `1.17.13` to `1.19.1`
+  - `atc0005/go-teams-notify`
+    - `v2.7.0-alpha.6` to `v2.7.0-rc.1`
+  - `github/codeql-action`
+    - `v2.1.21` to `v2.1.24`
+
+- (GH-248) Update project to Go 1.19
+- (GH-249) Update Makefile and GitHub Actions Workflows
+
+### Fixed
+
+- (GH-247) Add missing cmd doc file
+
 ## [v0.10.0] - 2022-08-23
 
 ### Overview
@@ -848,7 +877,8 @@ This initial prototype supports/provides:
 - GitHub Actions linting and build checks
 - Makefile for general use cases
 
-[Unreleased]: https://github.com/atc0005/send2teams/compare/v0.10.0...HEAD
+[Unreleased]: https://github.com/atc0005/send2teams/compare/v0.10.1...HEAD
+[v0.10.1]: https://github.com/atc0005/send2teams/releases/tag/v0.10.1
 [v0.10.0]: https://github.com/atc0005/send2teams/releases/tag/v0.10.0
 [v0.9.3]: https://github.com/atc0005/send2teams/releases/tag/v0.9.3
 [v0.9.2]: https://github.com/atc0005/send2teams/releases/tag/v0.9.2
