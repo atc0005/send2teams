@@ -1,0 +1,24 @@
+# Copyright 2022 Adam Chalkley
+#
+# https://github.com/atc0005/send2teams
+#
+# Licensed under the MIT License. See LICENSE file in the project root for
+# full license information.
+
+name: Lint and Build
+
+# Run builds for Pull Requests (new, updated)
+# `synchronized` seems to equate to pushing new commits to a linked branch
+# (whether force-pushed or not)
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  lint_and_build_using_ci_matrix:
+    name: CI matrix
+    uses: atc0005/shared-project-resources/.github/workflows/lint-and-build-using-ci-matrix.yml@master
+
+  lint_and_build_using_makefile:
+    name: Makefile
+    uses: atc0005/shared-project-resources/.github/workflows/lint-and-build-using-make.yml@master
