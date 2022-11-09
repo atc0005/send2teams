@@ -28,7 +28,7 @@ SHELL = /bin/bash
 WHAT					= send2teams
 
 # What package holds the "version" variable used in branding/version output?
-VERSION_VAR_PKG			= $(shell go list .)/internal/config
+VERSION_VAR_PKG			= $(shell go list -m)/internal/config
 
 OUTPUTDIR 				= release_assets
 
