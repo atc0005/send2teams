@@ -26,6 +26,31 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
+## [v0.10.2] - 2022-12-08
+
+### Overview
+
+- Bug fixes
+- Dependency updates
+- GitHub Actions Workflows updates
+- built using Go 1.19.4
+  - Statically linked
+  - Windows (x86, x64)
+  - Linux (x86, x64)
+
+### Changed
+
+- Dependencies
+  - `Go`
+    - `1.19.1` to `1.19.4`
+  - `atc0005/go-teams-notify`
+    - `v2.7.0-rc.1` to `v2.7.0-rc.2`
+- (GH-257) Refactor GitHub Actions workflows to import logic
+
+### Fixed
+
+- (GH-260) Fix Makefile Go module base path detection
+
 ## [v0.10.1] - 2022-09-20
 
 ### Overview
@@ -877,7 +902,8 @@ This initial prototype supports/provides:
 - GitHub Actions linting and build checks
 - Makefile for general use cases
 
-[Unreleased]: https://github.com/atc0005/send2teams/compare/v0.10.1...HEAD
+[Unreleased]: https://github.com/atc0005/send2teams/compare/v0.10.2...HEAD
+[v0.10.2]: https://github.com/atc0005/send2teams/releases/tag/v0.10.2
 [v0.10.1]: https://github.com/atc0005/send2teams/releases/tag/v0.10.1
 [v0.10.0]: https://github.com/atc0005/send2teams/releases/tag/v0.10.0
 [v0.9.3]: https://github.com/atc0005/send2teams/releases/tag/v0.9.3
