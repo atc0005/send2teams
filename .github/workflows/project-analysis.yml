@@ -37,3 +37,11 @@ jobs:
   vulnerability:
     name: Vulnerability
     uses: atc0005/shared-project-resources/.github/workflows/vulnerability-analysis.yml@master
+
+  go_mod_validation:
+    name: Go Module Validation
+    uses: atc0005/shared-project-resources/.github/workflows/go-mod-validation.yml@master
+
+  dependency_updates:
+    name: Dependency Updates
+    uses: atc0005/shared-project-resources/.github/workflows/dependency-updates.yml@master
