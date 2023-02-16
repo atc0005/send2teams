@@ -16,6 +16,6 @@ on:
     - cron: "30 4 1 * *"
 
 jobs:
-  lint:
+  monthly:
     name: Monthly Tasks
     uses: atc0005/shared-project-resources/.github/workflows/scheduled-monthly.yml@master

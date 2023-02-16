@@ -16,6 +16,6 @@ on:
     - cron: "30 4 * * 0"
 
 jobs:
-  lint:
+  weekly:
     name: Weekly Tasks
     uses: atc0005/shared-project-resources/.github/workflows/scheduled-weekly.yml@master
