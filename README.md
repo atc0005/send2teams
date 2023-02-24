@@ -8,7 +8,6 @@ Small CLI tool used to submit messages to Microsoft Teams.
 [![go.mod Go version](https://img.shields.io/github/go-mod/go-version/atc0005/send2teams)](https://github.com/atc0005/send2teams)
 [![Lint and Build](https://github.com/atc0005/send2teams/actions/workflows/lint-and-build.yml/badge.svg)](https://github.com/atc0005/send2teams/actions/workflows/lint-and-build.yml)
 [![Project Analysis](https://github.com/atc0005/send2teams/actions/workflows/project-analysis.yml/badge.svg)](https://github.com/atc0005/send2teams/actions/workflows/project-analysis.yml)
-[![Push Validation](https://github.com/atc0005/send2teams/actions/workflows/push-validation.yml/badge.svg)](https://github.com/atc0005/send2teams/actions/workflows/push-validation.yml)
 
 <!-- omit in toc -->
 ## Table of contents
