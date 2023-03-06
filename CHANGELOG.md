@@ -26,6 +26,29 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
+## [v0.10.3] - 2023-03-06
+
+### Overview
+
+- Dependency updates
+- GitHub Actions Workflows updates
+- built using Go 1.19.6
+  - Statically linked
+  - Windows (x86, x64)
+  - Linux (x86, x64)
+
+### Changed
+
+- Dependencies
+  - `Go`
+    - `1.19.4` to `1.19.6`
+  - `atc0005/go-teams-notify`
+    - `v2.7.0-rc.2` to `v2.7.0`
+- (GH-266) Add Go Module Validation, Dependency Updates jobs
+- (GH-268) Drop `Push Validation` workflow
+- (GH-269) Rework workflow scheduling
+- (GH-271) Remove `Push Validation` workflow status badge
+
 ## [v0.10.2] - 2022-12-08
 
 ### Overview
@@ -902,7 +925,8 @@ This initial prototype supports/provides:
 - GitHub Actions linting and build checks
 - Makefile for general use cases
 
-[Unreleased]: https://github.com/atc0005/send2teams/compare/v0.10.2...HEAD
+[Unreleased]: https://github.com/atc0005/send2teams/compare/v0.10.3...HEAD
+[v0.10.3]: https://github.com/atc0005/send2teams/releases/tag/v0.10.3
 [v0.10.2]: https://github.com/atc0005/send2teams/releases/tag/v0.10.2
 [v0.10.1]: https://github.com/atc0005/send2teams/releases/tag/v0.10.1
 [v0.10.0]: https://github.com/atc0005/send2teams/releases/tag/v0.10.0
