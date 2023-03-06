@@ -5,6 +5,8 @@
 // Licensed under the MIT License. See LICENSE file in the project root for
 // full license information.
 
+//go:generate go-winres make --product-version=git-tag --file-version=git-tag
+
 package main
 
 import (

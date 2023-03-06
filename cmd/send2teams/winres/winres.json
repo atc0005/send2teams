@@ -1,0 +1,53 @@
+{
+  "RT_MANIFEST": {
+    "#1": {
+      "0409": {
+        "identity": {
+          "name": "",
+          "version": ""
+        },
+        "description": "Small CLI tool used to submit messages to Microsoft Teams.",
+        "minimum-os": "win7",
+        "execution-level": "as invoker",
+        "ui-access": false,
+        "auto-elevate": false,
+        "dpi-awareness": "system",
+        "disable-theming": false,
+        "disable-window-filtering": false,
+        "high-resolution-scrolling-aware": false,
+        "ultra-high-resolution-scrolling-aware": false,
+        "long-path-aware": false,
+        "printer-driver-isolation": false,
+        "gdi-scaling": false,
+        "segment-heap": false,
+        "use-common-controls-v6": false
+      }
+    }
+  },
+  "RT_VERSION": {
+    "#1": {
+      "0000": {
+        "fixed": {
+          "file_version": "0.0.0.0",
+          "product_version": "0.0.0.0"
+        },
+        "info": {
+          "0409": {
+            "Comments": "Part of the atc0005/send2teams project",
+            "CompanyName": "github.com/atc0005",
+            "FileDescription": "Small CLI tool used to submit messages to Microsoft Teams.",
+            "FileVersion": "",
+            "InternalName": "check_cert",
+            "LegalCopyright": "© Adam Chalkley. Licensed under MIT.",
+            "LegalTrademarks": "",
+            "OriginalFilename": "main.go",
+            "PrivateBuild": "",
+            "ProductName": "send2teams",
+            "ProductVersion": "",
+            "SpecialBuild": ""
+          }
+        }
+      }
+    }
+  }
+}
