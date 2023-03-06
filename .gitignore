@@ -18,3 +18,6 @@
 /send2teams
 /send2teams.exe
 
+# Ignore go generate produced Windows executable resource files
+*.syso
+
