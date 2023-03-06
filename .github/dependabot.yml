@@ -83,3 +83,22 @@ updates:
           # Go release and no longer supported Go versions.
           - ">= 1.20"
           - "< 1.19"
+
+  # Monitor image used to build dev & stable project releases
+  - package-ecosystem: docker
+    directory: "/dependabot/docker/builds"
+    open-pull-requests-limit: 10
+    target-branch: "master"
+    schedule:
+      interval: "daily"
+      time: "02:00"
+      timezone: "America/Chicago"
+    assignees:
+      - "atc0005"
+    labels:
+      - "dependencies"
+      - "builds"
+    allow:
+      - dependency-type: "all"
+    commit-message:
+      prefix: "docker"
