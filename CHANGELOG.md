@@ -26,6 +26,34 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
+## [v0.11.0] - 2023-03-06
+
+### Overview
+
+- Add support for generating packages
+- Generated binary changes
+  - filename patterns
+  - compression
+  - executable metadata
+- Build improvements
+- built using Go 1.19.6
+  - Statically linked
+  - Linux x64
+
+### Added
+
+- (GH-273) Generate RPM/DEB packages using nFPM
+
+### Changed
+
+- (GH-272) Switch to semantic versioning (semver) compatible versioning
+  pattern
+- (GH-274) Add version metadata to Windows executables
+- (GH-275) Makefile: Compress binaries and use fixed filenames
+- (GH-276) Makefile: Refresh recipes to add "standard" set, new
+  package-related options
+- (GH-277) Build dev/stable releases using go-ci Docker image
+
 ## [v0.10.3] - 2023-03-06
 
 ### Overview
@@ -925,7 +953,8 @@ This initial prototype supports/provides:
 - GitHub Actions linting and build checks
 - Makefile for general use cases
 
-[Unreleased]: https://github.com/atc0005/send2teams/compare/v0.10.3...HEAD
+[Unreleased]: https://github.com/atc0005/send2teams/compare/v0.11.0...HEAD
+[v0.11.0]: https://github.com/atc0005/send2teams/releases/tag/v0.11.0
 [v0.10.3]: https://github.com/atc0005/send2teams/releases/tag/v0.10.3
 [v0.10.2]: https://github.com/atc0005/send2teams/releases/tag/v0.10.2
 [v0.10.1]: https://github.com/atc0005/send2teams/releases/tag/v0.10.1
