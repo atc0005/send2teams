@@ -38,7 +38,8 @@ The following types of changes will be recorded in this file:
 - Build improvements
 - built using Go 1.19.6
   - Statically linked
-  - Linux x64
+  - Windows (x86, x64)
+  - Linux (x86, x64)
 
 ### Added
 
