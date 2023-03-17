@@ -8,13 +8,21 @@
 name: Project Analysis
 
 on:
+  push:
+  # branches: [master]
+
   pull_request:
     # `synchronized` seems to equate to pushing new commits to a linked branch
     # (whether force-pushed or not)
     types: [opened, synchronize]
 
+    # The branches below must be a subset of the branches above
+    # branches: [master]
+
 jobs:
   lint:
+    # Only run this job on non-push events (e.g., pull requests)
+    if: github.event_name != 'push'
     name: Lint
     uses: atc0005/shared-project-resources/.github/workflows/lint-project-files.yml@master
 
@@ -23,9 +31,13 @@ jobs:
     uses: atc0005/shared-project-resources/.github/workflows/vulnerability-analysis.yml@master
 
   go_mod_validation:
+    # Only run this job on non-push events (e.g., pull requests)
+    if: github.event_name != 'push'
     name: Go Module Validation
     uses: atc0005/shared-project-resources/.github/workflows/go-mod-validation.yml@master
 
   dependency_updates:
+    # Only run this job on non-push events (e.g., pull requests)
+    if: github.event_name != 'push'
     name: Dependency Updates
     uses: atc0005/shared-project-resources/.github/workflows/dependency-updates.yml@master
