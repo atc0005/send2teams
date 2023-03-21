@@ -287,7 +287,7 @@ func (tus *targetURLsStringFlag) Set(value string) error {
 	u, err := url.Parse(items[0])
 	if err != nil {
 		return fmt.Errorf(
-			"provided URL %s failed to parse: %v",
+			"provided URL %s failed to parse: %w",
 			items[0],
 			err,
 		)
