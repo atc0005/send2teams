@@ -39,28 +39,9 @@ const (
 	// AdaptiveCardMaxVersion represents the highest supported version of the
 	// Adaptive Card schema supported in Microsoft Teams messages.
 	//
-	// Version 1.3 is the highest supported for user-generated cards.
 	// https://docs.microsoft.com/en-us/microsoftteams/platform/task-modules-and-cards/cards/cards-reference#support-for-adaptive-cards
 	// https://adaptivecards.io/designer
-	//
-	// Version 1.4 is when Action.Execute was introduced.
-	//
-	// Per this doc:
-	// https://docs.microsoft.com/en-us/microsoftteams/platform/task-modules-and-cards/cards/cards-reference#support-for-adaptive-cards
-	//
-	// the "Action.Execute" action is supported:
-	//
-	// "For Adaptive Cards in Incoming Webhooks, all native Adaptive Card
-	// schema elements, except Action.Submit, are fully supported. The
-	// supported actions are Action.OpenURL, Action.ShowCard,
-	// Action.ToggleVisibility, and Action.Execute."
-	//
-	// Per this doc, Teams MAY support the Action.Execute action:
-	//
-	// https://docs.microsoft.com/en-us/adaptive-cards/authoring-cards/universal-action-model#schema
-	//
-	// AdaptiveCardMaxVersion  float64 = 1.4
-	AdaptiveCardMaxVersion  float64 = 1.3
+	AdaptiveCardMaxVersion  float64 = 1.5
 	AdaptiveCardMinVersion  float64 = 1.0
 	AdaptiveCardVersionTmpl string  = "%0.1f"
 )
@@ -932,6 +913,8 @@ func (a Attachment) Validate() error {
 		"attachment",
 		ErrInvalidType,
 	)
+
+	v.SelfValidate(a.Content)
 
 	return v.Err()
 }
