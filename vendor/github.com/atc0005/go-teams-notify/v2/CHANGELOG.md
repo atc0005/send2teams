@@ -26,6 +26,26 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
+## [v2.7.1] - 2023-03-21
+
+### Changed
+
+- Dependencies
+  - `github.com/stretchr/testify`
+    - `v1.8.1` to `v1.8.2`
+- CI
+  - (GH-198) Add Go Module Validation, Dependency Updates jobs
+  - (GH-200) Drop `Push Validation` workflow
+  - (GH-201) Rework workflow scheduling
+  - (GH-203) Remove `Push Validation` workflow status badge
+  - (GH-207) Update vuln analysis GHAW to use on.push hook
+- `Adaptive Card` format
+  - (GH-206) Update `AdaptiveCardMaxVersion` to 1.5
+
+### Fixed
+
+- (GH-208) Validation of `(adaptivecard.Attachment).Content` is missing
+
 ## [v2.7.0] - 2022-12-12
 
 ### Added
@@ -443,7 +463,8 @@ The following types of changes will be recorded in this file:
 
 - add initial functionality of sending messages to MS Teams channel
 
-[Unreleased]: https://github.com/atc0005/go-teams-notify/compare/v2.7.0...HEAD
+[Unreleased]: https://github.com/atc0005/go-teams-notify/compare/v2.7.1...HEAD
+[v2.7.1]: https://github.com/atc0005/go-teams-notify/releases/tag/v2.7.1
 [v2.7.0]: https://github.com/atc0005/go-teams-notify/releases/tag/v2.7.0
 [v2.6.1]: https://github.com/atc0005/go-teams-notify/releases/tag/v2.6.1
 [v2.6.0]: https://github.com/atc0005/go-teams-notify/releases/tag/v2.6.0

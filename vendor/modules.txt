@@ -1,4 +1,4 @@
-# github.com/atc0005/go-teams-notify/v2 v2.7.0
+# github.com/atc0005/go-teams-notify/v2 v2.7.1-rc.1
 ## explicit; go 1.14
 github.com/atc0005/go-teams-notify/v2
 github.com/atc0005/go-teams-notify/v2/adaptivecard
