@@ -26,7 +26,7 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
-## [v2.7.1] - 2023-03-21
+## [v2.7.1] - 2023-03-23
 
 ### Changed
 
@@ -41,6 +41,7 @@ The following types of changes will be recorded in this file:
   - (GH-207) Update vuln analysis GHAW to use on.push hook
 - `Adaptive Card` format
   - (GH-206) Update `AdaptiveCardMaxVersion` to 1.5
+- (GH-212) Update `InList`, `InListIfFieldValNotEmpty` validators
 
 ### Fixed
 
