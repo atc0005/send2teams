@@ -175,9 +175,13 @@ func (v *Validator) NotEmptyValue(fieldVal string, fieldValDesc string, typeDesc
 // specific struct or value type whose field we are validating (e.g.,
 // "Element").
 //
-// A true value is returned if fieldVal is is in validVals. A false value is
-// returned if a prior validation step failed or if fieldVal is empty or is
-// not in validVals.
+// A true value is returned if fieldVal is is in validVals.
+//
+// A false value is returned if any of:
+//   - a prior validation step failed
+//   - fieldVal is empty
+//   - fieldVal is non-empty and not in validVals
+//   - the validVals collection to compare against is empty
 func (v *Validator) InList(fieldVal string, fieldValDesc string, typeDesc string, validVals []string, baseErr error) bool {
 	switch {
 	case v.err != nil:
@@ -188,6 +192,21 @@ func (v *Validator) InList(fieldVal string, fieldValDesc string, typeDesc string
 
 	case !goteamsnotify.InList(fieldVal, validVals, false):
 		switch {
+		case len(validVals) == 0 && baseErr != nil:
+			v.err = fmt.Errorf(
+				"invalid %s %q for %s; empty list of valid values: %w",
+				fieldValDesc,
+				fieldVal,
+				typeDesc,
+				baseErr,
+			)
+		case len(validVals) == 0:
+			v.err = fmt.Errorf(
+				"invalid %s %q for %s; no known valid values",
+				fieldValDesc,
+				fieldVal,
+				typeDesc,
+			)
 		case baseErr != nil:
 			v.err = fmt.Errorf(
 				"invalid %s %q for %s; expected one of %v: %w",
@@ -220,9 +239,12 @@ func (v *Validator) InList(fieldVal string, fieldValDesc string, typeDesc string
 // validated (e.g., "Type") and typeDesc describes the specific struct or
 // value type whose field we are validating (e.g., "Element").
 //
-// A true value is returned if fieldVal is empty or is in validVals. A false
-// value is returned if a prior validation step failed or if fieldVal is not
-// empty and is not in validVals.
+// A true value is returned if fieldVal is empty or is in validVals.
+//
+// A false value is returned if any of:
+//   - a prior validation step failed
+//   - fieldVal is not empty and is not in validVals
+//   - the validVals collection to compare against is empty
 func (v *Validator) InListIfFieldValNotEmpty(fieldVal string, fieldValDesc string, typeDesc string, validVals []string, baseErr error) bool {
 	switch {
 	case v.err != nil:
@@ -230,6 +252,21 @@ func (v *Validator) InListIfFieldValNotEmpty(fieldVal string, fieldValDesc strin
 
 	case fieldVal != "" && !goteamsnotify.InList(fieldVal, validVals, false):
 		switch {
+		case len(validVals) == 0 && baseErr != nil:
+			v.err = fmt.Errorf(
+				"invalid %s %q for %s; empty list of valid values: %w",
+				fieldValDesc,
+				fieldVal,
+				typeDesc,
+				baseErr,
+			)
+		case len(validVals) == 0:
+			v.err = fmt.Errorf(
+				"invalid %s %q for %s; no known valid values",
+				fieldValDesc,
+				fieldVal,
+				typeDesc,
+			)
 		case baseErr != nil:
 			v.err = fmt.Errorf(
 				"invalid %s %q for %s; expected one of %v: %w",
