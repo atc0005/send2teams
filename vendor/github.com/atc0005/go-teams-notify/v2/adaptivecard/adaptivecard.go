@@ -983,61 +983,19 @@ func (c Card) Validate() error {
 
 // Validate asserts that fields have valid values.
 func (tc TopLevelCard) Validate() error {
+	v := validator.Validator{}
+
 	// Validate embedded Card first as those validation requirements apply
 	// here also.
-	if err := tc.Card.Validate(); err != nil {
-		return err
-	}
+	v.SelfValidate(tc.Card)
 
 	// The Version field is required for top-level cards (this one), optional
 	// for Cards nested within an Action.ShowCard.
-	switch {
-	case strings.TrimSpace(tc.Version) == "":
-		return fmt.Errorf(
-			"required field Version is empty for top-level Card: %w",
-			ErrMissingValue,
-		)
-	default:
-		// Assert that Version value can be converted to the expected format.
-		versionNum, err := strconv.ParseFloat(tc.Version, 64)
-		if err != nil {
-			return fmt.Errorf(
-				"value %q incompatible with Version field: %w",
-				tc.Version,
-				ErrInvalidFieldValue,
-			)
-		}
+	v.SuccessfulFuncCall(
+		func() error { return assertValidVersionFieldValue(tc.Version) },
+	)
 
-		// This is a high confidence validation failure.
-		if versionNum < AdaptiveCardMinVersion {
-			return fmt.Errorf(
-				"unsupported version %q;"+
-					" expected minimum value of %0.1f: %w",
-				tc.Version,
-				AdaptiveCardMinVersion,
-				ErrInvalidFieldValue,
-			)
-		}
-
-		// This is *NOT* a high confidence validation failure; it is likely
-		// that Microsoft Teams will gain support for future versions of the
-		// Adaptive Card greater than the current recorded max configured
-		// schema version. Because the max value constant is subject to fall
-		// out of sync (at least briefly), this is a risky assertion to make.
-		//
-		// if versionNum < AdaptiveCardMinVersion || versionNum > AdaptiveCardMaxVersion {
-		// 	return fmt.Errorf(
-		// 		"unsupported version %q;"+
-		// 			" expected value between %0.1f and %0.1f: %w",
-		// 		tc.Version,
-		// 		AdaptiveCardMinVersion,
-		// 		AdaptiveCardMaxVersion,
-		// 		ErrInvalidFieldValue,
-		// 	)
-		// }
-	}
-
-	return nil
+	return v.Err()
 }
 
 // Validate asserts that the collection of Element values are all valid.
@@ -2221,6 +2179,56 @@ func assertColumnWidthValidValues(c Column) error {
 			ColumnWidthPixelWidthExample,
 			ErrInvalidFieldValue,
 		)
+	}
+
+	return nil
+}
+
+func assertValidVersionFieldValue(val string) error {
+	switch {
+	case strings.TrimSpace(val) == "":
+		return fmt.Errorf(
+			"required field Version is empty for top-level Card: %w",
+			ErrMissingValue,
+		)
+	default:
+		// Assert that Version value can be converted to the expected format.
+		versionNum, err := strconv.ParseFloat(val, 64)
+		if err != nil {
+			return fmt.Errorf(
+				"value %q incompatible with Version field: %w",
+				val,
+				ErrInvalidFieldValue,
+			)
+		}
+
+		// This is a high confidence validation failure.
+		if versionNum < AdaptiveCardMinVersion {
+			return fmt.Errorf(
+				"unsupported version %q;"+
+					" expected minimum value of %0.1f: %w",
+				val,
+				AdaptiveCardMinVersion,
+				ErrInvalidFieldValue,
+			)
+		}
+
+		// This is *NOT* a high confidence validation failure; it is likely
+		// that Microsoft Teams will gain support for future versions of the
+		// Adaptive Card greater than the current recorded max configured
+		// schema version. Because the max value constant is subject to fall
+		// out of sync (at least briefly), this is a risky assertion to make.
+		//
+		// if versionNum < AdaptiveCardMinVersion || versionNum > AdaptiveCardMaxVersion {
+		// 	return fmt.Errorf(
+		// 		"unsupported version %q;"+
+		// 			" expected value between %0.1f and %0.1f: %w",
+		// 		tc.Version,
+		// 		AdaptiveCardMinVersion,
+		// 		AdaptiveCardMaxVersion,
+		// 		ErrInvalidFieldValue,
+		// 	)
+		// }
 	}
 
 	return nil
