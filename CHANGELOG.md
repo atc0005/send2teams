@@ -26,6 +26,24 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
+## [v0.11.3] - 2023-03-27
+
+### Overview
+
+- Dependency updates
+- built using Go 1.19.7
+  - Statically linked
+  - Windows (x86, x64)
+  - Linux (x86, x64)
+
+### Changed
+
+- Dependencies
+  - `atc0005/go-teams-notify`
+    - `v2.7.1-rc.2` to `v2.7.1-rc.3`
+  - `atc0005/go-ci`
+    - `go-ci-oldstable-build-v0.10.2` to `go-ci-oldstable-build-v0.10.3`
+
 ## [v0.11.2] - 2023-03-23
 
 ### Overview
@@ -1000,7 +1018,8 @@ This initial prototype supports/provides:
 - GitHub Actions linting and build checks
 - Makefile for general use cases
 
-[Unreleased]: https://github.com/atc0005/send2teams/compare/v0.11.2...HEAD
+[Unreleased]: https://github.com/atc0005/send2teams/compare/v0.11.3...HEAD
+[v0.11.3]: https://github.com/atc0005/send2teams/releases/tag/v0.11.3
 [v0.11.2]: https://github.com/atc0005/send2teams/releases/tag/v0.11.2
 [v0.11.1]: https://github.com/atc0005/send2teams/releases/tag/v0.11.1
 [v0.11.0]: https://github.com/atc0005/send2teams/releases/tag/v0.11.0
