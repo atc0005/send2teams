@@ -135,7 +135,7 @@ QUICK_BUILDCMD			:=	go build -mod=vendor
 GOCLEANCMD				:=	go clean -mod=vendor ./...
 GITCLEANCMD				:= 	git clean -xfd
 CHECKSUMCMD				:=	sha256sum -b
-COMPRESSCMD				:= xz --compress --threads=0
+COMPRESSCMD				:= xz --compress --threads=0 --stdout
 
 .DEFAULT_GOAL := help
 
@@ -302,7 +302,9 @@ windows-x86-compress:
 
 	@set -e; for target in $(WHAT); do \
 		echo "  compressing $$target 386 binary" && \
-		$(COMPRESSCMD) $(ASSETS_PATH)/$$target/$$target-windows-386.exe; \
+		$(COMPRESSCMD) $(ASSETS_PATH)/$$target/$$target-windows-386.exe > \
+			$(ASSETS_PATH)/$$target/$$target-windows-386.exe.xz && \
+		rm -f $(ASSETS_PATH)/$$target/$$target-windows-386.exe; \
 	done
 
 	@echo "Completed compress tasks for windows x86"
@@ -358,7 +360,9 @@ windows-x64-compress:
 
 	@set -e; for target in $(WHAT); do \
 		echo "  compressing $$target amd64 binary" && \
-		$(COMPRESSCMD) $(ASSETS_PATH)/$$target/$$target-windows-amd64.exe; \
+		$(COMPRESSCMD) $(ASSETS_PATH)/$$target/$$target-windows-amd64.exe > \
+			$(ASSETS_PATH)/$$target/$$target-windows-amd64.exe.xz && \
+		rm -f $(ASSETS_PATH)/$$target/$$target-windows-amd64.exe; \
 	done
 
 	@echo "Completed compress tasks for windows x64"
@@ -430,7 +434,9 @@ linux-x86-compress:
 
 	@set -e; for target in $(WHAT); do \
 		echo "  compressing $$target 386 binary" && \
-		$(COMPRESSCMD) $(ASSETS_PATH)/$$target/$$target-linux-386; \
+		$(COMPRESSCMD) $(ASSETS_PATH)/$$target/$$target-linux-386 > \
+			$(ASSETS_PATH)/$$target/$$target-linux-386.xz && \
+		rm -f $(ASSETS_PATH)/$$target/$$target-linux-386; \
 	done
 
 	@echo "Completed compress tasks for linux x86"
@@ -482,7 +488,9 @@ linux-x64-compress:
 
 	@set -e; for target in $(WHAT); do \
 		echo "  compressing $$target amd64 binary" && \
-		$(COMPRESSCMD) $(ASSETS_PATH)/$$target/$$target-linux-amd64; \
+		$(COMPRESSCMD) $(ASSETS_PATH)/$$target/$$target-linux-amd64 > \
+			$(ASSETS_PATH)/$$target/$$target-linux-amd64.xz && \
+		rm -f $(ASSETS_PATH)/$$target/$$target-linux-amd64; \
 	done
 
 	@echo "Completed compress tasks for linux x64"
@@ -532,7 +540,9 @@ linux-x64-dev-compress:
 
 	@set -e; for target in $(WHAT); do \
 		echo "  compressing $$target amd64 binary" && \
-		$(COMPRESSCMD) $(ASSETS_PATH)/$$target/$$target-linux-amd64-dev; \
+		$(COMPRESSCMD) $(ASSETS_PATH)/$$target/$$target-linux-amd64-dev > \
+			$(ASSETS_PATH)/$$target/$$target-linux-amd64-dev.xz && \
+		rm -f $(ASSETS_PATH)/$$target/$$target-linux-amd64-dev; \
 	done
 
 	@echo "Completed dev compress tasks for linux x64"
@@ -752,89 +762,157 @@ dev-build: clean linux-x64-dev-build packages-dev package-links linux-x64-dev-co
 release-build: clean windows linux-x86 packages-dev clean-linux-x64-dev packages-stable linux-x64-compress linux-x64-checksums links
 	@echo "Completed all tasks for stable release build"
 
-.PHONY: helper-docker-builder-setup
-## helper-docker-builder-setup: refreshes builder image for Docker-based tasks
-helper-docker-builder-setup:
+.PHONY: helper-builder-setup
+helper-builder-setup:
 
-	@echo "Beginning regeneration of Docker builder image"
+	@echo "Beginning regeneration of builder image using $(CONTAINER_COMMAND)"
 	@echo "Removing any previous build image"
-	@docker image prune --all --force --filter "label=atc0005_projects_builder_image"
+	$(CONTAINER_COMMAND) image prune --all --force --filter "label=atc0005_projects_builder_image"
 
-	@echo "Gathering Docker build environment details"
-	@docker version
+	@echo "Gathering $(CONTAINER_COMMAND) build environment details"
+	@$(CONTAINER_COMMAND) version
 
 	@echo
 	@echo "Generating release builder image"
-	@docker image build \
+	$(CONTAINER_COMMAND) image build \
 		--pull \
 		--no-cache \
 		--force-rm \
-		dependabot/docker/builds/ \
+		. \
+		-f dependabot/docker/builds/Dockerfile \
 		-t builder_image \
 		--label="atc0005_projects_builder_image"
 	@echo "Completed generation of release builder image"
 
-	@echo
-	@echo "Inspecting release builder image environment"
-	@docker inspect --format "{{range .Config.Env}}{{println .}}{{end}}" builder_image
+	@echo "Listing current container images managed by $(CONTAINER_COMMAND)"
+	$(CONTAINER_COMMAND) image ls
 
-	@echo "Completed regeneration of Docker builder image"
+	@echo
+	@echo "Inspecting release builder image environment using $(CONTAINER_COMMAND)"
+	@$(CONTAINER_COMMAND) inspect --format "{{range .Config.Env}}{{println .}}{{end}}" builder_image
+
+	@echo "Completed regeneration of builder image using $(CONTAINER_COMMAND)"
+
+	@echo "Prepare output path for generated assets"
+	@mkdir -p $(ASSETS_PATH)
 
 .PHONY: docker-release-build
-## docker-release-build: generates stable build assets for public release using Docker
-docker-release-build: clean helper-docker-builder-setup
+## docker-release-build: generates stable build assets for public release using docker container
+docker-release-build: CONTAINER_COMMAND := docker
+docker-release-build: clean helper-builder-setup
 
-	@echo "Beginning release build using Docker"
+	@echo "Beginning release build using $(CONTAINER_COMMAND)"
 
 	@echo
 	@echo "Using release builder image to generate project release assets"
-	@docker container run \
-		--user $${UID:-1000} \
+	$(CONTAINER_COMMAND) container run \
+		--user builduser:builduser \
 		--rm \
 		-i \
-		-v $$PWD:$$PWD \
-		-w $$PWD \
+		-v $$PWD/$(OUTPUTDIR):/builds/$(OUTPUTDIR):rw \
+		-w /builds \
 		builder_image \
-		env GOCACHE=/tmp/ make release-build
+		make release-build
 
-	@echo "Completed release build using Docker"
+	@echo "Completed release build using $(CONTAINER_COMMAND)"
+
+.PHONY: podman-release-build
+## podman-release-build: generates stable build assets for public release using podman container
+podman-release-build: CONTAINER_COMMAND := podman
+podman-release-build: clean helper-builder-setup
+
+	@echo "Beginning release build using $(CONTAINER_COMMAND)"
+
+	@echo
+	@echo "Using release builder image to generate project release assets"
+	$(CONTAINER_COMMAND) container run \
+		--rm \
+		-i \
+		-v $$PWD/$(OUTPUTDIR):/builds/$(OUTPUTDIR):rw \
+		-w /builds \
+		builder_image \
+		make release-build
+
+	@echo "Completed release build using $(CONTAINER_COMMAND)"
 
 .PHONY: docker-dev-build
-## docker-dev-build: generates dev build assets for public release using Docker
-docker-dev-build: clean helper-docker-builder-setup
+## docker-dev-build: generates dev build assets for public release using docker container
+docker-dev-build: CONTAINER_COMMAND := docker
+docker-dev-build: clean helper-builder-setup
 
-	@echo "Beginning dev build using Docker"
+	@echo "Beginning dev build using $(CONTAINER_COMMAND)"
 
 	@echo
 	@echo "Using release builder image to generate project release assets"
-	@docker container run \
-		--user $${UID:-1000} \
+	$(CONTAINER_COMMAND) container run \
+		--user builduser:builduser \
 		--rm \
 		-i \
-		-v $$PWD:$$PWD \
-		-w $$PWD \
+		-v $$PWD/$(OUTPUTDIR):/builds/$(OUTPUTDIR):rw \
+		-w /builds \
 		builder_image \
-		env GOCACHE=/tmp/ make dev-build
+		make dev-build
 
-	@echo "Completed dev build using Docker"
+	@echo "Completed dev build using $(CONTAINER_COMMAND)"
 
+.PHONY: podman-dev-build
+## podman-dev-build: generates dev build assets for public release using podman container
+podman-dev-build: CONTAINER_COMMAND := podman
+podman-dev-build: clean helper-builder-setup
 
+	@echo "Beginning dev build using $(CONTAINER_COMMAND)"
+
+	@echo
+	@echo "Using release builder image to generate project release assets"
+	$(CONTAINER_COMMAND) container run \
+		--rm \
+		-i \
+		-v $$PWD/$(OUTPUTDIR):/builds/$(OUTPUTDIR):rw \
+		-w /builds \
+		builder_image \
+		make dev-build
+
+	@echo "Completed dev build using $(CONTAINER_COMMAND)"
 
 .PHONY: docker-packages
-## docker-packages: generates dev and stable packages using Docker
-docker-packages: helper-docker-builder-setup
+## docker-packages: generates dev and stable packages using builder image
+docker-packages: CONTAINER_COMMAND := docker
+docker-packages: helper-builder-setup
 
-	@echo "Beginning package generation using Docker"
+	@echo "Beginning package generation using $(CONTAINER_COMMAND)"
 
 	@echo
 	@echo "Using release builder image to generate packages"
-	@docker container run \
-		--user $${UID:-1000} \
+
+	@echo "Building with $(CONTAINER_COMMAND)"
+	$(CONTAINER_COMMAND) container run \
+		--rm \
+		--user builduser:builduser \
+		-i \
+		-v $$PWD/$(OUTPUTDIR):/builds/$(OUTPUTDIR):rw \
+		-w /builds \
+		builder_image \
+		make packages
+
+	@echo "Completed package generation using $(CONTAINER_COMMAND)"
+
+.PHONY: podman-packages
+## podman-packages: generates dev and stable packages using podman container
+podman-packages: CONTAINER_COMMAND := podman
+podman-packages: helper-builder-setup
+
+	@echo "Beginning package generation using $(CONTAINER_COMMAND)"
+
+	@echo
+	@echo "Using release builder image to generate packages"
+
+	@echo "Building with $(CONTAINER_COMMAND)"
+	$(CONTAINER_COMMAND) container run \
 		--rm \
 		-i \
-		-v $$PWD:$$PWD \
-		-w $$PWD \
+		-v $$PWD/$(OUTPUTDIR):/builds/$(OUTPUTDIR):rw \
+		-w /builds \
 		builder_image \
-		env GOCACHE=/tmp/ make packages
+		make packages
 
-	@echo "Completed package generation using Docker"
+	@echo "Completed package generation using $(CONTAINER_COMMAND)"
