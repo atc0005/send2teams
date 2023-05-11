@@ -26,6 +26,30 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
+## [v0.12.0] - 2023-05-11
+
+### Overview
+
+- Build improvements
+- Dependency updates
+- built using Go 1.19.9
+  - Statically linked
+  - Windows (x86, x64)
+  - Linux (x86, x64)
+
+### Added
+
+- (GH-306) Add rootless container builds via Docker/Podman
+
+### Changed
+
+- Dependencies
+  - `Go`
+    - `1.19.7` to `1.19.9`
+  - `atc0005/go-ci`
+    - `go-ci-oldstable-build-v0.10.3` to `go-ci-oldstable-build-v0.10.5`
+- (GH-307) Add .dockerignore file for use during image builds
+
 ## [v0.11.3] - 2023-03-27
 
 ### Overview
@@ -1018,7 +1042,8 @@ This initial prototype supports/provides:
 - GitHub Actions linting and build checks
 - Makefile for general use cases
 
-[Unreleased]: https://github.com/atc0005/send2teams/compare/v0.11.3...HEAD
+[Unreleased]: https://github.com/atc0005/send2teams/compare/v0.12.0...HEAD
+[v0.12.0]: https://github.com/atc0005/send2teams/releases/tag/v0.12.0
 [v0.11.3]: https://github.com/atc0005/send2teams/releases/tag/v0.11.3
 [v0.11.2]: https://github.com/atc0005/send2teams/releases/tag/v0.11.2
 [v0.11.1]: https://github.com/atc0005/send2teams/releases/tag/v0.11.1
