@@ -16,7 +16,8 @@ issues:
 
 linters:
   enable:
-    - depguard
+    # https://github.com/atc0005/go-ci/issues/1024
+    # - depguard
     - dogsled
     - dupl
     - exportloopref
