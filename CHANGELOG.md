@@ -26,6 +26,32 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
+## [v0.12.1] - 2023-06-09
+
+### Overview
+
+- Bug fixes
+- Dependency updates
+- built using Go 1.19.10
+  - Statically linked
+  - Windows (x86, x64)
+  - Linux (x86, x64)
+
+### Changed
+
+- Dependencies
+  - `Go`
+    - `1.19.9` to `1.19.10`
+  - `atc0005/go-teams-notify`
+    - `v2.7.1-rc.3` to `v2.8.0-alpha.1`
+  - `atc0005/go-ci`
+    - `go-ci-oldstable-build-v0.10.5` to `go-ci-oldstable-build-v0.10.6`
+- (GH-317) Update vuln analysis GHAW to remove on.push hook
+
+### Fixed
+
+- (GH-314) Disable depguard linter
+
 ## [v0.12.0] - 2023-05-11
 
 ### Overview
@@ -1042,7 +1068,8 @@ This initial prototype supports/provides:
 - GitHub Actions linting and build checks
 - Makefile for general use cases
 
-[Unreleased]: https://github.com/atc0005/send2teams/compare/v0.12.0...HEAD
+[Unreleased]: https://github.com/atc0005/send2teams/compare/v0.12.1...HEAD
+[v0.12.1]: https://github.com/atc0005/send2teams/releases/tag/v0.12.1
 [v0.12.0]: https://github.com/atc0005/send2teams/releases/tag/v0.12.0
 [v0.11.3]: https://github.com/atc0005/send2teams/releases/tag/v0.11.3
 [v0.11.2]: https://github.com/atc0005/send2teams/releases/tag/v0.11.2
