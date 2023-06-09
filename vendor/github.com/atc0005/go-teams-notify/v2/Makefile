@@ -101,6 +101,11 @@ pristine: goclean gitclean
 all: clean build
 	@echo "Completed build process ..."
 
+.PHONY: quick
+## quick: alias for build recipe
+quick: clean build
+	@echo "Completed tasks for quick build"
+
 .PHONY: build
 ## build: ensure that packages build
 build:
