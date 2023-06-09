@@ -12,8 +12,7 @@ package adaptivecard
 // for validation and display purposes.
 func supportedElementTypes() []string {
 	// TODO: Confirm whether all types are supported.
-	// NOTE: Based on current docs, version 1.4 is the latest supported at this
-	// time.
+	//
 	// https://docs.microsoft.com/en-us/microsoftteams/platform/task-modules-and-cards/cards/cards-reference#support-for-adaptive-cards
 	// https://adaptivecards.io/explorer/AdaptiveCard.html
 	return []string{
@@ -31,6 +30,7 @@ func supportedElementTypes() []string {
 		TypeElementInputToggle,
 		TypeElementMedia, // Introduced in version 1.1 (TODO: Is this supported in Teams message?)
 		TypeElementRichTextBlock,
+		TypeElementTable, // Introduced in version 1.5
 		TypeElementTextBlock,
 		TypeElementTextRun,
 	}
@@ -91,6 +91,32 @@ func supportedSpacingValues() []string {
 		SpacingLarge,
 		SpacingExtraLarge,
 		SpacingPadding,
+	}
+}
+
+// supportedHorizontalAlignmentValues returns a list of valid horizontal
+// content alignment values for supported container types. This list is
+// intended to be used for validation and display purposes.
+func supportedHorizontalContentAlignmentValues() []string {
+	// https://adaptivecards.io/explorer/Table.html
+	// https://adaptivecards.io/schemas/adaptive-card.json
+	return []string{
+		HorizontalAlignmentLeft,
+		HorizontalAlignmentCenter,
+		HorizontalAlignmentRight,
+	}
+}
+
+// supportedVerticalAlignmentValues returns a list of valid vertical content
+// alignment values for supported container types. This list is intended to be
+// used for validation and display purposes.
+func supportedVerticalContentAlignmentValues() []string {
+	// https://adaptivecards.io/explorer/Table.html
+	// https://adaptivecards.io/schemas/adaptive-card.json
+	return []string{
+		VerticalAlignmentTop,
+		VerticalAlignmentCenter,
+		VerticalAlignmentBottom,
 	}
 }
 
@@ -197,6 +223,8 @@ func supportedStyleValues(elementType string) []string {
 	case TypeElementColumnSet:
 		return supportedContainerStyleValues()
 	case TypeElementContainer:
+		return supportedContainerStyleValues()
+	case TypeElementTable:
 		return supportedContainerStyleValues()
 	case TypeElementImage:
 		return supportedImageStyleValues()

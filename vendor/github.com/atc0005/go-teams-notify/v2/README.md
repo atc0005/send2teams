@@ -27,6 +27,7 @@ A package to send messages to a Microsoft Teams channel.
   - [Examples](#examples)
     - [Basic](#basic)
     - [User Mention](#user-mention)
+    - [Tables](#tables)
     - [Set custom user agent](#set-custom-user-agent)
     - [Add an Action](#add-an-action)
     - [Disable webhook URL prefix validation](#disable-webhook-url-prefix-validation)
@@ -201,6 +202,15 @@ is not available in the legacy `MessageCard` card format.
 - File: [user-mention-verbose](./examples/adaptivecard/user-mention-verbose/main.go)
   - this example does not necessarily reflect an optimal implementation
 
+#### Tables
+
+These examples illustrates the use of a [`Table`][adaptivecard-table]. This
+feature is not available in the legacy `MessageCard` card format.
+
+- File: [table-manually-created](./examples/adaptivecard/table-manually-created/main.go)
+- File: [table-unordered-grid](./examples/adaptivecard/table-unordered-grid/main.go)
+- File: [table-with-headers](./examples/adaptivecard/table-with-headers/main.go)
+
 #### Set custom user agent
 
 This example illustrates setting a custom user agent.
@@ -280,3 +290,4 @@ using either this library or the original project.
 [adaptivecard-ref]: <https://adaptivecards.io/explorer>
 [adaptivecard-ref-actions]: <https://docs.microsoft.com/en-us/adaptive-cards/authoring-cards/getting-started>
 [adaptivecard-user-mentions]: <https://docs.microsoft.com/en-us/microsoftteams/platform/task-modules-and-cards/cards/cards-format#mention-support-within-adaptive-cards>
+[adaptivecard-table]: <https://adaptivecards.io/explorer/Table.html>

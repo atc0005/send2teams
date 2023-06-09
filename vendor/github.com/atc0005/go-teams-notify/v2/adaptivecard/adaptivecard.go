@@ -26,6 +26,14 @@ import (
 const (
 	// TypeMessage is the type for an Adaptive Card Message.
 	TypeMessage string = "message"
+
+	// PixelSizeRegex is a regular expression pattern intended to match
+	// specific pixel size (height, width) values such as "50px".
+	PixelSizeRegex string = "^[0-9]+px$"
+
+	// PixelSizeExample is an example of a valid pixel size (height, width)
+	// value.
+	PixelSizeExample string = "50px"
 )
 
 // Card & TopLevelCard specific constants.
@@ -102,14 +110,20 @@ const (
 	// ColumnWidthStretch indicates that a column's width should be stretched
 	// to fill the enclosing column group.
 	ColumnWidthStretch string = "stretch"
+)
 
-	// ColumnWidthPixelRegex is a regular expression pattern intended to match
-	// specific pixel width values (e.g., 50px).
-	ColumnWidthPixelRegex string = "^[0-9]+px$"
+// Table specific constants.
+//
+// https://adaptivecards.io/explorer/Table.html
+// https://adaptivecards.io/explorer/TableCell.html
+const (
 
-	// ColumnWidthPixelWidthExample is an example of a valid pixel width for a
-	// Column.
-	ColumnWidthPixelWidthExample string = "50px"
+	// NOTE: Table is not a type, it is an Card Element
+	// TypeTable     string = "Table"
+
+	TypeTableColumnDefinition string = "TableColumnDefinition"
+	TypeTableRow              string = "TableRow"
+	TypeTableCell             string = "TableCell"
 )
 
 // Text size for TextBlock or TextRun elements.
@@ -182,6 +196,20 @@ const (
 	SpacingLarge      string = "large"
 	SpacingExtraLarge string = "extraLarge"
 	SpacingPadding    string = "padding"
+)
+
+// Supported Horizontal alignment values for (supported) container types.
+const (
+	HorizontalAlignmentLeft   string = "left"
+	HorizontalAlignmentCenter string = "center"
+	HorizontalAlignmentRight  string = "right"
+)
+
+// Supported Horizontal alignment values for (supported) container types.
+const (
+	VerticalAlignmentTop    string = "top"
+	VerticalAlignmentCenter string = "center"
+	VerticalAlignmentBottom string = "bottom"
 )
 
 // Supported width values for the msteams property used in in Adaptive Card
@@ -266,8 +294,7 @@ const (
 // https://adaptivecards.io/explorer/AdaptiveCard.html
 //
 // TODO: Confirm whether all types are supported.
-// NOTE: Based on current docs, version 1.4 is the latest supported at this
-// time.
+//
 // https://docs.microsoft.com/en-us/microsoftteams/platform/task-modules-and-cards/cards/cards-reference#support-for-adaptive-cards
 // https://docs.microsoft.com/en-us/adaptive-cards/authoring-cards/universal-action-model#schema
 const (
@@ -285,6 +312,7 @@ const (
 	TypeElementInputToggle    string = "Input.Toggle"
 	TypeElementMedia          string = "Media"         // Introduced in version 1.1 (TODO: Is this supported in Teams message?)
 	TypeElementRichTextBlock  string = "RichTextBlock" // Introduced in version 1.2
+	TypeElementTable          string = "Table"         // Introduced in version 1.5
 	TypeElementTextBlock      string = "TextBlock"
 	TypeElementTextRun        string = "TextRun" // Introduced in version 1.2
 )
@@ -481,13 +509,45 @@ type Element struct {
 	// "attention" style (TextBlock does not).
 	Style string `json:"style,omitempty"`
 
-	// Items is required for the Container element type. Items is a collection
-	// of card elements to render inside the Container.
+	// Items is required for most Container element types. Items is a
+	// collection of card elements to render inside the Container.
 	Items []Element `json:"items,omitempty"`
 
 	// Columns is a collection of Columns used to divide a region. This field
-	// is used by a ColumnSet element type.
+	// is used both by ColumnSet and Table element types. The specific field
+	// validation applied is based on the Type field of this Element.
 	Columns []Column `json:"columns,omitempty"`
+
+	// Rows defines the rows of the table. This field is used by a Table
+	// element type.
+	Rows []TableRow `json:"rows,omitempty"`
+
+	// GridStyle defines the style of the grid. This property currently only
+	// controls the grid's color. This field is used by a Table element type.
+	GridStyle string `json:"gridStyle,omitempty"`
+
+	// FirstRowAsHeaders specifies whether the first row of the table should be
+	// treated as a header row, and be announced as such by accessibility
+	// software. This field is used by a Table element type.
+	//
+	// If not specified defaults to true.
+	//
+	// NOTE: We define this field as a pointer type so that omitting a value
+	// for the pointer leaves the field out of the generated JSON payload (due
+	// to 'omitempty' behavior of the JSON encoder and results in the
+	// "defaults to true" behavior as defined by the schema.
+	FirstRowAsHeaders *bool `json:"firstRowAsHeaders,omitempty"`
+
+	// ShowGridLines specified whether grid lines should be displayed.  This
+	// field is used by a Table element type.
+	//
+	// If not specified defaults to true.
+	//
+	// NOTE: We define this field as a pointer type so that omitting a value
+	// for the pointer leaves the field out of the generated JSON payload (due
+	// to 'omitempty' behavior of the JSON encoder and results in the
+	// "defaults to true" behavior as defined by the schema.
+	ShowGridLines *bool `json:"showGridLines,omitempty"`
 
 	// Actions is required for the ActionSet element type. Actions is a
 	// collection of Actions to show for an ActionSet element type.
@@ -506,7 +566,7 @@ type Element struct {
 	// TextBlock elements.
 	Wrap bool `json:"wrap,omitempty"`
 
-	// Separator, when true, indicates that a separating line shown should
+	// Separator, when true, indicates that a separating line shown should be
 	// drawn at the top of the element.
 	Separator bool `json:"separator,omitempty"`
 }
@@ -518,32 +578,36 @@ type Container Element
 // name/value pairs) in a tabular form.
 type FactSet Element
 
-// Columns is a collection of Column values.
+// Columns is a collection of Column values for a ColumnSet or a Table.
 type Columns []Column
 
 // ColumnItems is a collection of card elements that should be rendered inside
 // of the column.
 type ColumnItems []*Element
 
-// Column is a container used by a ColumnSet element type. Each container
-// may contain one or more elements.
+// Column is a container used by a ColumnSet or Table element type. Each
+// container may contain one or more elements.
 //
 // https://adaptivecards.io/explorer/Column.html
 type Column struct {
-
-	// Type is required; must be set to "Column".
-	Type string `json:"type"`
+	// Type is required; must be set to "Column" when used with ColumnSet type
+	// or "TableColumnDefinition" when used as a Table column.
+	Type string `json:"type,omitempty"`
 
 	// ID is a unique identifier associated with this Column.
 	ID string `json:"id,omitempty"`
 
-	// Width represents the width of a column in the column group. Valid
-	// values consist of fixed strings OR a number representing the relative
-	// width.
+	// Width represents the width of a column in the column group OR a column
+	// in a table. Valid values consist of fixed strings OR a number
+	// representing the relative width.
 	//
-	// "auto", "stretch", a number representing relative width of the column
-	// in the column group, or in version 1.1 and higher, a specific pixel
-	// width, like "50px".
+	// If used in a column group, valid values are "auto", "stretch", a number
+	// representing relative width of the column in the column group or a
+	// string that specifies a pixel width, like "50px".
+	//
+	// If used in a table, valid values are a number representing relative
+	// width of the column relative to the other columns in the table or a
+	// string that specifies a pixel width, like "50px".
 	Width interface{} `json:"width,omitempty"`
 
 	// Items are the card elements that should be rendered inside of the
@@ -553,6 +617,22 @@ type Column struct {
 	// SelectAction is an action that will be invoked when the Column is
 	// tapped or selected. Action.ShowCard is not supported.
 	SelectAction *ISelectAction `json:"selectAction,omitempty"`
+
+	// HorizontalCellContentAlignment is a property of the Table element type.
+	//
+	// This field controls how the content of all cells in the column is
+	// horizontally aligned by default. When specified, this value overrides
+	// the setting at the table level. When not specified, horizontal
+	// alignment is defined at the table, row or cell level.
+	HorizontalCellContentAlignment string `json:"horizontalCellContentAlignment,omitempty"`
+
+	// VerticalCellContentAlignment is a property of the Table element type.
+	//
+	// This field controls how the content of all cells in the column is
+	// vertically aligned by default. When specified, this value overrides the
+	// setting at the table level. When not specified, vertical alignment is
+	// defined at the table, row or cell level.
+	VerticalCellContentAlignment string `json:"verticalCellContentAlignment,omitempty"`
 }
 
 // Facts is a collection of Fact values.
@@ -566,6 +646,89 @@ type Fact struct {
 	// Value is required; the value of the fact.
 	Value string `json:"value"`
 }
+
+// TableColumnDefinition defines the characteristics of a column in a Table
+// element such as number of columns or their sizes.
+//
+// https://adaptivecards.io/explorer/Table.html
+type TableColumnDefinition Column
+
+// TableColumnDefinitions is a collection of TableColumnDefinition values.
+//
+// We use this as a "wrapper" type to convert a Columns collection so that we
+// can apply specific validation requirements specific to a Table column.
+type TableColumnDefinitions []Column
+
+// TableCell represents a cell within a row of a Table element.
+//
+// https://adaptivecards.io/explorer/TableCell.html
+type TableCell struct {
+	// Type is required; must be set to "TableCell".
+	Type string `json:"type"`
+
+	// Style is a style hint for a TableCell.
+	Style string `json:"style,omitempty"`
+
+	// Bleed determines whether the element should bleed through its parent's
+	// padding.
+	Bleed bool `json:"bleed,omitempty"`
+
+	// MinHeight specifies the minimum height of the container in pixels
+	// (e.g., 80px).
+	MinHeight string `json:"minHeight,omitempty"`
+
+	// VerticalContentAlignment defines how the content should be aligned
+	// vertically within the container.
+	//
+	// When not specified, the value of VerticalContentAlignment is inherited
+	// from the parent container. If no parent container has
+	// VerticalContentAlignment set, it defaults to Top.
+	VerticalContentAlignment string `json:"verticalContentAlignment,omitempty"`
+
+	// Items are the card elements that should be rendered inside of the
+	// cell.
+	Items []*Element `json:"items,omitempty"`
+}
+
+// TableCells is a collection of TableCell values.
+type TableCells []TableCell
+
+// TableRow is a row within a Table each being a collection of cells. Rows are
+// not required, which allows empty Tables to be generated via templating
+// without breaking the rendering of the whole card.
+//
+// https://adaptivecards.io/explorer/Table.html
+type TableRow struct {
+	// Type is required; must be set to "TableRow".
+	Type string `json:"type"`
+
+	// Style defines the style of the entire row.
+	Style string `json:"style,omitempty"`
+
+	// HorizontalCellContentAlignment is a property of the Table element type.
+	//
+	// This field controls how the content of all cells in the row is
+	// horizontally aligned by default. When specified, this value overrides
+	// both the setting at the table and columns level. When not specified,
+	// horizontal alignment is defined at the table, column or cell level.
+	HorizontalCellContentAlignment string `json:"horizontalCellContentAlignment,omitempty"`
+
+	// VerticalCellContentAlignment is a property of the Table element type.
+	//
+	// This field controls how the content of all cells in the column is
+	// vertically aligned by default. When specified, this value overrides the
+	// setting at the table and column level. When not specified, vertical
+	// alignment is defined either at the table, column or cell level.
+	VerticalCellContentAlignment string `json:"verticalCellContentAlignment,omitempty"`
+
+	// Cells are the cells in this row. If a row contains more cells than
+	// there are columns defined on the Table element, the extra cells are
+	// ignored.
+	Cells []TableCell `json:"cells"`
+}
+
+// TableRows is a collection of TableRow values.
+type TableRows []TableRow
 
 // Actions is a collection of Action values.
 type Actions []Action
@@ -1036,12 +1199,6 @@ func (e Element) Validate() error {
 	v.InListIfFieldValNotEmpty(e.Spacing, "Spacing", "element", supportedSpacingValues, ErrInvalidFieldValue)
 	v.InListIfFieldValNotEmpty(e.Style, "Style", "element", supportedStyleValues, ErrInvalidFieldValue)
 
-	v.SuccessfulFuncCall(
-		func() error {
-			return assertElementSupportsStyleValue(e, supportedStyleValues)
-		},
-	)
-
 	/******************************************************************
 		Requirements for specific Element types.
 	******************************************************************/
@@ -1080,6 +1237,19 @@ func (e Element) Validate() error {
 	case e.Type == TypeElementFactSet:
 		v.NotEmptyCollection("Facts", e.Type, ErrMissingValue, e.Facts)
 		v.SelfValidate(Facts(e.Facts))
+
+	case e.Type == TypeElementTable:
+		v.InListIfFieldValNotEmpty(
+			e.GridStyle,
+			"GridStyle",
+			e.Type,
+			supportedContainerStyleValues(),
+			ErrInvalidFieldValue,
+		)
+
+		v.SelfValidate(TableRows(e.Rows))
+
+		v.SelfValidate(TableColumnDefinitions(e.Columns))
 	}
 
 	// Return the last recorded validation error, or nil if no validation
@@ -1116,6 +1286,242 @@ func (ci ColumnItems) Validate() error {
 	}
 
 	return nil
+}
+
+// Validate asserts that the collection of TableColumnDefinition values are
+// all valid.
+func (tcds TableColumnDefinitions) Validate() error {
+	for _, c := range tcds {
+		// We convert the Column type to a TableColumnDefinition so that
+		// fields specific to that "subtype" have separate validation logic
+		// applied vs the Column type used by the ColumnSet container type.
+		if err := TableColumnDefinition(c).Validate(); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+// Validate asserts that fields have valid values.
+func (tcd TableColumnDefinition) Validate() error {
+	v := validator.Validator{}
+
+	// The schema shows that this is supposed to be set to
+	// "TableColumnDefinition", though the example payload I reviewed did not
+	// set the Type field. Because of this, we should support either not
+	// setting the field at all OR requiring this specific type.
+	v.FieldHasSpecificValueIfFieldNotEmpty(
+		tcd.Type,
+		"type",
+		TypeTableColumnDefinition,
+		"column",
+		ErrInvalidType,
+	)
+
+	v.SuccessfulFuncCall(
+		func() error { return assertTableColumnDefinitionWidthValidValues(tcd) },
+	)
+
+	v.InListIfFieldValNotEmpty(
+		tcd.VerticalCellContentAlignment,
+		"VerticalCellContentAlignment",
+		TypeTableColumnDefinition,
+		supportedVerticalContentAlignmentValues(),
+		ErrInvalidFieldValue,
+	)
+
+	v.InListIfFieldValNotEmpty(
+		tcd.HorizontalCellContentAlignment,
+		"HorizontalCellContentAlignment",
+		TypeTableColumnDefinition,
+		supportedHorizontalContentAlignmentValues(),
+		ErrInvalidFieldValue,
+	)
+
+	return v.Err()
+}
+
+// Validate asserts that the collection of TableRow values are all valid.
+func (trs TableRows) Validate() error {
+	for _, row := range trs {
+		if err := row.Validate(); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+// AddCell adds one or many TableCell values to a TableRow. An error is
+// returned if any TableCell value fails validation.
+func (tr *TableRow) AddCell(cells ...TableCell) error {
+	if len(cells) == 0 {
+		return fmt.Errorf("no data provided: %w", ErrMissingValue)
+	}
+
+	for _, cell := range cells {
+		if err := cell.Validate(); err != nil {
+			return err
+		}
+	}
+
+	tr.Cells = append(tr.Cells, cells...)
+
+	return nil
+}
+
+// // TableCells returns a collection of underlying TableCell pointers or an
+// // empty collection if no TableCell values are available.
+// func (trs *TableRows) TableCells() []*TableCell {
+// 	if trs == nil {
+// 		return []*TableCell{}
+// 	}
+//
+// 	var numCells int
+// 	for _, row := range *trs {
+// 		for range row.Cells {
+// 			numCells++
+// 		}
+// 	}
+// 	cells := make([]*TableCell, numCells)
+// 	for _, row := range *trs {
+// 		for i := range row.Cells {
+// 			cells = append(cells, &row.Cells[i])
+// 		}
+// 	}
+//
+// 	return cells
+// }
+
+// Validate asserts that fields have valid values.
+func (tr TableRow) Validate() error {
+	v := validator.Validator{}
+
+	v.FieldHasSpecificValueIfFieldNotEmpty(
+		tr.Type,
+		"type",
+		TypeTableRow,
+		"table row",
+		ErrInvalidType,
+	)
+
+	v.InListIfFieldValNotEmpty(
+		tr.Style,
+		"Style",
+		TypeTableRow,
+		supportedContainerStyleValues(),
+		ErrInvalidFieldValue,
+	)
+
+	v.InListIfFieldValNotEmpty(
+		tr.VerticalCellContentAlignment,
+		"VerticalCellContentAlignment",
+		TypeTableRow,
+		supportedVerticalContentAlignmentValues(),
+		ErrInvalidFieldValue,
+	)
+
+	v.InListIfFieldValNotEmpty(
+		tr.HorizontalCellContentAlignment,
+		"HorizontalCellContentAlignment",
+		TypeTableRow,
+		supportedHorizontalContentAlignmentValues(),
+		ErrInvalidFieldValue,
+	)
+
+	// Validate collection by using "wrapper" type.
+	v.SelfValidate(TableCells(tr.Cells))
+
+	return v.Err()
+}
+
+// Validate asserts that the collection of TableCell values are all valid.
+func (tcs TableCells) Validate() error {
+	for _, cell := range tcs {
+		if err := cell.Validate(); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+// AddElement adds one or many Element value pointers to a TableCell. An error
+// is returned if any Element value fails validation.
+func (tr *TableCell) AddElement(elements ...*Element) error {
+	if len(elements) == 0 {
+		return fmt.Errorf("no data provided: %w", ErrMissingValue)
+	}
+
+	for _, cell := range elements {
+		if cell == nil {
+			return fmt.Errorf("no data provided: %w", ErrMissingValue)
+		}
+
+		if err := cell.Validate(); err != nil {
+			return err
+		}
+	}
+
+	tr.Items = append(tr.Items, elements...)
+
+	return nil
+}
+
+// Validate asserts that fields have valid values.
+func (tr TableCell) Validate() error {
+	v := validator.Validator{}
+
+	v.FieldHasSpecificValueIfFieldNotEmpty(
+		tr.Type,
+		"type",
+		TypeTableCell,
+		"table cell",
+		ErrInvalidType,
+	)
+
+	v.InListIfFieldValNotEmpty(
+		tr.Style,
+		"Style",
+		TypeTableCell,
+		supportedContainerStyleValues(),
+		ErrInvalidFieldValue,
+	)
+
+	v.SuccessfulFuncCall(
+		func() error {
+			return assertValidPixelSizeOrEmptyValue(tr.MinHeight)
+		},
+	)
+
+	v.InListIfFieldValNotEmpty(
+		tr.VerticalContentAlignment,
+		"VerticalContentAlignment",
+		TypeTableCell,
+		supportedVerticalContentAlignmentValues(),
+		ErrInvalidFieldValue,
+	)
+
+	v.NotEmptyCollection(
+		"TableCellItems",
+		TypeTableCell,
+		ErrMissingValue,
+		tr.Items,
+	)
+
+	v.NoNilValuesInCollection(
+		"TableCellItems",
+		TypeTableCell,
+		ErrMissingValue,
+		tr.Items,
+	)
+
+	for _, item := range tr.Items {
+		v.SelfValidate(item)
+	}
+
+	return v.Err()
 }
 
 // Validate asserts that fields have valid values.
@@ -1857,6 +2263,301 @@ func NewTitleTextBlock(title string, wrap bool) Element {
 	}
 }
 
+// NewTableCellsWithTextBlock accepts a collection of items that can be converted
+// to string values and returns a collection of TableCells, each populated
+// with a single TextBlock containing one of the given items.
+//
+// Example usage:
+//
+// vals := []int{1, 2, 3}
+// items := make([]interface{}, len(vals))
+//
+//	for i := range vals {
+//		items[i] = vals[i]
+//	}
+//
+// tableCells := NewTextBlockTableCells(items)
+func NewTableCellsWithTextBlock(items []interface{}) (TableCells, error) {
+	if len(items) == 0 {
+		return TableCells{}, fmt.Errorf("no data provided: %w", ErrMissingValue)
+	}
+
+	cells := make(TableCells, len(items))
+	for i, item := range items {
+		switch {
+		// If an input item is nil, insert an empty table cell in its place.
+		case item == nil:
+			cell := TableCell{
+				Type: TypeTableCell,
+			}
+			cells[i] = cell
+		default:
+			block := Element{
+				Type: TypeElementTextBlock,
+				Text: fmt.Sprintf("%v", item),
+			}
+			cell := TableCell{
+				Type:  TypeTableCell,
+				Items: []*Element{&block},
+			}
+			cells[i] = cell
+		}
+	}
+
+	return cells, nil
+}
+
+// NewTableRowFromCells accepts a collection of TableCell values and returns a
+// TableRow populated with those TableCells.
+func NewTableRowFromCells(cells ...TableCell) (TableRow, error) {
+	if len(cells) == 0 {
+		return TableRow{}, fmt.Errorf("no data provided: %w", ErrMissingValue)
+	}
+
+	if err := TableCells(cells).Validate(); err != nil {
+		return TableRow{}, err
+	}
+
+	row := TableRow{
+		Type:  TypeTableRow,
+		Cells: cells,
+	}
+
+	return row, nil
+}
+
+// NewTable creates an empty Element of Table type.
+func NewTable() Element {
+	table := Element{
+		Type: TypeElementTable,
+	}
+
+	return table
+}
+
+// NewTableCellFromElement accepts an Element value and returns a TableCell
+// populated with that Element.
+func NewTableCellFromElement(element Element) (TableCell, error) {
+	if err := element.Validate(); err != nil {
+		return TableCell{}, err
+	}
+
+	cell := TableCell{
+		Type:  TypeTableCell,
+		Items: []*Element{&element},
+	}
+
+	return cell, nil
+}
+
+// NewTableCellFromElements accepts a collection of Element values and returns
+// a TableCell populated with those Elements.
+func NewTableCellFromElements(elements ...Element) (TableCell, error) {
+	if len(elements) == 0 {
+		return TableCell{}, fmt.Errorf("no data provided: %w", ErrMissingValue)
+	}
+
+	if err := Elements(elements).Validate(); err != nil {
+		return TableCell{}, err
+	}
+
+	cellItems := make([]*Element, len(elements))
+	for i := range elements {
+		cellItems[i] = &elements[i]
+	}
+
+	cell := TableCell{
+		Type:  TypeTableCell,
+		Items: cellItems,
+	}
+
+	return cell, nil
+}
+
+// NewTableWithGridFromTableCells accepts a collection of TableCell values and
+// the number of cells that should be inserted per table row. Header values
+// are not inserted.
+func NewTableWithGridFromTableCells(cells []TableCell, perRow int) (Element, error) {
+	switch {
+	case len(cells) == 0:
+		return Element{}, fmt.Errorf("no data provided: %w", ErrMissingValue)
+
+	case perRow < 0:
+		return Element{}, fmt.Errorf("invalid per row value %d provided", perRow)
+	}
+
+	if err := TableCells(cells).Validate(); err != nil {
+		return Element{}, err
+	}
+
+	neededRows := func() int {
+		// 	d := float64(len(cells)) / float64(perRow)
+		// 	return int(math.Ceil(d))
+
+		d := len(cells) / perRow
+
+		// Round up if the per row count doesn't divide evenly into the number
+		// of cells. This will leave us with a ragged, but valid number of
+		// cells per row.
+		if len(cells)%perRow > 0 {
+			d++
+		}
+		return d
+	}
+
+	table := Element{
+		Type:              TypeElementTable,
+		GridStyle:         ContainerStyleAccent,
+		ShowGridLines:     func() *bool { hasGridLines := true; return &hasGridLines }(),
+		FirstRowAsHeaders: func() *bool { hasHeaders := false; return &hasHeaders }(),
+	}
+
+	// Add columns to table.
+	for i := 0; i < perRow; i++ {
+		c := Column{
+			Type:                           TypeTableColumnDefinition,
+			Width:                          1,
+			HorizontalCellContentAlignment: HorizontalAlignmentCenter,
+			VerticalCellContentAlignment:   VerticalAlignmentCenter,
+		}
+		table.Columns = append(table.Columns, c)
+	}
+
+	tableRows := make(TableRows, 0, neededRows())
+
+	// 	cellsChan := make(chan TableCell)
+	// 	go func() {
+	// 		for _, cell := range cells {
+	// 			cellsChan <- cell
+	// 		}
+	// 		close(cellsChan)
+	// 	}()
+	//
+	// 	for i := 0; i < neededRows(); i++ {
+	// 		tableCells := make([]TableCell, 0, perRow)
+	// 		for j := 0; j < perRow; j++ {
+	// 			cell := <-cellsChan
+	// 			tableCells = append(tableCells, cell)
+	// 		}
+	//
+	// 		tableRow := TableRow{
+	// 			Type:  TypeTableRow,
+	// 			Cells: tableCells,
+	// 		}
+	//
+	// 		tableRows = append(tableRows, tableRow)
+	// 	}
+
+	// Opt for non-channel/non-goroutine implementation.
+	var cellCtr int
+	for i := 0; i < neededRows(); i++ {
+		tableCells := make([]TableCell, 0, perRow)
+		for j := 0; j < perRow; j++ {
+			cell := cells[cellCtr]
+			cellCtr++
+
+			tableCells = append(tableCells, cell)
+		}
+
+		tableRow := TableRow{
+			Type:  TypeTableRow,
+			Cells: tableCells,
+		}
+
+		tableRows = append(tableRows, tableRow)
+	}
+
+	table.Rows = tableRows
+
+	return table, nil
+}
+
+// NewTableFromTableCells accepts a multidimensional collection of TableCell
+// values, the number of columns that the table should have, a boolean value
+// indicating whether the first row should be treated as a header row and
+// another boolean value indicating whether grid lines should be displayed for
+// the table.
+//
+// If the specified number of columns is zero then the number of columns will
+// be calculated using the number of values in the first row.
+//
+// The outer slice is the collection of rows and the inner slice is the
+// collection of values. The number of cells per row is determined by the
+// number of cell values in that row. If a collection of values for a row is
+// empty, an empty row is inserted into the generated table.
+func NewTableFromTableCells(cells [][]TableCell, numColumns int, firstRowIsHeaders bool, showGridLines bool) (Element, error) {
+	if len(cells) == 0 {
+		return Element{}, fmt.Errorf("no data provided: %w", ErrMissingValue)
+	}
+
+	for _, row := range cells {
+		if err := TableCells(row).Validate(); err != nil {
+			return Element{}, err
+		}
+	}
+
+	neededRows := len(cells)
+	neededColumns := func() int {
+		switch {
+		case numColumns == 0:
+			return len(cells[0])
+		default:
+			return numColumns
+		}
+	}
+
+	table := Element{
+		Type:              TypeElementTable,
+		GridStyle:         ContainerStyleAccent,
+		ShowGridLines:     &showGridLines,
+		FirstRowAsHeaders: &firstRowIsHeaders,
+	}
+
+	// Add columns to table equal to the number of values in the first row.
+	for i := 0; i < neededColumns(); i++ {
+		c := Column{
+			Type:                           TypeTableColumnDefinition,
+			Width:                          1,
+			HorizontalCellContentAlignment: HorizontalAlignmentCenter,
+			VerticalCellContentAlignment:   VerticalAlignmentCenter,
+		}
+		table.Columns = append(table.Columns, c)
+	}
+
+	tableRows := make(TableRows, 0, neededRows)
+	for _, row := range cells {
+		var tableRow TableRow
+		// If our input row is empty, insert a cell with empty TextBlock in
+		// its place.
+		switch {
+		case len(row) == 0:
+			block := Element{
+				Type: TypeElementTextBlock,
+				Text: "",
+			}
+			cell := TableCell{
+				Type:  TypeTableCell,
+				Items: []*Element{&block},
+			}
+			tableRow = TableRow{
+				Type:  TypeTableRow,
+				Cells: []TableCell{cell},
+			}
+		default:
+			tableRow = TableRow{
+				Type:  TypeTableRow,
+				Cells: row,
+			}
+		}
+
+		tableRows = append(tableRows, tableRow)
+	}
+
+	table.Rows = tableRows
+
+	return table, nil
+}
+
 // NewFactSet creates an empty FactSet.
 func NewFactSet() FactSet {
 	factSet := FactSet{
@@ -1922,6 +2623,28 @@ func (e Element) HasMentionText(m Mention) bool {
 	default:
 		return false
 	}
+}
+
+// AddTableRow adds one or many TableRow values to an Element of Table type.
+// An error is returned if a TableRow value fails validation or if AddRow is
+// called on any Element type other than a Table.
+func (e *Element) AddTableRow(rows ...TableRow) error {
+	if e.Type != TypeElementTable {
+		return fmt.Errorf(
+			"unsupported element type %s; expected %s: %w",
+			e.Type,
+			TypeElementTable,
+			ErrInvalidType,
+		)
+	}
+
+	if len(rows) == 0 {
+		return fmt.Errorf("no data provided: %w", ErrMissingValue)
+	}
+
+	e.Rows = append(e.Rows, rows...)
+
+	return nil
 }
 
 // NewActionOpenURL creates a new Action.OpenURL value using the provided URL
@@ -2075,23 +2798,6 @@ func cardBodyHasMention(body []Element, mentions []Mention) bool {
 	return true
 }
 
-// assertElementSupportsStyleValue asserts that the style value for an element
-// falls within the list of valid style values for that element; not all
-// element types support all style values.
-func assertElementSupportsStyleValue(element Element, supportedValues []string) error {
-	if element.Style != "" && len(supportedValues) == 0 {
-		return fmt.Errorf(
-			"invalid %s %q for element; %s values not supported for element: %w",
-			"Style",
-			element.Style,
-			"Style",
-			ErrInvalidFieldValue,
-		)
-	}
-
-	return nil
-}
-
 // assertHeightAlignmentFieldsSetWhenRequired asserts verticalContentAlignment
 // is set when minHeight is set; while both are optional fields, both have to
 // be set when the other is.
@@ -2143,22 +2849,18 @@ func assertColumnWidthValidValues(c Column) error {
 	// Nothing to see here.
 	case nil:
 
-	// Assert specific fixed keyword values or valid pixel width; all other
-	// values are invalid.
+	// Assert specific fixed keyword values, empty string or valid pixel
+	// width; all other values are invalid.
 	case string:
 		v = strings.TrimSpace(v)
-		matched, _ := regexp.MatchString(ColumnWidthPixelRegex, v)
 
 		switch {
 		case v == ColumnWidthAuto:
 		case v == ColumnWidthStretch:
-		case !matched:
-			return fmt.Errorf(
-				"invalid pixel width %q; expected value in format %s: %w",
-				v,
-				ColumnWidthPixelWidthExample,
-				ErrInvalidFieldValue,
-			)
+		default:
+			if err := assertValidPixelSizeOrEmptyValue(v); err != nil {
+				return err
+			}
 		}
 
 	// Number representing relative width of the column.
@@ -2176,10 +2878,65 @@ func assertColumnWidthValidValues(c Column) error {
 				ColumnWidthStretch,
 			}, ","),
 			1,
-			ColumnWidthPixelWidthExample,
+			PixelSizeExample,
 			ErrInvalidFieldValue,
 		)
 	}
+
+	return nil
+}
+
+func assertTableColumnDefinitionWidthValidValues(tcd TableColumnDefinition) error {
+	switch v := tcd.Width.(type) {
+	// Nothing to see here.
+	case nil:
+
+	// Assert valid pixel width or empty string; all other values are invalid.
+	case string:
+		if err := assertValidPixelSizeOrEmptyValue(v); err != nil {
+			return err
+		}
+
+	// Number representing relative width of the column.
+	case int:
+
+	// Unsupported value.
+	default:
+		return fmt.Errorf(
+			"invalid pixel width %q; "+
+				"expected int value (e.g., %d) "+
+				"or specific pixel width (e.g., %s): %w",
+			v,
+			1,
+			PixelSizeExample,
+			ErrInvalidFieldValue,
+		)
+	}
+
+	return nil
+}
+
+func assertValidPixelSizeOrEmptyValue(val string) error {
+	val = strings.TrimSpace(val)
+
+	// An empty string is a special case and is permitted to honor "optional"
+	// field value requirement.
+	if val == "" {
+		return nil
+	}
+
+	matched, _ := regexp.MatchString(PixelSizeRegex, val)
+
+	if !matched {
+		return fmt.Errorf(
+			"invalid pixel width %q; expected value in format %s: %w",
+			val,
+			PixelSizeExample,
+			ErrInvalidFieldValue,
+		)
+	}
+
+	// TODO: Apply validation to ensure that 0 is not given as a pixel size?
 
 	return nil
 }

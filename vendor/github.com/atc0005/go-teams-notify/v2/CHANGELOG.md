@@ -26,7 +26,23 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
-## [v2.7.1] - 2023-03-23
+## [v2.8.0] - 2023-06-09
+
+### Added
+
+- `Adaptive Card` format
+  - (GH-205) Ability to create a Table in AdaptiveCard
+
+### Changed
+
+- Dependencies
+  - `stretchr/testify`
+    - `v1.8.2` to `v1.8.4`
+- CI
+  - (GH-226) Add `quick` Makefile recipe (alias)
+  - (GH-225) Update vuln analysis GHAW to remove on.push hook
+
+## [v2.7.1] - 2023-06-09
 
 ### Changed
 
@@ -41,8 +57,9 @@ The following types of changes will be recorded in this file:
   - (GH-207) Update vuln analysis GHAW to use on.push hook
 - `Adaptive Card` format
   - (GH-206) Update `AdaptiveCardMaxVersion` to 1.5
-- (GH-212) Update `InList`, `InListIfFieldValNotEmpty` validators
-- (GH-216) Refactor `TopLevelCard.Validate`
+  - (GH-216) Refactor `TopLevelCard.Validate`
+- Other
+  - (GH-212) Update `InList`, `InListIfFieldValNotEmpty` validators
 
 ### Fixed
 
@@ -465,7 +482,8 @@ The following types of changes will be recorded in this file:
 
 - add initial functionality of sending messages to MS Teams channel
 
-[Unreleased]: https://github.com/atc0005/go-teams-notify/compare/v2.7.1...HEAD
+[Unreleased]: https://github.com/atc0005/go-teams-notify/compare/v2.8.0...HEAD
+[v2.8.0]: https://github.com/atc0005/go-teams-notify/releases/tag/v2.8.0
 [v2.7.1]: https://github.com/atc0005/go-teams-notify/releases/tag/v2.7.1
 [v2.7.0]: https://github.com/atc0005/go-teams-notify/releases/tag/v2.7.0
 [v2.6.1]: https://github.com/atc0005/go-teams-notify/releases/tag/v2.6.1
