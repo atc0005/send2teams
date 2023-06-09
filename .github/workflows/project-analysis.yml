@@ -8,9 +8,6 @@
 name: Project Analysis
 
 on:
-  push:
-  # branches: [master]
-
   pull_request:
     # `synchronized` seems to equate to pushing new commits to a linked branch
     # (whether force-pushed or not)
