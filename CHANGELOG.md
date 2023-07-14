@@ -26,6 +26,29 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
+## [v0.12.2] - 2023-07-14
+
+### Overview
+
+- Bug fixes
+- Dependency updates
+- built using Go 1.19.11
+  - Statically linked
+  - Windows (x86, x64)
+  - Linux (x86, x64)
+
+### Changed
+
+- Dependencies
+  - `Go`
+    - `1.19.10` to `1.19.11`
+  - `atc0005/go-ci`
+    - `go-ci-oldstable-build-v0.10.6` to `go-ci-oldstable-build-v0.11.4`
+
+### Fixed
+
+- (GH-321) Restore local CodeQL workflow
+
 ## [v0.12.1] - 2023-06-09
 
 ### Overview
@@ -1068,7 +1091,8 @@ This initial prototype supports/provides:
 - GitHub Actions linting and build checks
 - Makefile for general use cases
 
-[Unreleased]: https://github.com/atc0005/send2teams/compare/v0.12.1...HEAD
+[Unreleased]: https://github.com/atc0005/send2teams/compare/v0.12.2...HEAD
+[v0.12.2]: https://github.com/atc0005/send2teams/releases/tag/v0.12.2
 [v0.12.1]: https://github.com/atc0005/send2teams/releases/tag/v0.12.1
 [v0.12.0]: https://github.com/atc0005/send2teams/releases/tag/v0.12.0
 [v0.11.3]: https://github.com/atc0005/send2teams/releases/tag/v0.11.3
