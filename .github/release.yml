@@ -1,0 +1,30 @@
+# Copyright 2023 Adam Chalkley
+#
+# https://github.com/atc0005/send2teams
+#
+# Licensed under the MIT License. See LICENSE file in the project root for
+# full license information.
+
+# https://docs.github.com/en/repositories/releasing-projects-on-github/automatically-generated-release-notes
+
+changelog:
+  exclude:
+    labels:
+      - ignore-for-release
+  categories:
+    - title: Breaking Changes 🛠
+      labels:
+        - breaking
+    - title: New Features or Enhancements 🎉
+      labels:
+        - new
+        - enhancement
+    - title: Bug Fixes 🐛
+      labels:
+        - bug
+    - title: Dependency Updates
+      labels:
+        - dependencies
+    - title: Other Changes
+      labels:
+        - "*"
