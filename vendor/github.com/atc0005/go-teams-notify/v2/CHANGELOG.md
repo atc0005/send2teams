@@ -26,12 +26,15 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
-## [v2.8.0] - 2023-06-09
+## [v2.8.0] - 2023-07-21
 
 ### Added
 
 - `Adaptive Card` format
   - (GH-205) Ability to create a Table in AdaptiveCard
+- CI
+  - (GH-232) Add initial automated release notes config
+  - (GH-233) Add initial automated release build workflow
 
 ### Changed
 
@@ -41,6 +44,12 @@ The following types of changes will be recorded in this file:
 - CI
   - (GH-226) Add `quick` Makefile recipe (alias)
   - (GH-225) Update vuln analysis GHAW to remove on.push hook
+  - (GH-230) Disable unsupported build opts in monthly workflow
+
+### Fixed
+
+- CI
+  - (GH-229) Restore local CodeQL workflow
 
 ## [v2.7.1] - 2023-06-09
 
