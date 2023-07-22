@@ -7,38 +7,49 @@
 
 # https://help.github.com/en/github/administering-a-repository/configuration-options-for-dependency-updates
 
+######################################################################
+# Monitor Go module dependency updates
+######################################################################
+
 version: 2
 updates:
-  # Enable version updates for Go modules
   - package-ecosystem: "gomod"
-
-    # Look for a `go.mod` file in the `root` directory
     directory: "/"
-
-    # Default is a maximum of five pull requests for version updates
     open-pull-requests-limit: 10
-
     target-branch: "master"
-
-    # Daily update checks; default version checks are performed at 05:00 UTC
     schedule:
       interval: "daily"
       time: "02:00"
       timezone: "America/Chicago"
-
-    # Assign everything to me by default
     assignees:
       - "atc0005"
     labels:
       - "dependencies"
-
     allow:
-      # Allow both direct and indirect updates for all packages
       - dependency-type: "all"
-
     commit-message:
-      # Prefix all commit messages with "go.mod"
       prefix: "go.mod"
+
+  - package-ecosystem: "gomod"
+    directory: "/"
+    open-pull-requests-limit: 10
+    target-branch: "development"
+    schedule:
+      interval: "daily"
+      time: "02:00"
+      timezone: "America/Chicago"
+    assignees:
+      - "atc0005"
+    labels:
+      - "dependencies"
+    allow:
+      - dependency-type: "all"
+    commit-message:
+      prefix: "go.mod"
+
+  ######################################################################
+  # Monitor GitHub Actions dependency updates
+  ######################################################################
 
   - package-ecosystem: "github-actions"
     directory: "/"
@@ -58,7 +69,28 @@ updates:
     commit-message:
       prefix: "ghaw"
 
-  # Monitor Go updates to serve as a reminder to generate fresh binaries
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    open-pull-requests-limit: 10
+    target-branch: "development"
+    schedule:
+      interval: "daily"
+      time: "02:00"
+      timezone: "America/Chicago"
+    assignees:
+      - "atc0005"
+    labels:
+      - "dependencies"
+      - "CI"
+    allow:
+      - dependency-type: "all"
+    commit-message:
+      prefix: "ghaw"
+
+  ######################################################################
+  # Monitor Go updates to service as a reminder to generate new releases
+  ######################################################################
+
   - package-ecosystem: docker
     directory: "/dependabot/docker/go"
     open-pull-requests-limit: 10
@@ -79,16 +111,53 @@ updates:
     ignore:
       - dependency-name: "golang"
         versions:
-          # Ignore updates from series associated with the latest "stable"
-          # Go release and no longer supported Go versions.
           - ">= 1.20"
           - "< 1.19"
 
-  # Monitor image used to build dev & stable project releases
+  - package-ecosystem: docker
+    directory: "/dependabot/docker/go"
+    open-pull-requests-limit: 10
+    target-branch: "development"
+    schedule:
+      interval: "daily"
+      time: "02:00"
+      timezone: "America/Chicago"
+    assignees:
+      - "atc0005"
+    labels:
+      - "dependencies"
+      - "CI"
+    allow:
+      - dependency-type: "all"
+    commit-message:
+      prefix: "canary"
+
+  ######################################################################
+  # Monitor images used to build project releases
+  ######################################################################
+
   - package-ecosystem: docker
     directory: "/dependabot/docker/builds"
     open-pull-requests-limit: 10
     target-branch: "master"
+    schedule:
+      interval: "daily"
+      time: "02:00"
+      timezone: "America/Chicago"
+    assignees:
+      - "atc0005"
+    labels:
+      - "dependencies"
+      - "builds"
+    allow:
+      - dependency-type: "all"
+    commit-message:
+      prefix: "docker"
+
+  - package-ecosystem: docker
+    directory: "/dependabot/docker/builds"
+    open-pull-requests-limit: 10
+    target-branch: "development"
     schedule:
       interval: "daily"
       time: "02:00"
