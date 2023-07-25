@@ -1,0 +1,22 @@
+# See LICENSE file in this repo for license details.
+
+# https://medium.com/@porteneuve/how-to-make-git-preserve-specific-files-while-merging-18c92343826b
+# https://git-scm.com/book/en/v2/Customizing-Git-Git-Attributes#Merge-Strategies
+
+# The development branch tracks a different version of Go; prevent merging
+# conflicts to these specific files.
+#
+# NOTE: You still need to configure a 'ours' merge strategy in order to have
+# these settings take effect.
+#
+# Per repo:
+#
+# $ cd /path/to/repo
+# $ git config merge.ours.driver true
+#
+# Globally:
+#
+# $ git config --global merge.ours.driver true
+
+dependabot/docker/builds/Dockerfile merge=ours
+dependabot/docker/go/Dockerfile merge=ours
