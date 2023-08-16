@@ -111,8 +111,8 @@ updates:
     ignore:
       - dependency-name: "golang"
         versions:
-          - ">= 1.20"
-          - "< 1.19"
+          - ">= 1.21"
+          - "< 1.20"
 
   - package-ecosystem: docker
     directory: "/dependabot/docker/go"
