@@ -7,7 +7,7 @@
 
 module github.com/atc0005/send2teams
 
-go 1.19
+go 1.20
 
 // Allow for testing local changes before they're published.
 //
