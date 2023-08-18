@@ -26,6 +26,25 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
+## [v0.12.3] - 2023-08-18
+
+### Added
+
+- (GH-329) Add initial automated release notes config
+- (GH-331) Add initial automated release build workflow
+
+### Changed
+
+- Dependencies
+  - `Go`
+    - `1.19.11` to `1.20.7`
+  - `atc0005/go-ci`
+    - `go-ci-oldstable-build-v0.11.4` to `go-ci-oldstable-build-v0.13.4`
+  - `atc0005/go-teams-notify`
+    - `v2.8.0-alpha.1` to `v2.8.0`
+- (GH-333) Update Dependabot config to monitor both branches
+- (GH-351) Update project to Go 1.20 series
+
 ## [v0.12.2] - 2023-07-14
 
 ### Overview
@@ -1091,7 +1110,8 @@ This initial prototype supports/provides:
 - GitHub Actions linting and build checks
 - Makefile for general use cases
 
-[Unreleased]: https://github.com/atc0005/send2teams/compare/v0.12.2...HEAD
+[Unreleased]: https://github.com/atc0005/send2teams/compare/v0.12.3...HEAD
+[v0.12.3]: https://github.com/atc0005/send2teams/releases/tag/v0.12.3
 [v0.12.2]: https://github.com/atc0005/send2teams/releases/tag/v0.12.2
 [v0.12.1]: https://github.com/atc0005/send2teams/releases/tag/v0.12.1
 [v0.12.0]: https://github.com/atc0005/send2teams/releases/tag/v0.12.0
