@@ -26,6 +26,21 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
+## [v0.12.4] - 2023-10-06
+
+### Changes
+
+#### Dependency Updates
+
+- (GH-364) canary: bump golang from 1.20.7 to 1.20.8 in /dependabot/docker/go
+- (GH-356) docker: bump atc0005/go-ci from go-ci-oldstable-build-v0.13.4 to go-ci-oldstable-build-v0.13.5 in /dependabot/docker/builds
+- (GH-359) docker: bump atc0005/go-ci from go-ci-oldstable-build-v0.13.5 to go-ci-oldstable-build-v0.13.6 in /dependabot/docker/builds
+- (GH-361) docker: bump atc0005/go-ci from go-ci-oldstable-build-v0.13.6 to go-ci-oldstable-build-v0.13.7 in /dependabot/docker/builds
+- (GH-366) docker: bump atc0005/go-ci from go-ci-oldstable-build-v0.13.7 to go-ci-oldstable-build-v0.13.8 in /dependabot/docker/builds
+- (GH-372) docker: bump atc0005/go-ci from go-ci-oldstable-build-v0.13.8 to go-ci-oldstable-build-v0.13.9 in /dependabot/docker/builds
+- (GH-376) docker: bump atc0005/go-ci from go-ci-oldstable-build-v0.13.9 to go-ci-oldstable-build-v0.13.10 in /dependabot/docker/builds
+- (GH-363) ghaw: bump actions/checkout from 3 to 4
+
 ## [v0.12.3] - 2023-08-18
 
 ### Added
@@ -1110,7 +1125,8 @@ This initial prototype supports/provides:
 - GitHub Actions linting and build checks
 - Makefile for general use cases
 
-[Unreleased]: https://github.com/atc0005/send2teams/compare/v0.12.3...HEAD
+[Unreleased]: https://github.com/atc0005/send2teams/compare/v0.12.4...HEAD
+[v0.12.4]: https://github.com/atc0005/send2teams/releases/tag/v0.12.4
 [v0.12.3]: https://github.com/atc0005/send2teams/releases/tag/v0.12.3
 [v0.12.2]: https://github.com/atc0005/send2teams/releases/tag/v0.12.2
 [v0.12.1]: https://github.com/atc0005/send2teams/releases/tag/v0.12.1
