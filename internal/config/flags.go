@@ -31,7 +31,7 @@ func (c *Config) handleFlagsConfig() {
 	flag.IntVar(&c.Retries, "retries", defaultRetries, retriesFlagHelp)
 	flag.IntVar(&c.RetriesDelay, "retries-delay", defaultRetriesDelay, retriesDelayFlagHelp)
 	flag.BoolVar(&c.ShowVersion, "version", defaultDisplayVersionAndExit, versionFlagHelp)
-	flag.BoolVar(&c.ShowVersion, "v", defaultDisplayVersionAndExit, versionFlagHelp+" (shorthand)")
+	flag.BoolVar(&c.ShowVersion, "v", defaultDisplayVersionAndExit, versionFlagHelp+shorthandFlagSuffix)
 
 	flag.Usage = flagsUsage()
 
