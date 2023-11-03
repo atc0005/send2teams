@@ -42,6 +42,10 @@ const (
 	retriesDelayFlagHelp                = "The number of seconds that this application will wait before making another delivery attempt."
 )
 
+// shorthandFlagSuffix is appended to short flag help text to emphasize that
+// the flag is a shorthand version of a longer flag.
+const shorthandFlagSuffix = " (shorthand)"
+
 // Default flag settings if not overridden by user input
 const (
 	defaultMessageThemeColor           string = "NotUsed"
