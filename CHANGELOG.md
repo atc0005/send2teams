@@ -26,6 +26,16 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
+## [v0.12.7] - 2024-01-19
+
+### Changed
+
+#### Dependency Updates
+
+- (GH-413) canary: bump golang from 1.20.12 to 1.20.13 in /dependabot/docker/go
+- (GH-414) docker: bump atc0005/go-ci from go-ci-oldstable-build-v0.14.2 to go-ci-oldstable-build-v0.14.3 in /dependabot/docker/builds
+- (GH-410) ghaw: bump github/codeql-action from 2 to 3
+
 ## [v0.12.6] - 2023-12-09
 
 ### Changed
@@ -1150,7 +1160,8 @@ This initial prototype supports/provides:
 - GitHub Actions linting and build checks
 - Makefile for general use cases
 
-[Unreleased]: https://github.com/atc0005/send2teams/compare/v0.12.6...HEAD
+[Unreleased]: https://github.com/atc0005/send2teams/compare/v0.12.7...HEAD
+[v0.12.7]: https://github.com/atc0005/send2teams/releases/tag/v0.12.7
 [v0.12.6]: https://github.com/atc0005/send2teams/releases/tag/v0.12.6
 [v0.12.5]: https://github.com/atc0005/send2teams/releases/tag/v0.12.5
 [v0.12.4]: https://github.com/atc0005/send2teams/releases/tag/v0.12.4
