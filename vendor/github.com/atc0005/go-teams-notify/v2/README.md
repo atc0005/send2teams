@@ -26,10 +26,12 @@ A package to send messages to a Microsoft Teams channel.
     - [How to create a webhook URL (Connector)](#how-to-create-a-webhook-url-connector)
   - [Examples](#examples)
     - [Basic](#basic)
+    - [Specify proxy server](#specify-proxy-server)
     - [User Mention](#user-mention)
     - [Tables](#tables)
     - [Set custom user agent](#set-custom-user-agent)
     - [Add an Action](#add-an-action)
+    - [Toggle visibility](#toggle-visibility)
     - [Disable webhook URL prefix validation](#disable-webhook-url-prefix-validation)
     - [Enable custom patterns' validation](#enable-custom-patterns-validation)
 - [Used by](#used-by)
@@ -192,6 +194,16 @@ This is an example of a simple client application which uses this library.
 - `MessageCard`
   - File: [basic](./examples/messagecard/basic/main.go)
 
+#### Specify proxy server
+
+This is an example of a simple client application which uses this library to
+route a generated message through a specified proxy server.
+
+- `Adaptive Card`
+  - File: [basic](./examples/adaptivecard/proxy/main.go)
+- `MessageCard`
+  - File: [basic](./examples/messagecard/proxy/main.go)
+
 #### User Mention
 
 These examples illustrates the use of one or more user mentions. This feature
@@ -230,6 +242,17 @@ this action triggers opening a URL in a separate browser or application.
   - File: [actions](./examples/adaptivecard/actions/main.go)
 - `MessageCard`
   - File: [actions](./examples/messagecard/actions/main.go)
+
+#### Toggle visibility
+
+These examples illustrates using
+[`ToggleVisibility`][adaptivecard-ref-actions] Actions to control the
+visibility of various Elements of an `Adaptive Card` message.
+
+- File: [toggle-visibility-single-button](./examples/adaptivecard/toggle-visibility-single-button/main.go)
+- File: [toggle-visibility-multiple-buttons](./examples/adaptivecard/toggle-visibility-multiple-buttons/main.go)
+- File: [toggle-visibility-column-action](./examples/adaptivecard/toggle-visibility-column-action/main.go)
+- File: [toggle-visibility-container-action](./examples/adaptivecard/toggle-visibility-container-action/main.go)
 
 #### Disable webhook URL prefix validation
 

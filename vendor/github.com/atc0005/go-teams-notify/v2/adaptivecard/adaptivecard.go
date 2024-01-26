@@ -70,10 +70,10 @@ const (
 
 // Attachment constants.
 //
-// https://docs.microsoft.com/en-us/microsoftteams/platform/task-modules-and-cards/cards/cards-reference
-// https://docs.microsoft.com/en-us/dotnet/api/microsoft.bot.schema.attachmentlayouttypes
-// https://docs.microsoft.com/en-us/javascript/api/botframework-schema/attachmentlayouttypes
-// https://github.com/matthidinger/ContosoScubaBot/blob/master/Cards/1-Schools.JSON
+//   - https://docs.microsoft.com/en-us/microsoftteams/platform/task-modules-and-cards/cards/cards-reference
+//   - https://docs.microsoft.com/en-us/dotnet/api/microsoft.bot.schema.attachmentlayouttypes
+//   - https://docs.microsoft.com/en-us/javascript/api/botframework-schema/attachmentlayouttypes
+//   - https://github.com/matthidinger/ContosoScubaBot/blob/master/Cards/1-Schools.JSON
 const (
 
 	// AttachmentContentType is the supported type value for an attached
@@ -291,12 +291,11 @@ const (
 // Valid types for an Adaptive Card element. Not all types are supported by
 // Microsoft Teams.
 //
-// https://adaptivecards.io/explorer/AdaptiveCard.html
-//
 // TODO: Confirm whether all types are supported.
 //
-// https://docs.microsoft.com/en-us/microsoftteams/platform/task-modules-and-cards/cards/cards-reference#support-for-adaptive-cards
-// https://docs.microsoft.com/en-us/adaptive-cards/authoring-cards/universal-action-model#schema
+//   - https://adaptivecards.io/explorer/AdaptiveCard.html
+//   - https://docs.microsoft.com/en-us/microsoftteams/platform/task-modules-and-cards/cards/cards-reference#support-for-adaptive-cards
+//   - https://docs.microsoft.com/en-us/adaptive-cards/authoring-cards/universal-action-model#schema
 const (
 	TypeElementActionSet      string = "ActionSet"
 	TypeElementColumnSet      string = "ColumnSet"
@@ -538,6 +537,17 @@ type Element struct {
 	// "defaults to true" behavior as defined by the schema.
 	FirstRowAsHeaders *bool `json:"firstRowAsHeaders,omitempty"`
 
+	// Visible specifies whether this element will be removed from the visual
+	// tree.
+	//
+	// If not specified defaults to true.
+	//
+	// NOTE: We define this field as a pointer type so that omitting a value
+	// for the pointer leaves the field out of the generated JSON payload (due
+	// to 'omitempty' behavior of the JSON encoder and results in the
+	// "defaults to true" behavior as defined by the schema.
+	Visible *bool `json:"isVisible,omitempty"`
+
 	// ShowGridLines specified whether grid lines should be displayed.  This
 	// field is used by a Table element type.
 	//
@@ -554,6 +564,14 @@ type Element struct {
 	//
 	// TODO: Should this be a pointer?
 	Actions []Action `json:"actions,omitempty"`
+
+	// SelectAction is an Action that will be invoked when the Container
+	// element is tapped or selected. Action.ShowCard is not supported.
+	//
+	// This field is used by supported Container element types (Column,
+	// ColumnSet, Container).
+	//
+	SelectAction *ISelectAction `json:"selectAction,omitempty"`
 
 	// Facts is required for the FactSet element type. Actions is a collection
 	// of Fact values that are part of a FactSet element type. Each Fact value
@@ -736,9 +754,9 @@ type Actions []Action
 // Action represents an action that a user may take on a card. Actions
 // typically get rendered in an "action bar" at the bottom of a card.
 //
-// https://adaptivecards.io/explorer/ActionSet.html
-// https://adaptivecards.io/explorer/AdaptiveCard.html
-// https://docs.microsoft.com/en-us/microsoftteams/platform/task-modules-and-cards/cards/cards-reference
+//   - https://adaptivecards.io/explorer/ActionSet.html
+//   - https://adaptivecards.io/explorer/AdaptiveCard.html
+//   - https://docs.microsoft.com/en-us/microsoftteams/platform/task-modules-and-cards/cards/cards-reference
 //
 // TODO: Extend with additional supported fields.
 type Action struct {
@@ -778,15 +796,86 @@ type Action struct {
 	//
 	// refs https://github.com/matthidinger/ContosoScubaBot/blob/master/Cards/SubscriberNotification.JSON
 	Card *Card `json:"card,omitempty"`
+
+	// TargetElements is the collection of TargetElement values.
+	//
+	// It is not recommended to include Input elements with validation due to
+	// confusion that can arise from invalid inputs that are not currently
+	// visible.
+	//
+	// https://docs.microsoft.com/en-us/adaptive-cards/authoring-cards/input-validation
+	TargetElements []TargetElement `json:"targetElements,omitempty"`
 }
+
+// TargetElement represents an entry for Action.ToggleVisibility's
+// targetElements property.
+//
+//   - https://adaptivecards.io/explorer/TargetElement.html
+//   - https://adaptivecards.io/explorer/Action.ToggleVisibility.html
+type TargetElement struct {
+	// ElementID is the ID value of the element to toggle.
+	ElementID string `json:"elementId"`
+
+	// Visible provides display or visibility control for a target Element.
+	//
+	//  - If true, always show target element.
+	//  - If false, always hide target element.
+	//  - If not supplied, toggle target element's visibility.
+	//
+	// NOTE: We define this field as a pointer type so that omitting a value
+	// for the pointer leaves the field out of the generated JSON payload (due
+	// to 'omitempty' behavior of the JSON encoder. If leaving this field out,
+	// visibility can be toggled for target Elements.
+	Visible *bool `json:"isVisible,omitempty"`
+}
+
+/*
+
+General scratch notes for https://github.com/atc0005/go-teams-notify/issues/243
+===============================================================================
+
+https://adaptivecards.io/explorer/Action.ToggleVisibility.html
+https://adaptivecards.io/explorer/TargetElement.html
+
+While the targetElements array (JSON) supports raw text strings OR
+TargetElement values, we will opt to only support TargetElement values.
+Otherwise, we end up needing to use more complicated logic.
+
+Instead of trying to support this:
+
+	"targetElements": [
+		"textToToggle",
+		"imageToToggle",
+		"imageToToggle2"
+	]
+
+we support this instead:
+
+	"targetElements": [
+		{
+			"elementId": "textToToggle"
+		},
+		{
+			"elementId": "imageToToggle"
+		},
+		{
+			"elementId": "imageToToggle2"
+		}
+	]
+
+
+A Container type has a selectAction field. That slice contains TargetElement
+entries.
+
+*/
 
 // ISelectAction represents an Action that will be invoked when a container
 // type (e.g., Column, ColumnSet, Container) is tapped or selected.
 // Action.ShowCard is not supported.
 //
-// https://adaptivecards.io/explorer/Container.html
-// https://adaptivecards.io/explorer/ColumnSet.html
-// https://adaptivecards.io/explorer/Column.html
+//   - https://adaptivecards.io/explorer/Container.html
+//   - https://adaptivecards.io/explorer/ColumnSet.html
+//   - https://adaptivecards.io/explorer/Column.html
 //
 // TODO: Extend with additional supported fields.
 type ISelectAction struct {
@@ -812,6 +901,17 @@ type ISelectAction struct {
 	// Fallback describes what to do when an unknown element is encountered or
 	// the requirements of this or any children can't be met.
 	Fallback string `json:"fallback,omitempty"`
+
+	// TargetElements is the collection of TargetElement values.
+	//
+	// This field is specific to the Action.ToggleVisibility Action type.
+	//
+	// It is not recommended to include Input elements with validation due to
+	// confusion that can arise from invalid inputs that are not currently
+	// visible.
+	//
+	// https://docs.microsoft.com/en-us/adaptive-cards/authoring-cards/input-validation
+	TargetElements []TargetElement `json:"targetElements,omitempty"`
 }
 
 // MSTeams represents a container for properties specific to Microsoft Teams
@@ -1215,6 +1315,10 @@ func (e Element) Validate() error {
 	case e.Type == TypeElementColumnSet:
 		v.SelfValidate(Columns(e.Columns))
 
+		if e.SelectAction != nil {
+			v.SelfValidate(e.SelectAction)
+		}
+
 	// Actions collection is required for ActionSet element type.
 	// https://adaptivecards.io/explorer/ActionSet.html
 	case e.Type == TypeElementActionSet:
@@ -1226,6 +1330,10 @@ func (e Element) Validate() error {
 	case e.Type == TypeElementContainer:
 		v.NotEmptyCollection("Items", e.Type, ErrMissingValue, e.Items)
 		v.SelfValidate(Elements(e.Items))
+
+		if e.SelectAction != nil {
+			v.SelfValidate(e.SelectAction)
+		}
 
 	// URL is required for Image element type.
 	// https://adaptivecards.io/explorer/Image.html
@@ -1524,6 +1632,50 @@ func (tr TableCell) Validate() error {
 	return v.Err()
 }
 
+// AddSelectAction adds a given Action or ISelectAction value to the
+// associated Column. This action will be invoked when the Column is
+// tapped or selected.
+//
+// An error is returned if the given Action or ISelectAction value fails
+// validation or if a value other than an Action or ISelectAction is provided.
+func (c *Column) AddSelectAction(action interface{}) error {
+	switch v := action.(type) {
+	case Action:
+		// Perform manual conversion to the supported type.
+		selectAction := ISelectAction{
+			Type:     v.Type,
+			ID:       v.ID,
+			Title:    v.Title,
+			URL:      v.URL,
+			Fallback: v.Fallback,
+		}
+
+		// Don't touch the new TargetElements field unless the provided Action
+		// has specified values.
+		if len(v.TargetElements) > 0 {
+			selectAction.TargetElements = append(
+				selectAction.TargetElements,
+				v.TargetElements...,
+			)
+		}
+
+		c.SelectAction = &selectAction
+
+	case ISelectAction:
+		c.SelectAction = &v
+
+	// unsupported value provided
+	default:
+		return fmt.Errorf(
+			"error: unsupported value provided; "+
+				" only Action or ISelectAction values are supported: %w",
+			ErrInvalidFieldValue,
+		)
+	}
+
+	return nil
+}
+
 // Validate asserts that fields have valid values.
 func (c Column) Validate() error {
 	v := validator.Validator{}
@@ -1596,6 +1748,9 @@ func (m MSTeams) Validate() error {
 
 // Validate asserts that fields have valid values.
 func (i ISelectAction) Validate() error {
+	supportedISelectActionValues := supportedISelectActionValues(AdaptiveCardMaxVersion)
+	fallbackValues := supportedActionFallbackValues(AdaptiveCardMaxVersion)
+
 	v := validator.Validator{}
 
 	// Some supportedISelectActionValues are restricted to later Adaptive Card
@@ -1604,7 +1759,7 @@ func (i ISelectAction) Validate() error {
 		i.Type,
 		"Type",
 		"ISelectAction",
-		supportedISelectActionValues(AdaptiveCardMaxVersion),
+		supportedISelectActionValues,
 		ErrInvalidType,
 	)
 
@@ -1616,8 +1771,16 @@ func (i ISelectAction) Validate() error {
 		ErrInvalidFieldValue,
 	)
 
-	if i.Type == TypeActionOpenURL {
+	// See also: Action.Validate() logic.
+	switch {
+	case i.Type == TypeActionOpenURL:
 		v.NotEmptyValue(i.URL, "URL", i.Type, ErrMissingValue)
+
+	case i.Fallback != "":
+		v.InList(i.Fallback, "Fallback", "action", fallbackValues, ErrInvalidFieldValue)
+
+	case i.Type == TypeActionToggleVisibility:
+		v.NotEmptyCollection("TargetElements", i.Type, ErrMissingValue, i.TargetElements)
 	}
 
 	return v.Err()
@@ -1634,45 +1797,138 @@ func (a Actions) Validate() error {
 	return nil
 }
 
+// AddTargetElement records the IDs from the given Elements in new
+// TargetElement values. The specified visibility setting is used for the new
+// TargetElement values.
+//
+//   - If true, always show target Element.
+//   - If false, always hide target Element.
+//   - If nil, allow toggling target Element's visibility.
+//
+// If the given visibility setting is nil, then the visibility setting for the
+// TargetElement values is omitted. This enables toggling visibility for the
+// target Elements (e.g., toggle button behavior).
+func (a *Action) AddTargetElement(visible *bool, elements ...Element) error {
+	elementIDs := make([]string, 0, len(elements))
+	for _, e := range elements {
+		if strings.TrimSpace(e.ID) == "" {
+			return fmt.Errorf(
+				"given Element has empty ID value: %w",
+				ErrInvalidFieldValue,
+			)
+		}
+
+		elementIDs = append(elementIDs, e.ID)
+	}
+
+	return a.AddTargetElementID(visible, elementIDs...)
+}
+
+// AddVisibleTargetElement records the Element IDs from the given Elements in
+// new TargetElement values. All new TargetElement values are explicitly set
+// as visible.
+func (a *Action) AddVisibleTargetElement(elements ...Element) error {
+	visible := true
+
+	return a.AddTargetElement(&visible, elements...)
+}
+
+// AddHiddenTargetElement records the Element IDs from the given Elements in
+// new TargetElement values. All new TargetElement values are explicitly set
+// as not visible.
+func (a *Action) AddHiddenTargetElement(elements ...Element) error {
+	visible := false
+
+	return a.AddTargetElement(&visible, elements...)
+}
+
+// AddTargetElementID records the given Element ID values in the TargetElements
+// collection. A non-empty ID value is required, but the Adaptive Card "tree"
+// is not searched for a valid match; it is up to the caller to ensure that
+// the given ID value is valid.
+//
+// The specified visibility setting is used for the new TargetElement values.
+//
+//   - If true, always show target Element.
+//   - If false, always hide target Element.
+//   - If nil, allow toggling target Element's visibility.
+//
+// If the given visibility setting is nil, then the visibility setting for the
+// TargetElement values is omitted. This enables toggling visibility for the
+// target Elements (e.g., toggle button behavior).
+func (a *Action) AddTargetElementID(visible *bool, elementIDs ...string) error {
+	for _, id := range elementIDs {
+		if strings.TrimSpace(id) == "" {
+			return fmt.Errorf(
+				"received empty Element ID value: %w",
+				ErrMissingValue,
+			)
+		}
+
+		existingElementIDs := func() []string {
+			ids := make([]string, 0, len(a.TargetElements))
+			for _, targetElement := range a.TargetElements {
+				ids = append(ids, targetElement.ElementID)
+			}
+
+			return ids
+		}()
+
+		// Assert that the ID is not already in the collection.
+		if goteamsnotify.InList(id, existingElementIDs, false) {
+			return fmt.Errorf(
+				"received duplicate Element ID value %q: %w",
+				id,
+				ErrInvalidFieldValue,
+			)
+		}
+
+		a.TargetElements = append(
+			a.TargetElements,
+			TargetElement{
+				ElementID: id,
+				Visible:   visible,
+			},
+		)
+	}
+
+	return nil
+}
+
 // Validate asserts that fields have valid values.
 func (a Action) Validate() error {
 	actionValues := supportedActionValues(AdaptiveCardMaxVersion)
 	fallbackValues := supportedActionFallbackValues(AdaptiveCardMaxVersion)
 
-	switch {
+	v := validator.Validator{}
+
 	// Some Actions are restricted to later Adaptive Card schema versions.
-	case !goteamsnotify.InList(a.Type, actionValues, false):
-		return fmt.Errorf(
-			"invalid %s %q for Action; expected one of %v: %w",
-			"Type",
-			a.Type,
-			actionValues,
-			ErrInvalidType,
-		)
+	v.InList(a.Type, "Type", "action", actionValues, ErrInvalidType)
 
-	case a.Type == TypeActionOpenURL && a.URL == "":
-		return fmt.Errorf("invalid URL for Action: %w", ErrMissingValue)
+	switch {
+	case a.Type == TypeActionOpenURL:
+		v.NotEmptyValue(a.URL, "URL", a.Type, ErrMissingValue)
 
-	case a.Fallback != "" &&
-		!goteamsnotify.InList(a.Fallback, fallbackValues, false):
-		return fmt.Errorf(
-			"invalid %s %q for Action; expected one of %v: %w",
-			"Fallback",
-			a.Fallback,
-			fallbackValues,
-			ErrInvalidFieldValue,
-		)
+	case a.Fallback != "":
+		v.InList(a.Fallback, "Fallback", "action", fallbackValues, ErrInvalidFieldValue)
+
+	case a.Type == TypeActionToggleVisibility:
+		v.NotEmptyCollection("TargetElements", a.Type, ErrMissingValue, a.TargetElements)
 
 	// Optional, but only supported by the Action.ShowCard type.
-	case a.Type != TypeActionShowCard && a.Card != nil:
+	case a.Card != nil:
+		v.FieldHasSpecificValue(a.Type, "type", TypeActionShowCard, "type", ErrInvalidType)
+
 		return fmt.Errorf(
 			"error: specifying a Card is unsupported for Action type %q: %w",
 			a.Type,
 			ErrInvalidFieldValue,
 		)
-	default:
-		return nil
 	}
+
+	// Return the last recorded validation error, or nil if no validation
+	// errors occurred.
+	return v.Err()
 }
 
 // Validate asserts that the collection of Mention values are all valid.
@@ -2224,6 +2480,36 @@ func NewContainer() Container {
 	return container
 }
 
+// NewHiddenContainer creates an empty Container whose initial state is
+// set as hidden from view.
+func NewHiddenContainer() Container {
+	visible := false
+	container := Container{
+		Type:    TypeElementContainer,
+		Visible: &visible,
+	}
+
+	return container
+}
+
+// NewColumn creates an empty Column.
+func NewColumn() Column {
+	column := Column{
+		Type: TypeColumn,
+	}
+
+	return column
+}
+
+// NewColumnSet creates an empty Element of type ColumnSet.
+func NewColumnSet() Element {
+	columnSet := Element{
+		Type: TypeElementColumnSet,
+	}
+
+	return columnSet
+}
+
 // NewActionSet creates an empty ActionSet.
 //
 // TODO: Should we create a type alias for ActionSet, or keep it as a "base"
@@ -2243,6 +2529,25 @@ func NewTextBlock(text string, wrap bool) Element {
 		Type: TypeElementTextBlock,
 		Wrap: wrap,
 		Text: text,
+	}
+
+	return textBlock
+}
+
+// NewHiddenTextBlock creates a new TextBlock element using the optional user
+// specified Text. If specified, text wrapping is enabled.
+//
+// The new TextBlock is explicitly hidden from view. To view this Element, the
+// caller should set an ID value and then allow toggling visibility by
+// referencing this TextBlock's ID from a TargetElement associated with a
+// ToggleVisibility Action.
+func NewHiddenTextBlock(text string, wrap bool) Element {
+	isVisible := false
+	textBlock := Element{
+		Type:    TypeElementTextBlock,
+		Wrap:    wrap,
+		Text:    text,
+		Visible: &isVisible,
 	}
 
 	return textBlock
@@ -2666,6 +2971,18 @@ func NewActionOpenURL(url string, title string) (Action, error) {
 	return action, nil
 }
 
+// NewActionToggleVisibility creates a new Action.ToggleVisibility value using
+// the (optionally) provided title text.
+//
+// NOTE: The caller is responsible for adding required TargetElement values to
+// meet validation requirements.
+func NewActionToggleVisibility(title string) Action {
+	return Action{
+		Type:  TypeActionToggleVisibility,
+		Title: title,
+	}
+}
+
 // NewActionSetsFromActions creates a new ActionSet for every
 // TeamsActionsDisplayLimit count of Actions given. An error is returned if
 // the specified Actions do not pass validation.
@@ -2733,6 +3050,9 @@ func (c *Container) AddElement(prepend bool, element Element) error {
 // If specified, the newly created ActionSets are inserted before other
 // Elements in the Container, otherwise appended.
 //
+// If adding an action to be used when the Container is tapped or selected use
+// AddSelectAction() instead.
+//
 // An error is returned if specified Action values fail validation.
 func (c *Container) AddAction(prepend bool, actions ...Action) error {
 	// Rely on function to apply validation instead of duplicating it here.
@@ -2746,6 +3066,50 @@ func (c *Container) AddAction(prepend bool, actions ...Action) error {
 		c.Items = append(actionSets, c.Items...)
 	case false:
 		c.Items = append(c.Items, actionSets...)
+	}
+
+	return nil
+}
+
+// AddSelectAction adds a given Action or ISelectAction value to the
+// associated Container. This action will be invoked when the Container is
+// tapped or selected.
+//
+// An error is returned if the given Action or ISelectAction value fails
+// validation or if a value other than an Action or ISelectAction is provided.
+func (c *Container) AddSelectAction(action interface{}) error {
+	switch v := action.(type) {
+	case Action:
+		// Perform manual conversion to the supported type.
+		selectAction := ISelectAction{
+			Type:     v.Type,
+			ID:       v.ID,
+			Title:    v.Title,
+			URL:      v.URL,
+			Fallback: v.Fallback,
+		}
+
+		// Don't touch the new TargetElements field unless the provided Action
+		// has specified values.
+		if len(v.TargetElements) > 0 {
+			selectAction.TargetElements = append(
+				selectAction.TargetElements,
+				v.TargetElements...,
+			)
+		}
+
+		c.SelectAction = &selectAction
+
+	case ISelectAction:
+		c.SelectAction = &v
+
+	// unsupported value provided
+	default:
+		return fmt.Errorf(
+			"error: unsupported value provided; "+
+				" only Action or ISelectAction values are supported: %w",
+			ErrInvalidFieldValue,
+		)
 	}
 
 	return nil
