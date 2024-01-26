@@ -9,8 +9,8 @@ package adaptivecard
 
 import "strings"
 
-// https://docs.microsoft.com/en-us/microsoftteams/platform/task-modules-and-cards/cards/cards-format#newlines-for-adaptive-cards
-// https://docs.microsoft.com/en-us/adaptive-cards/authoring-cards/text-features
+//  - https://docs.microsoft.com/en-us/microsoftteams/platform/task-modules-and-cards/cards/cards-format#newlines-for-adaptive-cards
+//  - https://docs.microsoft.com/en-us/adaptive-cards/authoring-cards/text-features
 
 // Newline and break statement patterns stripped out of text content sent to
 // Microsoft Teams (by request).
@@ -42,8 +42,8 @@ const (
 // text in desktop, web and mobile, so even with using this helper function
 // some differences are to be expected.
 //
-// https://docs.microsoft.com/en-us/microsoftteams/platform/task-modules-and-cards/cards/cards-format#newlines-for-adaptive-cards
-// https://docs.microsoft.com/en-us/adaptive-cards/authoring-cards/text-features
+//   - https://docs.microsoft.com/en-us/microsoftteams/platform/task-modules-and-cards/cards/cards-format#newlines-for-adaptive-cards
+//   - https://docs.microsoft.com/en-us/adaptive-cards/authoring-cards/text-features
 func ConvertEOL(s string) string {
 	s = strings.ReplaceAll(s, windowsEOLEscaped, unixEOLActual+unixEOLActual)
 	s = strings.ReplaceAll(s, windowsEOLActual, unixEOLActual+unixEOLActual)
@@ -66,8 +66,8 @@ func ConvertEOL(s string) string {
 // MessageCard format supports <br> statements for text spacing/formatting
 // where the Adaptive Card format does not.
 //
-// https://docs.microsoft.com/en-us/microsoftteams/platform/task-modules-and-cards/cards/cards-format#newlines-for-adaptive-cards
-// https://docs.microsoft.com/en-us/adaptive-cards/authoring-cards/text-features
+//   - https://docs.microsoft.com/en-us/microsoftteams/platform/task-modules-and-cards/cards/cards-format#newlines-for-adaptive-cards
+//   - https://docs.microsoft.com/en-us/adaptive-cards/authoring-cards/text-features
 func ConvertBreakToEOL(s string) string {
 	return strings.ReplaceAll(s, breakStatement, unixEOLActual+unixEOLActual)
 }
