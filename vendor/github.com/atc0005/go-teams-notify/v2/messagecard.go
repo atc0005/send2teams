@@ -75,6 +75,7 @@ const (
 
 // PotentialActionMaxSupported is the maximum number of actions allowed in a
 // MessageCardPotentialAction collection.
+//
 // https://docs.microsoft.com/en-us/outlook/actionable-messages/message-card-reference#actions
 //
 // Deprecated: use messagecard.PotentialActionMaxSupported instead.
@@ -88,11 +89,12 @@ const PotentialActionMaxSupported = 4
 var ErrPotentialActionsLimitReached = errors.New("potential actions collection limit reached")
 
 // MessageCardPotentialAction represents potential actions an user can do in a
-// message card. See
-// https://docs.microsoft.com/en-us/outlook/actionable-messages/message-card-reference#actions
-// for more information.
+// message card. See [Legacy actionable message card reference > Actions] for
+// more information.
 //
 // Deprecated: use messagecard.PotentialAction instead.
+//
+// [Legacy actionable message card reference > Actions]: https://docs.microsoft.com/en-us/outlook/actionable-messages/message-card-reference#actions
 type MessageCardPotentialAction struct {
 	// Type of the potential action. Can be OpenUri, HttpPOST, ActionCard or
 	// InvokeAddInCommand.
