@@ -26,6 +26,20 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
+## [v0.12.8] - 2024-02-16
+
+### Changed
+
+#### Dependency Updates
+
+- (GH-433) canary: bump golang from 1.20.13 to 1.20.14 in /dependabot/docker/go
+- (GH-419) docker: bump atc0005/go-ci from go-ci-oldstable-build-v0.14.3 to go-ci-oldstable-build-v0.14.4 in /dependabot/docker/builds
+- (GH-424) docker: bump atc0005/go-ci from go-ci-oldstable-build-v0.14.4 to go-ci-oldstable-build-v0.14.5 in /dependabot/docker/builds
+- (GH-426) docker: bump atc0005/go-ci from go-ci-oldstable-build-v0.14.5 to go-ci-oldstable-build-v0.14.6 in /dependabot/docker/builds
+- (GH-434) docker: bump atc0005/go-ci from go-ci-oldstable-build-v0.14.6 to go-ci-oldstable-build-v0.14.9 in /dependabot/docker/builds
+- (GH-438) docker: bump atc0005/go-ci from go-ci-oldstable-build-v0.14.9 to go-ci-oldstable-build-v0.15.0 in /dependabot/docker/builds
+- (GH-423) go.mod: bump github.com/atc0005/go-teams-notify/v2 from 2.8.0 to 2.9.0
+
 ## [v0.12.7] - 2024-01-19
 
 ### Changed
@@ -1160,7 +1174,8 @@ This initial prototype supports/provides:
 - GitHub Actions linting and build checks
 - Makefile for general use cases
 
-[Unreleased]: https://github.com/atc0005/send2teams/compare/v0.12.7...HEAD
+[Unreleased]: https://github.com/atc0005/send2teams/compare/v0.12.8...HEAD
+[v0.12.8]: https://github.com/atc0005/send2teams/releases/tag/v0.12.8
 [v0.12.7]: https://github.com/atc0005/send2teams/releases/tag/v0.12.7
 [v0.12.6]: https://github.com/atc0005/send2teams/releases/tag/v0.12.6
 [v0.12.5]: https://github.com/atc0005/send2teams/releases/tag/v0.12.5
