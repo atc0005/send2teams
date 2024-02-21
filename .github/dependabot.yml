@@ -28,7 +28,7 @@ updates:
     allow:
       - dependency-type: "all"
     commit-message:
-      prefix: "go.mod"
+      prefix: "Go Dependency"
 
   - package-ecosystem: "gomod"
     directory: "/"
@@ -45,7 +45,7 @@ updates:
     allow:
       - dependency-type: "all"
     commit-message:
-      prefix: "go.mod"
+      prefix: "Go Dependency"
 
   ######################################################################
   # Monitor GitHub Actions dependency updates
@@ -107,7 +107,7 @@ updates:
     allow:
       - dependency-type: "all"
     commit-message:
-      prefix: "canary"
+      prefix: "Go Runtime"
     ignore:
       - dependency-name: "golang"
         versions:
@@ -130,7 +130,7 @@ updates:
     allow:
       - dependency-type: "all"
     commit-message:
-      prefix: "canary"
+      prefix: "Go Runtime"
 
   ######################################################################
   # Monitor images used to build project releases
@@ -152,7 +152,7 @@ updates:
     allow:
       - dependency-type: "all"
     commit-message:
-      prefix: "docker"
+      prefix: "Build Image"
 
   - package-ecosystem: docker
     directory: "/dependabot/docker/builds"
@@ -170,4 +170,4 @@ updates:
     allow:
       - dependency-type: "all"
     commit-message:
-      prefix: "docker"
+      prefix: "Build Image"
