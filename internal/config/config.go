@@ -245,6 +245,15 @@ func (tus *targetURLsStringFlag) String() string {
 	var output strings.Builder
 
 	for i, target := range *tus {
+		// Building with `go build -gcflags=all=-d=loopvar=2` identified this
+		// loop as compiling differently with Go 1.22 (per-iteration) loop
+		// semantics. In particular, it is the use of the url.URL struct field
+		// which caused this loop to be flagged.
+		//
+		// As a workaround, we create a new variable for each iteration to
+		// work around potential issues with Go versions prior to Go 1.22.
+		target := target
+
 		fmt.Fprintf(
 			&output,
 			"[URL: %s, Desc: %s]",
