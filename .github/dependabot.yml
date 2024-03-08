@@ -104,6 +104,7 @@ updates:
     labels:
       - "dependencies"
       - "CI"
+      - "todo/release"
     allow:
       - dependency-type: "all"
     commit-message:
@@ -127,6 +128,7 @@ updates:
     labels:
       - "dependencies"
       - "CI"
+      - "todo/release"
     allow:
       - dependency-type: "all"
     commit-message:
