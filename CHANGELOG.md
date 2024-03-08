@@ -26,6 +26,23 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
+## [v0.12.9] - 2024-03-08
+
+### Changed
+
+#### Dependency Updates
+
+- (GH-444) Update project to Go 1.21 series
+- (GH-445) canary: bump golang from 1.21.6 to 1.21.7 in /dependabot/docker/go
+- (GH-443) docker: bump atc0005/go-ci from go-ci-oldstable-build-v0.15.0 to go-ci-oldstable-build-v0.15.2 in /dependabot/docker/builds
+- (GH-446) Update Dependabot PR prefixes
+- (GH-447) Update Dependabot PR prefixes (redux)
+- (GH-449) Go Dependency: Bump github.com/atc0005/go-teams-notify/v2 from 2.9.0 to 2.10.0
+- (GH-453) Build Image: Bump atc0005/go-ci from go-ci-oldstable-build-v0.15.2 to go-ci-oldstable-build-v0.15.3 in /dependabot/docker/builds
+- (GH-458) Build Image: Bump atc0005/go-ci from go-ci-oldstable-build-v0.15.3 to go-ci-oldstable-build-v0.15.4 in /dependabot/docker/builds
+- (GH-460) Add todo/release label to "Go Runtime" PRs
+- (GH-456) Go Runtime: Bump golang from 1.21.7 to 1.21.8 in /dependabot/docker/go
+
 ## [v0.12.8] - 2024-02-16
 
 ### Changed
@@ -1174,7 +1191,8 @@ This initial prototype supports/provides:
 - GitHub Actions linting and build checks
 - Makefile for general use cases
 
-[Unreleased]: https://github.com/atc0005/send2teams/compare/v0.12.8...HEAD
+[Unreleased]: https://github.com/atc0005/send2teams/compare/v0.12.9...HEAD
+[v0.12.9]: https://github.com/atc0005/send2teams/releases/tag/v0.12.9
 [v0.12.8]: https://github.com/atc0005/send2teams/releases/tag/v0.12.8
 [v0.12.7]: https://github.com/atc0005/send2teams/releases/tag/v0.12.7
 [v0.12.6]: https://github.com/atc0005/send2teams/releases/tag/v0.12.6
