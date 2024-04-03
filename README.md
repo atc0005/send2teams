@@ -55,11 +55,11 @@ This project provides:
 
 - `send2teams`
   - Small CLI tool used to submit messages to Microsoft Teams. `send2teams` is
-    intended for use by Nagios, scripts or other actions that may need to submit
-    pass/fail results to a MS Teams channel.
+    intended for use by Nagios, scripts or other actions that may need to
+    submit pass/fail results to a MS Teams channel.
 
-Prior to `v0.4.7`, this project also provided a `teams` subpackage. All of
-that functionality has since been migrated to the `atc0005/go-teams-notify`
+Prior to `v0.4.7` this project also provided a `teams` subpackage. All of that
+functionality has since been migrated to the `atc0005/go-teams-notify`
 project. All client code for that package has been updated to use
 `atc0005/go-teams-notify` in place of the previous `teams` subpackage of this
 project.
@@ -77,7 +77,7 @@ project.
 - optional support for noting a sending application as the source of the
   message
 - optional support for specifying target `url`, `description` comma-separated
-  pairs for use as labelled "buttons" within a Microsoft Teams message.
+  pairs for use as labelled "buttons" within a Microsoft Teams message
 - optional support for omitting the "branding" trailer from generated messages
 
 ## Changelog
@@ -260,7 +260,7 @@ The same example, shown split over multiple lines for readability (e.g., shell
 script):
 
 ```console
-./send2teams \
+send2teams \
   --silent \
   --channel "Alerts" \
   --team "Support" \
@@ -273,7 +273,7 @@ script):
 and on a single line (e.g., one-off via terminal or batch file):
 
 ```console
-./send2teams.exe --silent --channel "Alerts" --team "Support" --message "System XYZ is down!" --title "System outage alert" --sender "Nagios" --url "https://outlook.office.com/webhook/www@xxx/IncomingWebhook/yyy/zzz"
+send2teams.exe --silent --channel "Alerts" --team "Support" --message "System XYZ is down!" --title "System outage alert" --sender "Nagios" --url "https://outlook.office.com/webhook/www@xxx/IncomingWebhook/yyy/zzz"
 ```
 
 Note:
@@ -293,7 +293,7 @@ flag provided but not defined: -fake-flag
 ### Specifying url, description pairs
 
 ```console
-./send2teams \
+send2teams \
   --silent \
   --channel "Alerts" \
   --team "Support" \
@@ -308,7 +308,7 @@ flag provided but not defined: -fake-flag
 and on a single line (e.g., one-off via terminal or batch file):
 
 ```console
-./send2teams.exe --silent --channel "Alerts" --team "Support" --message "Useful starting points" --title "Learn more about Go" --sender "Nagios" --url "https://outlook.office.com/webhook/www@xxx/IncomingWebhook/yyy/zzz" --target-url "https://go.dev/, Go Homepage" --target-url "https://github.com/dariubs/GoBooks, Awesome Go Books"
+send2teams.exe --silent --channel "Alerts" --team "Support" --message "Useful starting points" --title "Learn more about Go" --sender "Nagios" --url "https://outlook.office.com/webhook/www@xxx/IncomingWebhook/yyy/zzz" --target-url "https://go.dev/, Go Homepage" --target-url "https://github.com/dariubs/GoBooks, Awesome Go Books"
 ```
 
 ### User mentions
@@ -322,7 +322,7 @@ The example, shown split over multiple lines for readability (e.g., shell
 script):
 
 ```console
-./send2teams \
+send2teams \
   --silent \
   --channel "Alerts" \
   --team "Support" \
@@ -335,7 +335,7 @@ script):
 and on a single line (e.g., one-off via terminal or batch file):
 
 ```console
-./send2teams --silent --channel "Alerts" --team "Support" --message "System XYZ is down!" --user-mention "John Doe,john.doe@example.com" --sender "Nagios" --url "https://outlook.office.com/webhook/www@xxx/IncomingWebhook/yyy/zzz"
+send2teams --silent --channel "Alerts" --team "Support" --message "System XYZ is down!" --user-mention "John Doe,john.doe@example.com" --sender "Nagios" --url "https://outlook.office.com/webhook/www@xxx/IncomingWebhook/yyy/zzz"
 ```
 
 Note:
@@ -356,7 +356,7 @@ The example, shown split over multiple lines for readability (e.g., shell
 script):
 
 ```console
-./send2teams \
+send2teams \
   --silent \
   --channel "Alerts" \
   --team "Support" \
@@ -370,7 +370,7 @@ script):
 and on a single line (e.g., one-off via terminal or batch file):
 
 ```console
-./send2teams --silent --channel "Alerts" --team "Support" --message "System XYZ is down!" --user-mention "John Doe,john.doe@example.com" --user-mention "Jane Doe,jane.doe@example.com" --sender "Nagios" --url "https://outlook.office.com/webhook/www@xxx/IncomingWebhook/yyy/zzz"
+send2teams --silent --channel "Alerts" --team "Support" --message "System XYZ is down!" --user-mention "John Doe,john.doe@example.com" --user-mention "Jane Doe,jane.doe@example.com" --sender "Nagios" --url "https://outlook.office.com/webhook/www@xxx/IncomingWebhook/yyy/zzz"
 ```
 
 Note:
