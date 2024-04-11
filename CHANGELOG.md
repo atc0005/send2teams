@@ -26,6 +26,23 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
+## [v0.12.10] - 2024-04-11
+
+### Changed
+
+#### Dependency Updates
+
+- (GH-464) Build Image: Bump atc0005/go-ci from go-ci-oldstable-build-v0.15.4 to go-ci-oldstable-build-v0.16.0 in /dependabot/docker/builds
+- (GH-466) Build Image: Bump atc0005/go-ci from go-ci-oldstable-build-v0.16.0 to go-ci-oldstable-build-v0.16.1 in /dependabot/docker/builds
+- (GH-467) Build Image: Bump atc0005/go-ci from go-ci-oldstable-build-v0.16.1 to go-ci-oldstable-build-v0.19.0 in /dependabot/docker/builds
+- (GH-471) Build Image: Bump atc0005/go-ci from go-ci-oldstable-build-v0.19.0 to go-ci-oldstable-build-v0.20.0 in /dependabot/docker/builds
+- (GH-476) Build Image: Bump atc0005/go-ci from go-ci-oldstable-build-v0.20.0 to go-ci-oldstable-build-v0.20.1 in /dependabot/docker/builds
+- (GH-474) Go Runtime: Bump golang from 1.21.8 to 1.21.9 in /dependabot/docker/go
+
+#### Other
+
+- (GH-473) Minor README tweaks
+
 ## [v0.12.9] - 2024-03-08
 
 ### Changed
@@ -1191,7 +1208,8 @@ This initial prototype supports/provides:
 - GitHub Actions linting and build checks
 - Makefile for general use cases
 
-[Unreleased]: https://github.com/atc0005/send2teams/compare/v0.12.9...HEAD
+[Unreleased]: https://github.com/atc0005/send2teams/compare/v0.12.10...HEAD
+[v0.12.10]: https://github.com/atc0005/send2teams/releases/tag/v0.12.10
 [v0.12.9]: https://github.com/atc0005/send2teams/releases/tag/v0.12.9
 [v0.12.8]: https://github.com/atc0005/send2teams/releases/tag/v0.12.8
 [v0.12.7]: https://github.com/atc0005/send2teams/releases/tag/v0.12.7
