@@ -377,7 +377,7 @@ func (ums *userMentionsStringFlag) Set(value string) error {
 
 // Branding is responsible for emitting application name, version and origin
 func Branding() {
-	fmt.Fprintf(flag.CommandLine.Output(), "\n%s %s\n%s\n\n", myAppName, version, myAppURL)
+	_, _ = fmt.Fprintf(flag.CommandLine.Output(), "\n%s %s\n%s\n\n", myAppName, version, myAppURL)
 }
 
 // MessageTrailer generates a branded "footer" for use with submitted Teams
@@ -410,7 +410,7 @@ func flagsUsage() func() {
 
 		Branding()
 
-		fmt.Fprintf(flag.CommandLine.Output(), "Usage of \"%s\":\n",
+		_, _ = fmt.Fprintf(flag.CommandLine.Output(), "Usage of \"%s\":\n",
 			myBinaryName,
 		)
 		flag.PrintDefaults()
