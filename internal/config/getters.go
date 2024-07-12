@@ -15,10 +15,15 @@ import (
 // TeamsSubmissionTimeout is the timeout value for sending messages to
 // Microsoft Teams.
 func (c Config) TeamsSubmissionTimeout() time.Duration {
+	delay := time.Duration(c.Retries) * time.Duration(c.RetriesDelay)
 
-	return time.Duration(c.Retries) *
-		time.Duration(c.RetriesDelay) *
-		teamsSubmissionTimeoutMultiplier
+	// Fallback to 1 if retry behavior was disabled or retry delay is set too
+	// short.
+	if delay <= 0 {
+		delay = time.Duration(1)
+	}
+
+	return delay * teamsSubmissionTimeoutMultiplier
 }
 
 // UserAgent returns a string usable as-is as a custom user agent for plugins
