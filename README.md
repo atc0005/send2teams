@@ -23,9 +23,17 @@ Small CLI tool used to submit messages to Microsoft Teams.
   - [From source](#from-source)
   - [Using release binaries](#using-release-binaries)
 - [Configuration Options](#configuration-options)
-  - [Webhook URLs](#webhook-urls)
-    - [Expected format](#expected-format)
-    - [How to create a webhook URL (Connector)](#how-to-create-a-webhook-url-connector)
+  - [Setup a connection to Microsoft Teams](#setup-a-connection-to-microsoft-teams)
+    - [Overview](#overview-1)
+    - [Workflow connectors](#workflow-connectors)
+      - [Workflow webhook URL format](#workflow-webhook-url-format)
+      - [How to create a Workflow connector webhook URL](#how-to-create-a-workflow-connector-webhook-url)
+        - [Using Teams client Workflows context option](#using-teams-client-workflows-context-option)
+        - [Using Teams client app](#using-teams-client-app)
+        - [Using Power Automate web UI](#using-power-automate-web-ui)
+    - [O365 connectors](#o365-connectors)
+      - [O365 webhook URL format](#o365-webhook-url-format)
+      - [How to create an O365 connector webhook URL](#how-to-create-an-o365-connector-webhook-url)
   - [Command-line](#command-line)
 - [Limitations](#limitations)
   - [message size](#message-size)
@@ -164,20 +172,130 @@ binaries.
 
 ## Configuration Options
 
-### Webhook URLs
+### Setup a connection to Microsoft Teams
 
-#### Expected format
+#### Overview
 
-Valid webhook URLs for Microsoft Teams use one of several (confirmed) FQDNs
-patterns:
+> [!WARNING]
+>
+> Microsoft announced July 3rd, 2024 that Office 365 (O365) connectors within
+Microsoft Teams would be [retired in 3
+months][o365-connector-retirement-announcement] and replaced by Power Automate
+workflows (or just "Workflows" for short).
+
+Quoting from the microsoft365dev blog:
+
+> We will gradually roll out this change in waves:
+>
+> - Wave 1 - effective August 15th, 2024: All new Connector creation will be
+>   blocked within all clouds
+> - Wave 2 - effective October 1st, 2024: All connectors within all clouds
+>   will stop working
+
+As noted, Existing O365 connector webhook URLs *should* continue to work until
+2024-10-01.
+
+#### Workflow connectors
+
+##### Workflow webhook URL format
+
+Valid Power Automate Workflow URLs used to submit messages to Microsoft Teams
+use this format:
+
+- `https://*.logic.azure.com:443/workflows/GUID_HERE/triggers/manual/paths/invoke?api-version=YYYY-MM-DD&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=SIGNATURE_HERE`
+
+Example URL from the LinkedIn [Bring Microsoft Teams incoming webhook security to
+the next level with Azure Logic App][linkedin-teams-webhook-security-article]
+article:
+
+- `https://webhook-jenkins.azure-api.net/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=f2QjZY50uoRnX6PIpyPT3xk`
+
+##### How to create a Workflow connector webhook URL
+
+> [!TIP]
+>
+> Use a dedicated "service" account not tied to a specific team member to help
+ensure that the Workflow connector is long lived.
+
+The [initial O365 retirement blog
+post][o365-connector-retirement-announcement] provides a list of templates
+which guide you through the process of creating a Power Automate Workflow
+webhook URL.
+
+###### Using Teams client Workflows context option
+
+1. Navigate to a channel or chat
+1. Select the ellipsis on the channel or chat
+1. Select `Workflows`
+1. Type `when a webhook request`
+1. Select the appropriate template
+   - `Post to a channel when a webhook request is received`
+   - `Post to a chat when a webhook request is received`
+1. Verify that `Microsoft Teams` is successfully enabled
+1. Select `Next`
+1. Select an appropriate value from the `Microsoft Teams Team` drop-down list.
+1. Select an appropriate `Microsoft Teams Channel` drop-down list.
+1. Select `Create flow`
+1. Copy the new workflow URL
+1. Select `Done`
+
+###### Using Teams client app
+
+1. Open `Workflows` application in teams
+1. Select `Create` across the top of the UI
+1. Choose `Notifications` at the left
+1. Select `Post to a channel when a webhook request is received`
+1. Verify that `Microsoft Teams` is successfully enabled
+1. Select `Next`
+1. Select an appropriate value from the `Microsoft Teams Team` drop-down list.
+1. Select an appropriate `Microsoft Teams Channel` drop-down list.
+1. Select `Create flow`
+1. Copy the new workflow URL
+1. Select `Done`
+
+###### Using Power Automate web UI
+
+[This][workflow-channel-post-from-webhook-request] template walks you through
+the steps of creating a new Workflow using the
+<https://make.powerautomate.com/> web UI:
+
+1. Select or create a new connection (e.g., <user@example.com>) to Microsoft
+   Teams
+1. Select `Create`
+1. Select an appropriate value from the `Microsoft Teams Team` drop-down list.
+1. Select an appropriate `Microsoft Teams Channel` drop-down list.
+1. Select `Create`
+1. If prompted, read the info message (e.g., "Your flow is ready to go") and
+   dismiss it.
+1. Select `Edit` from the menu across the top
+   - alternatively, select `My flows` from the side menu, then select `Edit`
+     from the "More commands" ellipsis
+1. Select `When a Teams webhook request is received` (e.g., left click)
+1. Copy the `HTTP POST URL` value
+   - this is your *private* custom Workflow connector URL
+   - by default anyone can `POST` a request to this Workflow connector URL
+     - while this access setting can be changed it will prevent this library
+       from being used to submit webhook requests
+
+#### O365 connectors
+
+##### O365 webhook URL format
+
+> [!WARNING]
+>
+> O365 connector webhook URLs are deprecated and [scheduled to be
+retired][o365-connector-retirement-announcement] on 2024-10-01.
+
+Valid (***deprecated***) O365 webhook URLs for Microsoft Teams use one of several
+(confirmed) FQDNs patterns:
 
 - `outlook.office.com`
 - `outlook.office365.com`
 - `*.webhook.office.com`
   - e.g., `example.webhook.office.com`
 
-Using a webhook URL with any of these FQDN patterns appears to give identical
-results.
+Using an O365 webhook URL with any of these FQDN patterns appears to give
+identical results.
 
 Here are complete, equivalent example webhook URLs from Microsoft's
 documentation using the FQDNs above:
@@ -187,10 +305,16 @@ documentation using the FQDNs above:
 - <https://example.webhook.office.com/webhookb2/a1269812-6d10-44b1-abc5-b84f93580ba0@9e7b80c7-d1eb-4b52-8582-76f921e416d9/IncomingWebhook/3fdd6767bae44ac58e5995547d66a4e4/f332c8d9-3397-4ac5-957b-b8e3fc465a8c>
   - note the `webhookb2` sub-URI specific to this FQDN pattern
 
-All of these patterns should pass the default validation applied to
-user-specified webhook URLs.
+All of these patterns when provided to this library should pass the default
+validation applied. See the example further down for the option of disabling
+webhook URL validation entirely.
 
-#### How to create a webhook URL (Connector)
+##### How to create an O365 connector webhook URL
+
+> [!WARNING]
+>
+> O365 connector webhook URLs are deprecated and [scheduled to be
+retired][o365-connector-retirement-announcement] on 2024-10-01.
 
 1. Open Microsoft Teams
 1. Navigate to the channel where you wish to receive incoming messages from
@@ -217,27 +341,27 @@ shadabacc3934](https://gist.github.com/chusiang/895f6406fbf9285c58ad0a3ace13d025
 Currently `send2teams` only supports command-line configuration flags.
 Requests for other configuration sources will be considered.
 
-| Flag                       | Required | Default       | Possible                                                  | Description                                                                                                                                       |
-| -------------------------- | -------- | ------------- | --------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `h`, `help`                | No       | N/A           | N/A                                                       | Display Help; show available flags.                                                                                                               |
-| `v`, `version`             | No       | `false`       | `true`, `false`                                           | Whether to display application version and then immediately exit application.                                                                     |
-| `channel`                  | No       | `unspecified` | *valid Microsoft Teams channel name*                      | The target channel where we will send a message. If not specified, defaults to `unspecified`.                                                     |
-| `color`                    | No       | `NotUsed`     | N/A                                                       | NOOP; this setting is no longer used. Values specified for this flag are ignored.                                                                 |
-| `message`                  | Yes      |               | *valid message string*                                    | The (optionally) Markdown-formatted message to submit.                                                                                            |
-| `team`                     | No       | `unspecified` | *valid Microsoft Teams team name*                         | The name of the Team containing our target channel. If not specified, defaults to `unspecified`.                                                  |
-| `title`                    | No       |               | *valid title string*                                      | The (optional) title for the message to submit.                                                                                                   |
-| `sender`                   | No       |               | *valid application or script name*                        | The (optional) sending application name or generator of the message this app will attempt to deliver.                                             |
-| `url`                      | Yes      |               | [*valid Microsoft Office 365 Webhook URL*](#webhook-urls) | The Webhook URL provided by a pre-configured Connector.                                                                                           |
-| `target-url`               | No       |               | *valid comma-separated `url`, `description` pair*         | The target URL and label (specified as comma separated pair) usually visible as a button towards the bottom of the Microsoft Teams message.       |
-| `verbose`                  | No       | `false`       | `true`, `false`                                           | Whether detailed output should be shown after message submission success or failure                                                               |
-| `silent`                   | No       | `false`       | `true`, `false`                                           | Whether ANY output should be shown after message submission success or failure                                                                    |
-| `convert-eol`              | No       | `false`       | `true`, `false`                                           | Whether messages with Windows, Mac and Linux newlines are updated to use break statements before message submission                               |
-| `disable-url-validation`   | No       | `false`       | `true`, `false`                                           | Whether webhook URL validation should be disabled. Useful when submitting generated JSON payloads to a service like <https://httpbin.org/>.       |
-| `disable-branding-trailer` | No       | `false`       | `true`, `false`                                           | Whether the branding trailer should be omitted from all messages generated by this application.                                                   |
-| `ignore-invalid-response`  | No       | `false`       | `true`, `false`                                           | Whether an invalid response from remote endpoint should be ignored. This is expected if submitting a message to a non-standard webhook URL.       |
-| `retries`                  | No       | `2`           | *positive whole number*                                   | The number of attempts that this application will make to deliver messages before giving up.                                                      |
-| `retries-delay`            | No       | `2`           | *positive whole number*                                   | The number of seconds that this application will wait before making another delivery attempt.                                                     |
-| `user-mention`             | No       |               | *one or more valid comma-separated `name`, `id` pairs*    | The DisplayName and ID of the recipient (specified as comma separated pair) for a user mention. May be repeated to create multiple user mentions. |
+| Flag                       | Required | Default       | Possible                                                      | Description                                                                                                                                       |
+| -------------------------- | -------- | ------------- | ------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `h`, `help`                | No       | N/A           | N/A                                                           | Display Help; show available flags.                                                                                                               |
+| `v`, `version`             | No       | `false`       | `true`, `false`                                               | Whether to display application version and then immediately exit application.                                                                     |
+| `channel`                  | No       | `unspecified` | *valid Microsoft Teams channel name*                          | The target channel where we will send a message. If not specified, defaults to `unspecified`.                                                     |
+| `color`                    | No       | `NotUsed`     | N/A                                                           | NOOP; this setting is no longer used. Values specified for this flag are ignored.                                                                 |
+| `message`                  | Yes      |               | *valid message string*                                        | The (optionally) Markdown-formatted message to submit.                                                                                            |
+| `team`                     | No       | `unspecified` | *valid Microsoft Teams team name*                             | The name of the Team containing our target channel. If not specified, defaults to `unspecified`.                                                  |
+| `title`                    | No       |               | *valid title string*                                          | The (optional) title for the message to submit.                                                                                                   |
+| `sender`                   | No       |               | *valid application or script name*                            | The (optional) sending application name or generator of the message this app will attempt to deliver.                                             |
+| `url`                      | Yes      |               | [*valid Webhook URL*](#setup-a-connection-to-microsoft-teams) | The Webhook URL provided by a pre-configured Connector.                                                                                           |
+| `target-url`               | No       |               | *valid comma-separated `url`, `description` pair*             | The target URL and label (specified as comma separated pair) usually visible as a button towards the bottom of the Microsoft Teams message.       |
+| `verbose`                  | No       | `false`       | `true`, `false`                                               | Whether detailed output should be shown after message submission success or failure                                                               |
+| `silent`                   | No       | `false`       | `true`, `false`                                               | Whether ANY output should be shown after message submission success or failure                                                                    |
+| `convert-eol`              | No       | `false`       | `true`, `false`                                               | Whether messages with Windows, Mac and Linux newlines are updated to use break statements before message submission                               |
+| `disable-url-validation`   | No       | `false`       | `true`, `false`                                               | Whether webhook URL validation should be disabled. Useful when submitting generated JSON payloads to a service like <https://httpbin.org/>.       |
+| `disable-branding-trailer` | No       | `false`       | `true`, `false`                                               | Whether the branding trailer should be omitted from all messages generated by this application.                                                   |
+| `ignore-invalid-response`  | No       | `false`       | `true`, `false`                                               | Whether an invalid response from remote endpoint should be ignored. This is expected if submitting a message to a non-standard webhook URL.       |
+| `retries`                  | No       | `2`           | *positive whole number*                                       | The number of attempts that this application will make to deliver messages before giving up.                                                      |
+| `retries-delay`            | No       | `2`           | *positive whole number*                                       | The number of seconds that this application will wait before making another delivery attempt.                                                     |
+| `user-mention`             | No       |               | *one or more valid comma-separated `name`, `id` pairs*        | The DisplayName and ID of the recipient (specified as comma separated pair) for a user mention. May be repeated to create multiple user mentions. |
 
 ## Limitations
 
@@ -413,6 +537,9 @@ SOFTWARE.
 - Related projects
   - <https://github.com/atc0005/go-teams-notify/>
 
+<!--
+  TODO: Refresh/replace these ref links after 2024-10-01 when O365 connectors are scheduled to be retired.
+-->
 - Webhook / Office 365
   - <https://sankalpit.com/how-to-get-channel-webhook-url/>
   - <https://docs.microsoft.com/en-us/outlook/actionable-messages/message-card-reference>
@@ -437,5 +564,9 @@ SOFTWARE.
 [go-docs-install]: <https://golang.org/doc/install>  "Install Go"
 
 [go-supported-releases]: <https://go.dev/doc/devel/release#policy> "Go Release Policy"
+
+[o365-connector-retirement-announcement]: <https://devblogs.microsoft.com/microsoft365dev/retirement-of-office-365-connectors-within-microsoft-teams/> "Retirement of Office 365 connectors within Microsoft Teams"
+[workflow-channel-post-from-webhook-request]: <https://make.preview.powerautomate.com/galleries/public/templates/d271a6f01c2545a28348d8f2cddf4c8f/post-to-a-channel-when-a-webhook-request-is-received> "Post to a channel when a webhook request is received"
+[linkedin-teams-webhook-security-article]: <https://www.linkedin.com/pulse/bring-microsoft-teams-incoming-webhook-security-next-level-kinzelin> "Bring Microsoft Teams incoming webhook security to the next level with Azure Logic App"
 
 <!-- []: PLACEHOLDER "DESCRIPTION_HERE" -->
