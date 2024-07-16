@@ -13,7 +13,7 @@
 
 # https://github.com/atc0005/go-ci/releases
 # https://github.com/atc0005/go-ci/pkgs/container/go-ci
-FROM ghcr.io/atc0005/go-ci:go-ci-oldstable-build-v0.21.4
+FROM ghcr.io/atc0005/go-ci:go-ci-oldstable-build-v0.21.5
 
 # Setup isolated build environment with a full copy of the Git repo contents
 # MINUS any file or path listed in the .dockerignore file at the root of this
