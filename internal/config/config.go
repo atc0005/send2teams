@@ -477,7 +477,6 @@ func NewConfig() (*Config, error) {
 
 	// log.Debug("Validating configuration ...")
 	if err := cfg.Validate(cfg.DisableWebhookURLValidation); err != nil {
-		flag.Usage()
 		return nil, err
 	}
 	// log.Debug("Configuration validated")
