@@ -26,6 +26,27 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
+## [v0.13.0] - 2024-07-23
+
+### Added
+
+- (GH-538) Initial support for Power Automate workflow connectors
+
+### Changed
+
+#### Dependency Updates
+
+- (GH-530) Build Image: Bump atc0005/go-ci from go-ci-oldstable-build-v0.21.4 to go-ci-oldstable-build-v0.21.5 in /dependabot/docker/builds
+- (GH-535) Build Image: Bump atc0005/go-ci from go-ci-oldstable-build-v0.21.5 to go-ci-oldstable-build-v0.21.6 in /dependabot/docker/builds
+
+### Other
+
+- (GH-536) Remove automatic display of help text on err
+
+### Fixed
+
+- (GH-525) Fix Teams submission timeout value logic
+
 ## [v0.12.13] - 2024-07-10
 
 ### Changed
@@ -1247,7 +1268,8 @@ This initial prototype supports/provides:
 - GitHub Actions linting and build checks
 - Makefile for general use cases
 
-[Unreleased]: https://github.com/atc0005/send2teams/compare/v0.12.13...HEAD
+[Unreleased]: https://github.com/atc0005/send2teams/compare/v0.13.0...HEAD
+[v0.13.0]: https://github.com/atc0005/send2teams/releases/tag/v0.13.0
 [v0.12.13]: https://github.com/atc0005/send2teams/releases/tag/v0.12.13
 [v0.12.12]: https://github.com/atc0005/send2teams/releases/tag/v0.12.12
 [v0.12.11]: https://github.com/atc0005/send2teams/releases/tag/v0.12.11
