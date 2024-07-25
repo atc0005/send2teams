@@ -192,8 +192,34 @@ Quoting from the microsoft365dev blog:
 > - Wave 2 - effective October 1st, 2024: All connectors within all clouds
 >   will stop working
 
-As noted, Existing O365 connector webhook URLs *should* continue to work until
-2024-10-01.
+[Microsoft later changed some of the
+details][o365-connector-retirement-announcement] regarding the retirement
+timeline of O365 connectors:
+
+> Update 07/23/2024: We understand and appreciate the feedback that customers
+> have shared with us regarding the timeline provided for the migration from
+> Office 365 connectors. We have extended the retirement timeline through
+> December 2025 to provide ample time to migrate to another solution such as
+> Power Automate, an app within Microsoft Teams, or Microsoft Graph. Please
+> see below for more information about the extension:
+>
+> - All existing connectors within all clouds will continue to work until
+>   December 2025, however using connectors beyond December 31, 2024 will
+>   require additional action.
+>   - Connector owners will be required to update the respective URL to post
+>     by December 31st, 2024. At least 90 days prior to the December 31, 2024
+>     deadline, we will send further guidance about making this URL update. If
+>     the URL is not updated by December 31, 2024 the connector will stop
+>     working. This is due to further service hardening updates being
+>     implemented for Office 365 connectors in alignment with Microsoft's
+>     [Secure Future
+>     Initiative](https://blogs.microsoft.com/blog/2024/05/03/prioritizing-security-above-all-else/)
+> - Starting August 15th, 2024 all new creations should be created using the
+>   Workflows app in Microsoft Teams
+
+Since O365 connectors will likely persist in many environments until the very
+end of the deprecation period this project will continue to support them until
+then alongside Power Automate workflows.
 
 #### Workflow connectors
 
