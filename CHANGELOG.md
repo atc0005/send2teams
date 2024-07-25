@@ -26,6 +26,15 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
+## [v0.13.1] - 2024-07-25
+
+### Changed
+
+#### Dependency Updates
+
+- (GH-543) Go Dependency: Bump github.com/atc0005/go-teams-notify/v2 from 2.11.0-alpha.1 to 2.11.0-alpha.5
+- (GH-544) Go Dependency: Bump github.com/atc0005/go-teams-notify/v2 from 2.11.0-alpha.5 to 2.11.0-rc.1
+
 ## [v0.13.0] - 2024-07-23
 
 ### Added
@@ -1268,7 +1277,8 @@ This initial prototype supports/provides:
 - GitHub Actions linting and build checks
 - Makefile for general use cases
 
-[Unreleased]: https://github.com/atc0005/send2teams/compare/v0.13.0...HEAD
+[Unreleased]: https://github.com/atc0005/send2teams/compare/v0.13.1...HEAD
+[v0.13.1]: https://github.com/atc0005/send2teams/releases/tag/v0.13.1
 [v0.13.0]: https://github.com/atc0005/send2teams/releases/tag/v0.13.0
 [v0.12.13]: https://github.com/atc0005/send2teams/releases/tag/v0.12.13
 [v0.12.12]: https://github.com/atc0005/send2teams/releases/tag/v0.12.12
