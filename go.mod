@@ -13,4 +13,4 @@ go 1.19
 //
 // replace github.com/atc0005/go-teams-notify/v2 => ../go-teams-notify
 
-require github.com/atc0005/go-teams-notify/v2 v2.12.0-alpha.1
+require github.com/atc0005/go-teams-notify/v2 v2.12.0-rc.1
