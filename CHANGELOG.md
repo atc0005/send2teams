@@ -26,6 +26,15 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
+## [v0.13.3] - 2024-08-13
+
+### Changed
+
+#### Dependency Updates
+
+- (GH-563) Build Image: Bump atc0005/go-ci from go-ci-oldstable-build-v0.21.7 to go-ci-oldstable-build-v0.21.8 in /dependabot/docker/builds
+- (GH-560) Go Runtime: Bump golang from 1.21.12 to 1.21.13 in /dependabot/docker/go
+
 ## [v0.13.2] - 2024-08-06
 
 ### Changed
@@ -1291,7 +1300,8 @@ This initial prototype supports/provides:
 - GitHub Actions linting and build checks
 - Makefile for general use cases
 
-[Unreleased]: https://github.com/atc0005/send2teams/compare/v0.13.2...HEAD
+[Unreleased]: https://github.com/atc0005/send2teams/compare/v0.13.3...HEAD
+[v0.13.3]: https://github.com/atc0005/send2teams/releases/tag/v0.13.3
 [v0.13.2]: https://github.com/atc0005/send2teams/releases/tag/v0.13.2
 [v0.13.1]: https://github.com/atc0005/send2teams/releases/tag/v0.13.1
 [v0.13.0]: https://github.com/atc0005/send2teams/releases/tag/v0.13.0
