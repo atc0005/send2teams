@@ -26,6 +26,17 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
+## [v0.13.4] - 2024-08-21
+
+### Changed
+
+#### Dependency Updates
+
+- (GH-572) Build Image: Bump atc0005/go-ci from go-ci-oldstable-build-v0.21.8 to go-ci-oldstable-build-v0.21.9 in /dependabot/docker/builds
+- (GH-576) Go Dependency: Bump github.com/atc0005/go-teams-notify/v2 from 2.11.0 to 2.12.0
+- (GH-575) Go Runtime: Bump golang from 1.21.13 to 1.22.6 in /dependabot/docker/go
+- (GH-574) Update project to Go 1.22 series
+
 ## [v0.13.3] - 2024-08-13
 
 ### Changed
@@ -1300,7 +1311,8 @@ This initial prototype supports/provides:
 - GitHub Actions linting and build checks
 - Makefile for general use cases
 
-[Unreleased]: https://github.com/atc0005/send2teams/compare/v0.13.3...HEAD
+[Unreleased]: https://github.com/atc0005/send2teams/compare/v0.13.4...HEAD
+[v0.13.4]: https://github.com/atc0005/send2teams/releases/tag/v0.13.4
 [v0.13.3]: https://github.com/atc0005/send2teams/releases/tag/v0.13.3
 [v0.13.2]: https://github.com/atc0005/send2teams/releases/tag/v0.13.2
 [v0.13.1]: https://github.com/atc0005/send2teams/releases/tag/v0.13.1
