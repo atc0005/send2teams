@@ -252,7 +252,10 @@ func (tus *targetURLsStringFlag) String() string {
 		//
 		// As a workaround, we create a new variable for each iteration to
 		// work around potential issues with Go versions prior to Go 1.22.
-		target := target
+		//
+		// NOTE: Not needed as of Go 1.22.
+		//
+		// target := target
 
 		fmt.Fprintf(
 			&output,
