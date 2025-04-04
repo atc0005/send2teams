@@ -29,6 +29,7 @@ updates:
       - dependency-type: "all"
     commit-message:
       prefix: "Go Dependency"
+    rebase-strategy: "disabled"
 
   - package-ecosystem: "gomod"
     directory: "/"
@@ -46,6 +47,7 @@ updates:
       - dependency-type: "all"
     commit-message:
       prefix: "Go Dependency"
+    rebase-strategy: "disabled"
 
   ######################################################################
   # Monitor GitHub Actions dependency updates
@@ -68,6 +70,7 @@ updates:
       - dependency-type: "all"
     commit-message:
       prefix: "CI Dependency"
+    rebase-strategy: "disabled"
 
   - package-ecosystem: "github-actions"
     directory: "/"
@@ -86,6 +89,7 @@ updates:
       - dependency-type: "all"
     commit-message:
       prefix: "CI Dependency"
+    rebase-strategy: "disabled"
 
   ######################################################################
   # Monitor Go updates to service as a reminder to generate new releases
@@ -109,6 +113,7 @@ updates:
       - dependency-type: "all"
     commit-message:
       prefix: "Go Runtime"
+    rebase-strategy: "disabled"
     ignore:
       - dependency-name: "golang"
         versions:
@@ -133,6 +138,7 @@ updates:
       - dependency-type: "all"
     commit-message:
       prefix: "Go Runtime"
+    rebase-strategy: "disabled"
 
   ######################################################################
   # Monitor images used to build project releases
@@ -155,6 +161,7 @@ updates:
       - dependency-type: "all"
     commit-message:
       prefix: "Build Image"
+    rebase-strategy: "disabled"
 
   - package-ecosystem: docker
     directory: "/dependabot/docker/builds"
@@ -173,3 +180,4 @@ updates:
       - dependency-type: "all"
     commit-message:
       prefix: "Build Image"
+    rebase-strategy: "disabled"
