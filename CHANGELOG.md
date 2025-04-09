@@ -26,6 +26,23 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
+## [v0.13.10] - 2025-04-09
+
+### Changed
+
+#### Dependency Updates
+
+- (GH-658) Build Image: Bump atc0005/go-ci from go-ci-oldstable-build-v0.22.3 to go-ci-oldstable-build-v0.22.8 in /dependabot/docker/builds
+- (GH-665) Build Image: Bump atc0005/go-ci from go-ci-oldstable-build-v0.22.8 to go-ci-oldstable-build-v0.22.9 in /dependabot/docker/builds
+- (GH-667) Disable Dependabot automatic PR rebasing
+- (GH-660) Go Runtime: Bump golang from 1.22.12 to 1.23.8 in /dependabot/docker/go
+- (GH-655) go.mod: update minimum Go version to 1.23.0
+- (GH-646) Update project to Go 1.23 series
+
+### Fixed
+
+- (GH-663) Fix `copyloopvar` linting errors
+
 ## [v0.13.9] - 2024-02-20
 
 ### Changed
@@ -1362,7 +1379,8 @@ This initial prototype supports/provides:
 - GitHub Actions linting and build checks
 - Makefile for general use cases
 
-[Unreleased]: https://github.com/atc0005/send2teams/compare/v0.13.9...HEAD
+[Unreleased]: https://github.com/atc0005/send2teams/compare/v0.13.10...HEAD
+[v0.13.10]: https://github.com/atc0005/send2teams/releases/tag/v0.13.10
 [v0.13.9]: https://github.com/atc0005/send2teams/releases/tag/v0.13.9
 [v0.13.8]: https://github.com/atc0005/send2teams/releases/tag/v0.13.8
 [v0.13.7]: https://github.com/atc0005/send2teams/releases/tag/v0.13.7
