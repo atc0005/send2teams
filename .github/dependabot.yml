@@ -92,55 +92,6 @@ updates:
     rebase-strategy: "disabled"
 
   ######################################################################
-  # Monitor Go updates to service as a reminder to generate new releases
-  ######################################################################
-
-  - package-ecosystem: docker
-    directory: "/dependabot/docker/go"
-    open-pull-requests-limit: 10
-    target-branch: "master"
-    schedule:
-      interval: "daily"
-      time: "02:00"
-      timezone: "America/Chicago"
-    assignees:
-      - "atc0005"
-    labels:
-      - "dependencies"
-      - "CI"
-      - "todo/release"
-    allow:
-      - dependency-type: "all"
-    commit-message:
-      prefix: "Go Runtime"
-    rebase-strategy: "disabled"
-    ignore:
-      - dependency-name: "golang"
-        versions:
-          - ">= 1.24.0"
-          - "< 1.23.0"
-
-  - package-ecosystem: docker
-    directory: "/dependabot/docker/go"
-    open-pull-requests-limit: 10
-    target-branch: "development"
-    schedule:
-      interval: "daily"
-      time: "02:00"
-      timezone: "America/Chicago"
-    assignees:
-      - "atc0005"
-    labels:
-      - "dependencies"
-      - "CI"
-      - "todo/release"
-    allow:
-      - dependency-type: "all"
-    commit-message:
-      prefix: "Go Runtime"
-    rebase-strategy: "disabled"
-
-  ######################################################################
   # Monitor images used to build project releases
   ######################################################################
 
