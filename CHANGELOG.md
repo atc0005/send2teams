@@ -26,6 +26,19 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
+## [v0.13.13] - 2026-01-19
+
+### Changed
+
+#### Dependency Updates
+
+- (GH-730) Build Image: Bump atc0005/go-ci from go-ci-oldstable-build-v0.23.10 to go-ci-oldstable-build-v0.23.11 in /dependabot/docker/builds
+- (GH-724) Build Image: Bump atc0005/go-ci from go-ci-oldstable-build-v0.23.7 to go-ci-oldstable-build-v0.23.10 in /dependabot/docker/builds
+- (GH-720) CI Dependency: Bump actions/checkout from 4 to 6
+- (GH-701) CI Dependency: Bump github/codeql-action from 3 to 4
+- (GH-716) Go Dependency: Bump github.com/atc0005/go-teams-notify/v2 from 2.13.0 to 2.14.0
+- (GH-729) Remove "canary" Go version tracking
+
 ## [v0.13.12] - 2026-01-19
 
 ### Changed
@@ -1396,7 +1409,8 @@ This initial prototype supports/provides:
 - GitHub Actions linting and build checks
 - Makefile for general use cases
 
-[Unreleased]: https://github.com/atc0005/send2teams/compare/v0.13.12...HEAD
+[Unreleased]: https://github.com/atc0005/send2teams/compare/v0.13.13...HEAD
+[v0.13.13]: https://github.com/atc0005/send2teams/releases/tag/v0.13.13
 [v0.13.12]: https://github.com/atc0005/send2teams/releases/tag/v0.13.12
 [v0.13.11]: https://github.com/atc0005/send2teams/releases/tag/v0.13.11
 [v0.13.10]: https://github.com/atc0005/send2teams/releases/tag/v0.13.10
