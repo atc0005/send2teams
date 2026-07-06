@@ -23,7 +23,7 @@ func (c *Config) handleFlagsConfig() {
 	flag.Var(&c.TargetURLs, "target-url", targetURLFlagHelp)
 	flag.Var(&c.UserMentions, "user-mention", userMentionFlagHelp)
 	flag.StringVar(&c.Channel, "channel", defaultChannelName, channelNameFlagHelp)
-	flag.StringVar(&c.WebhookURL, "url", defaultWebhookURL, webhookURLFlagHelp)
+	flag.StringVar(&c.webhookURL, "url", defaultWebhookURL, webhookURLFlagHelp)
 	flag.StringVar(&c.ThemeColor, "color", defaultMessageThemeColor, themeColorFlagHelp)
 	flag.StringVar(&c.MessageTitle, "title", defaultMessageTitle, titleFlagHelp)
 	flag.StringVar(&c.MessageText, "message", defaultMessageText, messageFlagHelp)
