@@ -8,7 +8,9 @@
 package config
 
 import (
+	"encoding/base64"
 	"fmt"
+	"strings"
 	"time"
 )
 
@@ -38,4 +40,18 @@ func (c Config) UserAgent() string {
 		c.App.Version,
 	)
 
+}
+
+// WebhookURL attempts to transparently decode the given input for the target
+// Microsoft Teams webhook URL as a base64 encoded string. If successful, the
+// decoded value is used for message delivery. If unsuccessful the original
+// input value is provided as-is.
+func (c Config) WebhookURL() string {
+	webhookURL, err := base64.StdEncoding.DecodeString(c.webhookURL)
+	if err != nil {
+		// If base64 decoding fails return the original value as-is.
+		return c.webhookURL
+	}
+
+	return strings.TrimSpace(string(webhookURL))
 }

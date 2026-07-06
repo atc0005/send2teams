@@ -42,7 +42,8 @@ func main() {
 	}
 
 	if cfg.VerboseOutput {
-		log.Printf("Configuration: %s\n", cfg)
+		// Show human-readable configuration settings.
+		log.Printf("Configuration: %s\n", cfg.String())
 	}
 
 	// Emulate returning exit code from main function by "queuing up" a
@@ -62,8 +63,9 @@ func main() {
 	if cfg.TeamsSubmissionTimeout() > config.DefaultNagiosNotificationTimeout {
 		if !cfg.SilentOutput {
 			log.Printf(
-				"WARNING: app cancellation timeout value of %v greater than default Nagios command timeout value!",
+				"WARNING: app cancellation timeout value of %v greater than default Nagios command timeout value of %v!",
 				cfg.TeamsSubmissionTimeout(),
+				config.DefaultNagiosNotificationTimeout,
 			)
 		}
 	}
@@ -273,7 +275,7 @@ func main() {
 
 	// Submit message card using Microsoft Teams client, retry submission if
 	// needed up to specified number of retry attempts.
-	sendErr := mstClient.SendWithRetry(ctxSubmissionTimeout, cfg.WebhookURL, message, cfg.Retries, cfg.RetriesDelay)
+	sendErr := mstClient.SendWithRetry(ctxSubmissionTimeout, cfg.WebhookURL(), message, cfg.Retries, cfg.RetriesDelay)
 
 	switch {
 
@@ -282,7 +284,7 @@ func main() {
 
 		if !cfg.SilentOutput {
 			log.Printf(
-				"WARNING: invalid response received from %q endpoint", cfg.WebhookURL)
+				"WARNING: invalid response received from %q endpoint", cfg.WebhookURL())
 			log.Printf("ignoring error response as requested: \n%s", sendErr)
 		}
 
@@ -313,7 +315,7 @@ func main() {
 
 	if cfg.VerboseOutput {
 		log.Printf("Configuration used: %#v\n", cfg)
-		log.Printf("Webhook URL: %s\n", cfg.WebhookURL)
+		log.Printf("Webhook URL: %s\n", cfg.WebhookURL())
 		log.Printf("Message values sent: %#v\n", message)
 	}
 
