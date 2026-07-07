@@ -39,6 +39,7 @@ Small CLI tool used to submit messages to Microsoft Teams.
   - [message size](#message-size)
 - [Examples](#examples)
   - [One-off](#one-off)
+  - [Using base64 encoded webhook URLs](#using-base64-encoded-webhook-urls)
   - [Using an invalid flag](#using-an-invalid-flag)
   - [Specifying url, description pairs](#specifying-url-description-pairs)
   - [User mentions](#user-mentions)
@@ -65,8 +66,15 @@ This project provides:
   - Small CLI tool used to submit messages to Microsoft Teams. `send2teams` is
     intended for use by Nagios, scripts or other actions that may need to submit
     pass/fail results to a MS Teams channel.
+- `webhookenc`
+  - Small CLI tool used to encode Microsoft Teams webhook URLs. `webhookenc`
+    is intended for use by Nagios admins who may wish to encode a webhook URL
+    for inclusion in a `Custom Object Variable` or a `User Macro` where
+    sanitization would strip out required `&` characters used to separate URL
+    query parameters in webhook URLs.
 
-Prior to `v0.4.7`, this project also provided a `teams` subpackage. All of
+> [!NOTE]
+> Prior to `v0.4.7`, this project also provided a `teams` subpackage. All of
 that functionality has since been migrated to the `atc0005/go-teams-notify`
 project. All client code for that package has been updated to use
 `atc0005/go-teams-notify` in place of the previous `teams` subpackage of this
@@ -75,8 +83,14 @@ project.
 ## Features
 
 - single binary, no outside dependencies
-- minimal configuration
+- minimal configuration required
 - very few build dependencies
+- transparent decoding of (optional) base64 encoded webhook URLs
+  - this allows newer Nagios versions `v4.5.13` and newer to store webhook
+    URLs (with query parameters) in `Custom Object Variables` or `User Macros`
+    in a format that avoids triggering sanitization behavior related to the
+    Nagios `illegal_macro_output_chars` setting
+  - existing (non-encoded) webhook URLs continue to be supported as before
 - optional conversion of messages with Windows, Mac or Linux newlines to
   increase compatibility with Teams formatting
 - message delivery retry support with retry and retry delay values
@@ -228,13 +242,16 @@ then alongside Power Automate workflows.
 Valid Power Automate Workflow URLs used to submit messages to Microsoft Teams
 use this format:
 
-- `https://*.logic.azure.com:443/workflows/GUID_HERE/triggers/manual/paths/invoke?api-version=YYYY-MM-DD&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=SIGNATURE_HERE`
+- `https://<environment-id>.<region>://<workflow-id>/triggers/manual/paths/invoke?api-version=YYYY-MM-DD&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=<signature-key>`
 
-Example URL from the LinkedIn [Bring Microsoft Teams incoming webhook security to
-the next level with Azure Logic App][linkedin-teams-webhook-security-article]
-article:
+Example URL:
 
-- `https://webhook-jenkins.azure-api.net/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=f2QjZY50uoRnX6PIpyPT3xk`
+- `https://default216c138bf5fd4aa8bf44fc3cb5a093.be.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/ed3386c459104b11bd4e891c76e5e2a1/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=vqF0En+Z0ucuRTM/01o2GuhMH3hKKk/N2bOmlM31zaA`
+
+Based on:
+
+- <https://learn.microsoft.com/en-us/microsoftteams/platform/webhooks-and-connectors/how-to/add-outgoing-webhook?tabs=verifyhmactoken%2Cdotnet>
+- <https://support.microsoft.com/en-US/teams/apps-service/create-incoming-webhooks-with-workflows-for-microsoft-teams>
 
 ##### How to create a Workflow connector webhook URL
 
@@ -417,13 +434,13 @@ script):
   --message "System XYZ is down!" \
   --title "System outage alert" \
   --sender "Nagios" \
-  --url "https://outlook.office.com/webhook/www@xxx/IncomingWebhook/yyy/zzz"
+  --url "WORKFLOW_URL_PLACEHOLDER"
 ```
 
 and on a single line (e.g., one-off via terminal or batch file):
 
 ```console
-./send2teams.exe --silent --channel "Alerts" --team "Support" --message "System XYZ is down!" --title "System outage alert" --sender "Nagios" --url "https://outlook.office.com/webhook/www@xxx/IncomingWebhook/yyy/zzz"
+./send2teams.exe --silent --channel "Alerts" --team "Support" --message "System XYZ is down!" --title "System outage alert" --sender "Nagios" --url "WORKFLOW_URL_PLACEHOLDER"
 ```
 
 Note:
@@ -431,6 +448,68 @@ Note:
 - remove the `-silent` flag in order to see pass or failure output
 - use the `-verbose` flag to see the JSON payload submitted to Microsoft Teams
 - check the exit code (`$?`) to determine overall success/failure result
+
+### Using base64 encoded webhook URLs
+
+> [!NOTE]
+>
+> As of the v0.14.0 release base64 encoded webhook URLs are also optionally
+> accepted as valid input for the `--url` flag. Unencoded webhook URLs
+> continue to be supported as before.
+
+Example:
+
+```console
+./send2teams \
+  --silent \
+  --channel "Alerts" \
+  --team "Support" \
+  --message "System XYZ is down!" \
+  --title "System outage alert" \
+  --sender "Nagios" \
+  --url "aHR0cHM6Ly9kZWZhdWx0MjE2YzEzOGJmNWZkNGFhOGJmNDRmYzNjYjVhMDkzLmJlLmVudmlyb25tZW50LmFwaS5wb3dlcnBsYXRmb3JtLmNvbTo0NDMvcG93ZXJhdXRvbWF0ZS9hdXRvbWF0aW9ucy9kaXJlY3Qvd29ya2Zsb3dzL2VkMzM4NmM0NTkxMDRiMTFiZDRlODkxYzc2ZTVlMmExL3RyaWdnZXJzL21hbnVhbC9wYXRocy9pbnZva2U/YXBpLXZlcnNpb249MSZzcD0lMkZ0cmlnZ2VycyUyRm1hbnVhbCUyRnJ1biZzdj0xLjAmc2lnPXZxRjBFbitaMHVjdVJUTS8wMW8yR3VoTUgzaEtLay9OMmJPbWxNMzF6YUE="
+```
+
+The base64 encoded URL can be created using a variety of tools. This example
+uses `echo` and the `base64` utility provided by the `coreutils` package:
+
+```console
+$ echo -n 'https://default216c138bf5fd4aa8bf44fc3cb5a093.be.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/ed3386c459104b11bd4e891c76e5e2a1/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=vqF0En+Z0ucuRTM/01o2GuhMH3hKKk/N2bOmlM31zaA' | base64 -w 0
+aHR0cHM6Ly9kZWZhdWx0MjE2YzEzOGJmNWZkNGFhOGJmNDRmYzNjYjVhMDkzLmJlLmVudmlyb25tZW50LmFwaS5wb3dlcnBsYXRmb3JtLmNvbTo0NDMvcG93ZXJhdXRvbWF0ZS9hdXRvbWF0aW9ucy9kaXJlY3Qvd29ya2Zsb3dzL2VkMzM4NmM0NTkxMDRiMTFiZDRlODkxYzc2ZTVlMmExL3RyaWdnZXJzL21hbnVhbC9wYXRocy9pbnZva2U/YXBpLXZlcnNpb249MSZzcD0lMkZ0cmlnZ2VycyUyRm1hbnVhbCUyRnJ1biZzdj0xLjAmc2lnPXZxRjBFbitaMHVjdVJUTS8wMW8yR3VoTUgzaEtLay9OMmJPbWxNMzF6YUE=
+```
+
+Alternatively, v0.14.0 also includes support for accepting multiple comma
+separated individual base64 encoded segments. Segments are reconstructed as a
+single base64 encoded string before decoding and using the result.
+
+Example:
+
+```console
+./send2teams \
+  --silent \
+  --channel "Alerts" \
+  --team "Support" \
+  --message "System XYZ is down!" \
+  --title "System outage alert" \
+  --sender "Nagios" \
+  --url "aHR0cHM6Ly9kZWZhdWx0MjE2YzEzOGJmNWZkNGFhOGJmNDRmYzNjYjVhMDkzLmJlLmVudmlyb25tZW50LmFwaS5wb3dlcnBsYXRmb3JtLmNvbTo0NDM,L3Bvd2VyYXV0b21hdGUvYXV0b21hdGlvbnMvZGlyZWN0L3dvcmtmbG93cy9lZDMzODZjNDU5MTA0YjExYmQ0ZTg5MWM3NmU1ZTJhMS90cmlnZ2Vycy9tYW51YWwvcGF0aHMvaW52b2tlPw,YXBpLXZlcnNpb249MSZzcD0lMkZ0cmlnZ2VycyUyRm1hbnVhbCUyRnJ1biZzdj0xLjAmc2lnPXZxRjBFbitaMHVjdVJUTS8wMW8yR3VoTUgzaEtLay9OMmJPbWxNMzF6YUE"
+```
+
+> [!IMPORTANT]
+>
+> Since Nagios Core v4.5.13 (incorporated into Nagios XI 2026R1.5) changes the
+behavior of sanitization applied to `Custom Object Variables` (which removes
+characters matching the list defined in the `illegal_macro_output_chars`
+Nagios Core setting), webhook URLs stored in their original form will be
+broken. By encoding them as base64 values you can safely store them in `User
+Macros` or `Custom Object Variables` and reference them as needed from command
+definitions which invoke the `send2teams` utility.
+
+See also:
+
+- <https://www.nagios.com/changelog/nagios-xi/2026r1-5/>
+- <https://github.com/NagiosEnterprises/nagioscore/blob/master/Changelog>
+- <https://assets.nagios.com/downloads/nagioscore/docs/nagioscore/4/en/customobjectvars.html>
 
 ### Using an invalid flag
 
@@ -450,7 +529,7 @@ flag provided but not defined: -fake-flag
   --message "Useful starting points" \
   --title "Learn more about Go" \
   --sender "Nagios" \
-  --url "https://outlook.office.com/webhook/www@xxx/IncomingWebhook/yyy/zzz" \
+  --url "WORKFLOW_URL_PLACEHOLDER" \
   --target-url "https://go.dev/, Go Homepage" \
   --target-url "https://github.com/dariubs/GoBooks, Awesome Go Books"
 ```
@@ -458,7 +537,7 @@ flag provided but not defined: -fake-flag
 and on a single line (e.g., one-off via terminal or batch file):
 
 ```console
-./send2teams.exe --silent --channel "Alerts" --team "Support" --message "Useful starting points" --title "Learn more about Go" --sender "Nagios" --url "https://outlook.office.com/webhook/www@xxx/IncomingWebhook/yyy/zzz" --target-url "https://go.dev/, Go Homepage" --target-url "https://github.com/dariubs/GoBooks, Awesome Go Books"
+./send2teams.exe --silent --channel "Alerts" --team "Support" --message "Useful starting points" --title "Learn more about Go" --sender "Nagios" --url "WORKFLOW_URL_PLACEHOLDER" --target-url "https://go.dev/, Go Homepage" --target-url "https://github.com/dariubs/GoBooks, Awesome Go Books"
 ```
 
 ### User mentions
@@ -479,13 +558,13 @@ script):
   --message "System XYZ is down!" \
   --user-mention "John Doe,john.doe@example.com" \
   --sender "Nagios" \
-  --url "https://outlook.office.com/webhook/www@xxx/IncomingWebhook/yyy/zzz"
+  --url "WORKFLOW_URL_PLACEHOLDER"
 ```
 
 and on a single line (e.g., one-off via terminal or batch file):
 
 ```console
-./send2teams --silent --channel "Alerts" --team "Support" --message "System XYZ is down!" --user-mention "John Doe,john.doe@example.com" --sender "Nagios" --url "https://outlook.office.com/webhook/www@xxx/IncomingWebhook/yyy/zzz"
+./send2teams --silent --channel "Alerts" --team "Support" --message "System XYZ is down!" --user-mention "John Doe,john.doe@example.com" --sender "Nagios" --url "WORKFLOW_URL_PLACEHOLDER"
 ```
 
 Note:
@@ -514,13 +593,13 @@ script):
   --user-mention "John Doe,john.doe@example.com" \
   --user-mention "Jane Doe,jane.doe@example.com" \
   --sender "Nagios" \
-  --url "https://outlook.office.com/webhook/www@xxx/IncomingWebhook/yyy/zzz"
+  --url "WORKFLOW_URL_PLACEHOLDER"
 ```
 
 and on a single line (e.g., one-off via terminal or batch file):
 
 ```console
-./send2teams --silent --channel "Alerts" --team "Support" --message "System XYZ is down!" --user-mention "John Doe,john.doe@example.com" --user-mention "Jane Doe,jane.doe@example.com" --sender "Nagios" --url "https://outlook.office.com/webhook/www@xxx/IncomingWebhook/yyy/zzz"
+./send2teams --silent --channel "Alerts" --team "Support" --message "System XYZ is down!" --user-mention "John Doe,john.doe@example.com" --user-mention "Jane Doe,jane.doe@example.com" --sender "Nagios" --url "WORKFLOW_URL_PLACEHOLDER"
 ```
 
 Note:
@@ -593,6 +672,5 @@ SOFTWARE.
 
 [o365-connector-retirement-announcement]: <https://devblogs.microsoft.com/microsoft365dev/retirement-of-office-365-connectors-within-microsoft-teams/> "Retirement of Office 365 connectors within Microsoft Teams"
 [workflow-channel-post-from-webhook-request]: <https://make.preview.powerautomate.com/galleries/public/templates/d271a6f01c2545a28348d8f2cddf4c8f/post-to-a-channel-when-a-webhook-request-is-received> "Post to a channel when a webhook request is received"
-[linkedin-teams-webhook-security-article]: <https://www.linkedin.com/pulse/bring-microsoft-teams-incoming-webhook-security-next-level-kinzelin> "Bring Microsoft Teams incoming webhook security to the next level with Azure Logic App"
 
 <!-- []: PLACEHOLDER "DESCRIPTION_HERE" -->

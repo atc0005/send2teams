@@ -8,7 +8,6 @@
 package config
 
 import (
-	"encoding/base64"
 	"errors"
 	"flag"
 	"fmt"
@@ -20,6 +19,7 @@ import (
 	"time"
 
 	goteamsnotify "github.com/atc0005/go-teams-notify/v2"
+	"github.com/atc0005/send2teams/internal/webhookurl"
 )
 
 const (
@@ -421,7 +421,7 @@ func flagsUsage() func() {
 
 func (c Config) String() string {
 	switch {
-	case isBase64(c.webhookURL):
+	case webhookurl.IsBase64URL(c.webhookURL):
 		return fmt.Sprintf(
 			"Team=%q, "+
 				"Channel=%q, "+
@@ -460,7 +460,7 @@ func (c Config) String() string {
 			c.VerboseOutput,
 			c.SilentOutput,
 			c.ConvertEOL,
-			isBase64(c.webhookURL),
+			true,
 		)
 
 	default:
@@ -500,7 +500,7 @@ func (c Config) String() string {
 			c.VerboseOutput,
 			c.SilentOutput,
 			c.ConvertEOL,
-			isBase64(c.webhookURL),
+			false,
 		)
 	}
 
@@ -575,12 +575,4 @@ func (c Config) Validate(disableWebhookURLValidation bool) error {
 	// Indicate that we didn't spot any problems
 	return nil
 
-}
-
-// isBase64 is a helper function that indicates whether a given string is
-// base64 encoded.
-func isBase64(s string) bool {
-	_, err := base64.StdEncoding.DecodeString(s)
-
-	return err == nil
 }
