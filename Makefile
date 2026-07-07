@@ -24,7 +24,7 @@
 SHELL := /bin/bash
 
 # Space-separated list of cmd/BINARY_NAME directories to build
-WHAT 					:= send2teams
+WHAT 					:= send2teams webhookenc
 
 PROJECT_NAME			:= send2teams
 

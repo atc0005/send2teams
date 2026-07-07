@@ -32,6 +32,11 @@ contents:
     file_info:
       mode: 0755
 
+  - src: ../../release_assets/webhookenc/webhookenc-linux-amd64-dev
+    dst: /usr/bin/webhookenc_dev
+    file_info:
+      mode: 0755
+
 overrides:
   rpm:
     scripts:
