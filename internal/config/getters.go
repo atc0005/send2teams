@@ -9,7 +9,10 @@ package config
 
 import (
 	"fmt"
+	"strings"
 	"time"
+
+	"github.com/atc0005/send2teams/internal/webhookurl"
 )
 
 // TeamsSubmissionTimeout is the timeout value for sending messages to
@@ -38,4 +41,23 @@ func (c Config) UserAgent() string {
 		c.App.Version,
 	)
 
+}
+
+// WebhookURL attempts to transparently process the given input for the target
+// Microsoft Teams webhook URL as:
+//
+//   - a single base64 string
+//   - multiple base64 strings ("segments") separated by commas
+//   - an unencoded webhook URL
+//
+// If a decode attempt is successful, the decoded value is used for message
+// delivery. If unsuccessful the original input value is provided as-is.
+func (c Config) WebhookURL() string {
+	webhookURL, err := webhookurl.DecodeBase64(c.webhookURL)
+	if err != nil {
+		// If base64 decoding fails return the original value as-is.
+		return c.webhookURL
+	}
+
+	return strings.TrimSpace(string(webhookURL))
 }
