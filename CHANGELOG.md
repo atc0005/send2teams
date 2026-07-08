@@ -26,6 +26,17 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
+## [v0.14.0] - 2026-07-08
+
+### Added
+
+- (GH-768) Add support for base64 encoded webhook URLs
+
+### Changed
+
+- (GH-757) Build Image: Bump atc0005/go-ci from go-ci-oldstable-build-v0.23.14 to go-ci-oldstable-build-v0.23.21 in /dependabot/docker/builds
+- (GH-762) CI Dependency: Bump actions/checkout from 6 to 7
+
 ## [v0.13.14] - 2026-03-06
 
 ### Changed
@@ -1417,7 +1428,8 @@ This initial prototype supports/provides:
 - GitHub Actions linting and build checks
 - Makefile for general use cases
 
-[Unreleased]: https://github.com/atc0005/send2teams/compare/v0.13.14...HEAD
+[Unreleased]: https://github.com/atc0005/send2teams/compare/v0.14.0...HEAD
+[v0.14.0]: https://github.com/atc0005/send2teams/releases/tag/v0.14.0
 [v0.13.14]: https://github.com/atc0005/send2teams/releases/tag/v0.13.14
 [v0.13.13]: https://github.com/atc0005/send2teams/releases/tag/v0.13.13
 [v0.13.12]: https://github.com/atc0005/send2teams/releases/tag/v0.13.12
