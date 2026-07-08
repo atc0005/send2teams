@@ -19,6 +19,7 @@ import (
 	"time"
 
 	goteamsnotify "github.com/atc0005/go-teams-notify/v2"
+	"github.com/atc0005/send2teams/internal/webhookurl"
 )
 
 const (
@@ -31,7 +32,7 @@ const (
 	convertEOLFlagHelp                  = "Whether messages with Windows, Mac and Linux newlines are updated to use break statements before message submission."
 	teamNameFlagHelp                    = "The name of the Team containing our target channel. Used in log messages. If not specified, defaults to \"unspecified\"."
 	channelNameFlagHelp                 = "The target channel where we will send a message. Used in log messages. If not specified, defaults to \"unspecified\"."
-	webhookURLFlagHelp                  = "The Webhook URL provided by a preconfigured Connector."
+	webhookURLFlagHelp                  = "The target webhook URL used for delivering Microsoft Teams notifications. May optionally be base64 encoded and will be transparently decoded before use."
 	targetURLFlagHelp                   = "The target URL and label (specified as comma separated pair) usually visible as a button towards the bottom of the Microsoft Teams message."
 	userMentionFlagHelp                 = "The DisplayName and ID of the recipient (specified as comma separated pair) for a user mention."
 	themeColorFlagHelp                  = "NOOP; this setting is no longer used. Values specified for this flag are ignored."
@@ -152,13 +153,10 @@ type Config struct {
 	// by this application only; the remote API does not receive this value.
 	Channel string
 
-	// WebhookURL is the full URL used to submit messages to the Teams channel
-	// This URL is in the form of https://outlook.office.com/webhook/xxx or
-	// https://outlook.office365.com/webhook/xxx. This URL is REQUIRED in
-	// order for this application to function and needs to be created in
-	// advance by adding/configuring a Webhook Connector in a Microsoft Teams
-	// channel that you wish to submit messages to using this application.
-	WebhookURL string
+	// webhookURL is the full URL used to submit messages to the Teams
+	// channel. This URL value may optionally be base64 encoded and will be
+	// transparently decoded before use.
+	webhookURL string
 
 	// ThemeColor is no longer used. Values specified for this flag are
 	// ignored. If/when the Adaptive Card format adds support for message
@@ -422,42 +420,90 @@ func flagsUsage() func() {
 }
 
 func (c Config) String() string {
-	return fmt.Sprintf(
-		"Team=%q, "+
-			"Channel=%q, "+
-			"WebhookURL=%q, "+
-			"ThemeColor=%q, "+
-			"MessageTitle=%q, "+
-			"MessageText=%q, "+
-			"Sender=%q, "+
-			"TargetURLs=%q, "+
-			"Retries=%q, "+
-			"RetriesDelay=%q, "+
-			"AppTimeout=%q, "+
-			"DisableWebhookURLValidation=%t, "+
-			"DisableBrandingTrailer=%t, "+
-			"IgnoreInvalidResponse=%t, "+
-			"VerboseOutput=%t, "+
-			"SilentOutput=%t, "+
-			"ConvertEOL=%t",
-		c.Team,
-		c.Channel,
-		c.WebhookURL,
-		c.ThemeColor,
-		c.MessageTitle,
-		c.MessageText,
-		c.Sender,
-		c.TargetURLs.String(),
-		strconv.Itoa(c.Retries),
-		strconv.Itoa(c.RetriesDelay),
-		c.TeamsSubmissionTimeout(),
-		c.DisableWebhookURLValidation,
-		c.DisableBrandingTrailer,
-		c.IgnoreInvalidResponse,
-		c.VerboseOutput,
-		c.SilentOutput,
-		c.ConvertEOL,
-	)
+	switch {
+	case webhookurl.IsBase64URL(c.webhookURL):
+		return fmt.Sprintf(
+			"Team=%q, "+
+				"Channel=%q, "+
+				"WebhookURL (raw)=%q, "+
+				"WebhookURL (decoded)=%q, "+
+				"ThemeColor=%q, "+
+				"MessageTitle=%q, "+
+				"MessageText=%q, "+
+				"Sender=%q, "+
+				"TargetURLs=%q, "+
+				"Retries=%q, "+
+				"RetriesDelay=%q, "+
+				"AppTimeout=%q, "+
+				"DisableWebhookURLValidation=%t, "+
+				"DisableBrandingTrailer=%t, "+
+				"IgnoreInvalidResponse=%t, "+
+				"VerboseOutput=%t, "+
+				"SilentOutput=%t, "+
+				"ConvertEOL=%t, "+
+				"Base64EncodedWebhookURL=%t",
+			c.Team,
+			c.Channel,
+			c.webhookURL,
+			c.WebhookURL(),
+			c.ThemeColor,
+			c.MessageTitle,
+			c.MessageText,
+			c.Sender,
+			c.TargetURLs.String(),
+			strconv.Itoa(c.Retries),
+			strconv.Itoa(c.RetriesDelay),
+			c.TeamsSubmissionTimeout(),
+			c.DisableWebhookURLValidation,
+			c.DisableBrandingTrailer,
+			c.IgnoreInvalidResponse,
+			c.VerboseOutput,
+			c.SilentOutput,
+			c.ConvertEOL,
+			true,
+		)
+
+	default:
+		return fmt.Sprintf(
+			"Team=%q, "+
+				"Channel=%q, "+
+				"WebhookURL=%q, "+
+				"ThemeColor=%q, "+
+				"MessageTitle=%q, "+
+				"MessageText=%q, "+
+				"Sender=%q, "+
+				"TargetURLs=%q, "+
+				"Retries=%q, "+
+				"RetriesDelay=%q, "+
+				"AppTimeout=%q, "+
+				"DisableWebhookURLValidation=%t, "+
+				"DisableBrandingTrailer=%t, "+
+				"IgnoreInvalidResponse=%t, "+
+				"VerboseOutput=%t, "+
+				"SilentOutput=%t, "+
+				"ConvertEOL=%t, "+
+				"Base64EncodedWebhookURL=%t",
+			c.Team,
+			c.Channel,
+			c.WebhookURL(),
+			c.ThemeColor,
+			c.MessageTitle,
+			c.MessageText,
+			c.Sender,
+			c.TargetURLs.String(),
+			strconv.Itoa(c.Retries),
+			strconv.Itoa(c.RetriesDelay),
+			c.TeamsSubmissionTimeout(),
+			c.DisableWebhookURLValidation,
+			c.DisableBrandingTrailer,
+			c.IgnoreInvalidResponse,
+			c.VerboseOutput,
+			c.SilentOutput,
+			c.ConvertEOL,
+			false,
+		)
+	}
+
 }
 
 // NewConfig is a factory function that produces a new Config object based
@@ -521,7 +567,7 @@ func (c Config) Validate(disableWebhookURLValidation bool) error {
 
 	// Allow selective toggling of webhook URL validation.
 	if !disableWebhookURLValidation {
-		if err := mstClient.ValidateWebhook(c.WebhookURL); err != nil {
+		if err := mstClient.ValidateWebhook(c.WebhookURL()); err != nil {
 			return fmt.Errorf("webhook URL validation failed: %w", err)
 		}
 	}

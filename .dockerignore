@@ -29,6 +29,7 @@ scratch/
 
 # Ignore local app builds
 /send2teams
+/webhookenc
 
 # Generated assets are placed here
 /release_assets
