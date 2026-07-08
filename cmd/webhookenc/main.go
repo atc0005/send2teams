@@ -20,6 +20,12 @@ import (
 	"github.com/atc0005/send2teams/internal/webhookurl"
 )
 
+const (
+	// Maximum field length for Nagios XI Custom Object Variables database
+	// field values.
+	nagiosDBCustomObjectVariablesMaxFieldLength int = 255
+)
+
 // validateResults asserts that:
 //
 //  1. that the raw segments when combined match the original URL
@@ -78,11 +84,11 @@ func main() {
 
 	verboseOutputTemplate := `
     _powerautomateworkflowurl_part1of3
-    %v,
+    %v
     %d base64 encoded characters
 
     _powerautomateworkflowurl_part2of3
-    %v,
+    %v
     %d base64 encoded characters
 
     _powerautomateworkflowurl_part3of3
@@ -130,7 +136,10 @@ func main() {
 		part3Encoded,
 	)
 
-	fmt.Println("NOTE: We split into multiple base64 encoded values to comply with Nagios XI DB field limitations for Custom Object Variables.")
+	fmt.Printf(
+		"NOTE: We split into multiple base64 encoded values to comply with Nagios XI DB field limitations (%d chars) for Custom Object Variables.\n",
+		nagiosDBCustomObjectVariablesMaxFieldLength,
+	)
 
 	fmt.Printf(
 		"\nCombined (comma separated) input string for testing with send2teams:\n\n'%s,%s,%s'\n",
