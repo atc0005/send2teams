@@ -26,6 +26,12 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
+## [v0.14.1] - 2026-10-07
+
+### Changed
+
+- (GH-781) Build Image: Bump atc0005/go-ci from go-ci-oldstable-build-v0.23.21 to go-ci-oldstable-build-v0.23.25 in /dependabot/docker/builds
+
 ## [v0.14.0] - 2026-07-08
 
 ### Added
@@ -1428,7 +1434,8 @@ This initial prototype supports/provides:
 - GitHub Actions linting and build checks
 - Makefile for general use cases
 
-[Unreleased]: https://github.com/atc0005/send2teams/compare/v0.14.0...HEAD
+[Unreleased]: https://github.com/atc0005/send2teams/compare/v0.14.1...HEAD
+[v0.14.1]: https://github.com/atc0005/send2teams/releases/tag/v0.14.1
 [v0.14.0]: https://github.com/atc0005/send2teams/releases/tag/v0.14.0
 [v0.13.14]: https://github.com/atc0005/send2teams/releases/tag/v0.13.14
 [v0.13.13]: https://github.com/atc0005/send2teams/releases/tag/v0.13.13
